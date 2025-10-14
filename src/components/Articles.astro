@@ -1,0 +1,20 @@
+---
+import MainArticle from "./MainArticle.astro";
+import SecondaryArticle from "./SecondaryArticle.astro";
+import TerciaryArticle from "./TerciaryArticle.astro";
+import laikaImage from "../assets/images/laika.jpg";
+---
+
+<main class="grid w-full h-[600px] grid-cols-4 grid-rows-6 gap-5">
+  <MainArticle
+    image={laikaImage}
+    alt="Main Article"
+    author="Ezequias Torczuk"
+    subtitle="Acuerdo de paz en Gaza"
+    title="Hamas liberó a los 20 rehenes que pasaron más de dos años en cautiverio, entre ellos tres argentinos "
+    class="col-span-2 row-span-6"
+  />
+  <TerciaryArticle class="row-span-3 col-start-3 row-start-4" />
+  <SecondaryArticle class="col-span-2 row-span-3 col-start-3 row-start-1" />
+  <TerciaryArticle class="row-span-3 col-start-4 row-start-4" />
+</main>

@@ -1,2 +1,35 @@
 @import "tailwindcss";
-@plugin "daisyui";
+
+@font-face {
+  font-family: "PlayfairDisplay-Regular";
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("src/assets/fonts/playfair-display-regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "PlayfairDisplay-Bold";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("src/assets/fonts/playfair-display-bold.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "PlayfairDisplay-Semibold";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("src/assets/fonts/playfair-display-semibold.ttf") format("truetype");
+}
+
+@theme {
+  --font-playfair-regular: "PlayfairDisplay-Regular", sans-serif;
+  --font-playfair-semibold: "PlayfairDisplay-Semibold", sans-serif;
+  --font-playfair-bold: "PlayfairDisplay-Bold", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
