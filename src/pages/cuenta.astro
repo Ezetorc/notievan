@@ -1,0 +1,82 @@
+---
+import Layout from "../layouts/Layout.astro";
+import H2 from "../components/H2.astro";
+---
+
+<Layout>
+  <main class="min-h-screen w-full bg-white text-gray-900">
+    <!-- Header -->
+    <header class="border-b border-gray-300 py-6 px-8">
+      <H2 class="text-center font-playfair-bold">Perfil de usuario</H2>
+    </header>
+
+    <!-- Contenido centrado -->
+    <section class="px-8 py-12 max-w-3xl mx-auto">
+      <div
+        id="user-data"
+        class="flex flex-col gap-y-6 text-lg text-gray-800 serif"
+      >
+        <p>Cargando información...</p>
+      </div>
+
+      <!-- Botón logout -->
+      <div class="mt-12 text-center">
+        <button
+          id="logout-btn"
+          class="cursor-pointer bg-gray-900 text-white py-3 px-6 rounded-md shadow hover:bg-gray-800 transition-colors"
+        >
+          Cerrar sesión
+        </button>
+      </div>
+    </section>
+  </main>
+</Layout>
+
+<script>
+  import { supabase } from "../configuration/supabase.configuration";
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  console.log("Sesión actual:", session);
+
+  const container = document.getElementById("user-data");
+
+  if (container) {
+    if (session) {
+      const user = session.user;
+
+      const fullName = user.user_metadata.full_name || "Sin nombre";
+      const email = user.email;
+      const createdAt = new Date(user.created_at).toLocaleDateString("es-AR", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+
+      container.innerHTML = `
+      <div>
+        <h3 class="text-xl font-semibold mb-1">Nombre completo</h3>
+        <p>${fullName}</p>
+      </div>
+      <div>
+        <h3 class="text-xl font-semibold mb-1">Correo electrónico</h3>
+        <p>${email}</p>
+      </div>
+      <div>
+        <h3 class="text-xl font-semibold mb-1">Fecha de creación</h3>
+        <p>${createdAt}</p>
+      </div>
+    `;
+    } else {
+      container.innerHTML = `<p class="text-red-600">No hay sesión activa</p>`;
+    }
+  }
+
+  const logoutBtn = document.getElementById("logout-btn");
+  logoutBtn?.addEventListener("click", async () => {
+    await supabase.auth.signOut();
+
+    window.location.href = "/iniciar-sesion";
+  });
+</script>

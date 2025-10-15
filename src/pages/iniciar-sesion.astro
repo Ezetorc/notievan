@@ -1,0 +1,87 @@
+---
+import Layout from "../layouts/Layout.astro";
+import H2 from "../components/H2.astro";
+import Input from "../components/Input.astro";
+---
+
+<Layout>
+  <main class="min-h-screen w-full bg-white text-gray-900">
+    <header class="border-b border-gray-300 py-6 px-8">
+      <H2 class="text-center font-playfair-bold">Iniciar sesión</H2>
+    </header>
+
+    <section class="px-8 py-12 max-w-3xl mx-auto">
+      <form id="login-form" class="flex flex-col gap-y-6">
+        <Input
+          id="email"
+          name="email"
+          placeholder="juanPEREZ@email.com"
+          type="email"
+          required>Correo electrónico</Input
+        >
+
+        <Input
+          id="password"
+          name="password"
+          placeholder="juanPEREZ123!"
+          type="password"
+          required>Contraseña</Input
+        >
+
+        <button
+          type="submit"
+          class="w-full cursor-pointer mt-6 bg-gray-900 text-white py-3 px-6 rounded-md shadow serif hover:bg-gray-800 transition-colors"
+        >
+          Iniciar sesión
+        </button>
+
+        <p id="login-message" class="text-red-600 mt-2 hidden"></p>
+      </form>
+
+      <p class="text-center text-sm text-gray-600 mt-12 serif">
+        ¿No tenés cuenta?
+        <a href="/registro" class="underline cursor-pointer hover:text-gray-900"
+          >Crea una cuenta</a
+        >
+      </p>
+    </section>
+  </main>
+</Layout>
+
+<script>
+  import { supabase } from "../configuration/supabase.configuration.js";
+
+  const form = document.getElementById("login-form") as HTMLFormElement;
+  const message = document.getElementById(
+    "login-message"
+  ) as HTMLParagraphElement;
+
+  if (form && message) {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      message.classList.add("hidden");
+
+      const formData = new FormData(form);
+      const emailValue = formData.get("email");
+      const passwordValue = formData.get("password");
+
+      if (!emailValue || !passwordValue) return;
+
+      const email = String(emailValue);
+      const password = String(passwordValue);
+
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        message.textContent = error.message;
+        message.classList.remove("hidden");
+      } else {
+        alert(`¡Bienvenido, ${data.user?.email}!`);
+        window.location.href = "/";
+      }
+    });
+  }
+</script>

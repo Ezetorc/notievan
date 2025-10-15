@@ -1,0 +1,15 @@
+---
+const { id } = Astro.props;
+---
+
+<div>
+  <label for={id} class="block text-[18px] text-gray-700">
+    <slot />
+  </label>
+
+  <input
+    {...Astro.props}
+    name={id}
+    class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm font-playfair-semibold text-gray-900 focus:ring-gray-800 focus:border-gray-800 sm:text-base"
+  />
+</div>

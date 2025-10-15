@@ -1,3 +1,8 @@
+---
+import InstagramIcon from "./icons/InstagramIcon.astro";
+import UserIcon from "./icons/UserIcon.astro";
+---
+
 <header
   class="w-full sticky z-20 bg-[#2a53c1] top-0 left-0 h-20 flex items-center justify-center px-4"
 >
@@ -10,8 +15,14 @@
       <a href="/articulos">Artículos</a>
     </nav>
 
-    <div>
-      <a href="https://instagram.com" target="_blank">Instagram</a>
+    <div class="flex gap-x-8">
+      <a aria-label="Instagram" href="https://instagram.com" target="_blank">
+        <InstagramIcon />
+      </a>
+
+      <a aria-label="Cuenta" href="/cuenta">
+        <UserIcon />
+      </a>
     </div>
   </div>
 </header>

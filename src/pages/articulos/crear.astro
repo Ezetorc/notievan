@@ -1,0 +1,32 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout>
+  <main class="min-h-screen flex items-center justify-center">
+    <div id="content" class="text-center">Cargando...</div>
+  </main>
+</Layout>
+
+<script>
+  import { supabase } from "../../configuration/supabase.configuration";
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  const content = document.getElementById("content");
+
+  if (!session) {
+    window.location.href = "/iniciar-sesion";
+  } else {
+    const role = session.user.user_metadata.role;
+
+    if (role !== "AUTHOR") {
+      window.location.href = "/";
+    } else {
+      content.innerHTML = `
+        <h1 class="text-3xl font-bold">Crear artículo</h1>
+      `;
+    }
+  }
+</script>

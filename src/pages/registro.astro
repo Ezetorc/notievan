@@ -1,0 +1,107 @@
+---
+import Layout from "../layouts/Layout.astro";
+import H2 from "../components/H2.astro";
+import Input from "../components/Input.astro";
+---
+
+<Layout>
+  <main class="min-h-screen w-full bg-white text-gray-900">
+    <header class="border-b border-gray-300 py-6 px-8">
+      <H2 class="text-center font-playfair-bold">Crear nueva cuenta</H2>
+    </header>
+
+    <section class="px-8 py-12 max-w-3xl mx-auto">
+      <form id="register-form" class="flex flex-col gap-y-6">
+        <Input
+          id="name"
+          name="name"
+          placeholder="Juan Pérez"
+          type="text"
+          required>Nombre completo</Input
+        >
+        <Input
+          id="email"
+          name="email"
+          placeholder="juanPEREZ@email.com"
+          type="email"
+          required>Correo electrónico</Input
+        >
+        <Input
+          id="password"
+          name="password"
+          placeholder="juanPEREZ123!"
+          type="password"
+          required>Contraseña</Input
+        >
+
+        <button
+          type="submit"
+          class="w-full cursor-pointer mt-6 bg-gray-900 text-white py-3 px-6 rounded-md shadow serif hover:bg-gray-800 transition-colors"
+        >
+          Crear cuenta
+        </button>
+
+        <p id="message" class="text-red-600 mt-2 hidden"></p>
+      </form>
+
+      <p class="text-center text-sm text-gray-600 mt-12 serif">
+        ¿Tenés cuenta?
+        <a
+          href="/iniciar-sesion"
+          class="underline cursor-pointer hover:text-gray-900">Inicia sesión</a
+        >
+      </p>
+    </section>
+  </main>
+</Layout>
+
+<script>
+  import { supabase } from "../configuration/supabase.configuration";
+
+  const $form = document.getElementById("register-form") as HTMLFormElement;
+  const $message = document.getElementById("message") as HTMLParagraphElement;
+
+  if ($form && $message) {
+    $form.addEventListener("submit", async (event) => {
+      console.log("HOLA");
+      event.preventDefault();
+
+      const formData = new FormData($form);
+      const emailValue = formData.get("email");
+      const passwordValue = formData.get("password");
+      const nameValue = formData.get("name");
+
+      if (!emailValue || !passwordValue || !nameValue) return;
+
+      const email = String(emailValue);
+      const password = String(passwordValue);
+      const name = String(nameValue);
+
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { data: { full_name: name } },
+      });
+
+      console.log("data: ", data);
+
+      if (error) {
+        $message.textContent = error.message;
+        $message.classList.remove("hidden");
+      } else {
+        const { data: profileData, error: profileError } = await supabase
+          .from("profiles")
+          .insert({ id: data.user!.id, name: data.user?.user_metadata.full_name });
+
+        if (profileError) {
+          $message.textContent = profileError.message;
+          $message.classList.remove("hidden");
+          return;
+        }
+
+        alert("Cuenta creada! Revisa tu email para confirmar.");
+        $form.reset();
+      }
+    });
+  }
+</script>

@@ -1,7 +1,6 @@
 ---
 import TerciaryArticle from "../../components/TerciaryArticle.astro";
 import Layout from "../../layouts/Layout.astro";
-import { ARTICLES } from "../../mocks/articles.mock";
 import { ArticlesService } from "../../services/articles.service";
 import { marked } from "marked";
 
@@ -11,13 +10,7 @@ if (id === undefined) {
   throw new Error("ID param is missing");
 }
 
-const articleId = parseInt(id);
-
-if (isNaN(articleId)) {
-  throw new Error("Invalid ID param");
-}
-
-const article = await ArticlesService.getById(articleId);
+const article = await ArticlesService.getById(id);
 
 if (article === undefined) {
   throw new Error("Article not found");
