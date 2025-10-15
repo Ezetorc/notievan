@@ -1,0 +1,43 @@
+---
+import TerciaryArticle from "../../components/TerciaryArticle.astro";
+import Layout from "../../layouts/Layout.astro";
+import { ARTICLES } from "../../mocks/articles.mock";
+import { ArticlesService } from "../../services/articles.service";
+import { marked } from "marked";
+
+const { id } = Astro.params;
+
+if (id === undefined) {
+  throw new Error("ID param is missing");
+}
+
+const article = await ArticlesService.getById(id);
+
+if (article === undefined) {
+  throw new Error("Article not found");
+}
+
+const content = marked.parse(article.content);
+const mostPopularArticles = await ArticlesService.getMostPopular();
+---
+
+<Layout>
+  <h1 class="text-[#0e1c40] font-playfair-bold text-5xl mt-[60px] mb-[20px]">
+    {article.title}
+  </h1>
+
+  <h2 class="text-gray-600 font-playfair-bold text-2xl mt-[20px] mb-[30px]">
+    {article.description}
+  </h2>
+
+  <div class="grid grid-cols-[2fr_1fr]">
+    <article
+      class="max-w-3xl text-gray-800 leading-relaxed text-2xl space-y-6 prose prose-lg prose-slate"
+      set:html={content}
+    />
+
+    <aside class="flex flex-col gap-y-5">
+      {mostPopularArticles.map((article) => <TerciaryArticle {article} />)}
+    </aside>
+  </div>
+</Layout>

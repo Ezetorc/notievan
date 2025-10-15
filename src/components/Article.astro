@@ -1,0 +1,15 @@
+---
+interface Props {
+  class?: string;
+  id: string;
+}
+
+const { class: extraClass = "", id } = Astro.props;
+---
+
+<a
+  href={`/articulos/${id}`}
+  class={`hover:bg-gray-100 p-2 transition-colors duration-100 ${extraClass}`}
+>
+  <slot /></a
+>
