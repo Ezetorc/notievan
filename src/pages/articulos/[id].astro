@@ -11,7 +11,13 @@ if (id === undefined) {
   throw new Error("ID param is missing");
 }
 
-const article = await ArticlesService.getById(id);
+const articleId = parseInt(id);
+
+if (isNaN(articleId)) {
+  throw new Error("Invalid ID param");
+}
+
+const article = await ArticlesService.getById(articleId);
 
 if (article === undefined) {
   throw new Error("Article not found");

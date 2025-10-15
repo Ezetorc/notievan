@@ -1,13 +1,13 @@
 export type Article = {
   id: string;
   title: string;
+  authorId: string;
   description: string;
   subtitle: string;
-  author: string;
   content: string;
-  date: string;
+  createdAt: string;
   thumbnail: {
-    src: string;
-    alt: string;
+    url: string | null;
+    alt: string | null;
   };
 };

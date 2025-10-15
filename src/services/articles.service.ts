@@ -1,20 +1,51 @@
-import { ARTICLES } from "../mocks/articles.mock";
+import { getArticleFromEndpoint } from "../adapters/article.adapter";
+import { supabase } from "../configuration/supabase.configuration";
 import type { Article } from "../models/article.model";
 
 export class ArticlesService {
   static async getById(id: string): Promise<Article | undefined> {
-    return ARTICLES.find((article) => article.id === id);
+    const { data: articleEndpoint, error } = await supabase
+      .from("articles")
+      .select("*")
+      .eq("id", id)
+      .single();
+
+    if (error) throw error;
+
+    const article = getArticleFromEndpoint(articleEndpoint);
+
+    return article;
   }
 
   static async getMostRecent(amount: number = 4): Promise<Article[]> {
-    return ARTICLES.toSorted(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-    ).slice(0, amount);
+    const { data: articleEndpoints, error } = await supabase
+      .from("articles")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(amount);
+
+    if (error) throw error;
+
+    const articles = articleEndpoints.map((endpoint) =>
+      getArticleFromEndpoint(endpoint)
+    );
+
+    return articles as Article[];
   }
 
   static async getMostPopular(): Promise<Article[]> {
-    return ARTICLES.toSorted(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-    ).slice(0, 5);
+    const { data: articleEndpoints, error } = await supabase
+      .from("articles")
+      .select("*")
+      // .order("views", { ascending: false })
+      .limit(5);
+
+    if (error) throw error;
+
+    const articles = articleEndpoints.map((endpoint) =>
+      getArticleFromEndpoint(endpoint)
+    );
+
+    return articles as Article[];
   }
 }

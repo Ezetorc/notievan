@@ -4,32 +4,41 @@ import Article from "./Article.astro";
 import H3 from "./H3.astro";
 import H4 from "./H4.astro";
 import H5 from "./H5.astro";
+import LoadingArticle from "./LoadingArticle.astro";
 
 interface Props {
   class?: string;
-  article: ArticleData;
+  article?: ArticleData;
 }
 
 const { class: extraClass = "", article } = Astro.props;
 ---
 
-<Article id={article.id} class={`flex flex-col gap-y-6 ${extraClass}`}>
-  <img
-    loading="eager"
-    src={article.thumbnail.src}
-    alt={article.thumbnail.alt}
-    class="h-[clamp(100px,100%,300px)] w-full object-cover"
-  />
+<>
+  {
+    article ? (
+      <Article id={article.id} class={`flex flex-col gap-y-6 ${extraClass}`}>
+        {article.thumbnail.url && article.thumbnail.alt && (
+          <img
+            loading="eager"
+            src={article.thumbnail.url}
+            alt={article.thumbnail.alt}
+            class="h-[clamp(100px,100%,300px)] w-full object-cover"
+          />
+        )}
 
-  <div>
-    <div class="flex flex-col gap-y-2">
-      <H4 class="text-3xl">{article.subtitle}</H4>
-      <H3 class="text-3xl">{article.title}</H3>
-      <p class="text-gray-900 text-[18px]">
-        {article.description}
-      </p>
-    </div>
+        <div>
+          <div class="flex flex-col gap-y-2">
+            <H4 class="text-3xl">{article.subtitle}</H4>
+            <H3 class="text-3xl">{article.title}</H3>
+            <p class="text-gray-900 text-[18px]">{article.description}</p>
+          </div>
 
-    <H5>{article.author}</H5>
-  </div>
-</Article>
+          <H5>{article.authorId}</H5>
+        </div>
+      </Article>
+    ) : (
+      <LoadingArticle class={`flex flex-col gap-y-6 ${extraClass}`} />
+    )
+  }
+</>
