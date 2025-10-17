@@ -1,66 +1,52 @@
 ---
+import Hero from "../components/Hero.astro";
+import UserInfo from "../components/UserInfo.astro";
 import Layout from "../layouts/Layout.astro";
-import H2 from "../components/H2.astro";
 ---
 
 <Layout>
-  <main class="min-h-screen w-full bg-white text-gray-900">
-    <header class="border-b border-gray-300 py-6 px-8">
-      <H2 class="text-center font-playfair-bold">Perfil de usuario</H2>
-    </header>
+  <Hero title="Cuenta" description="Mirá y cambiá tu información" />
 
-    <section class="px-8 py-12 max-w-3xl mx-auto">
-      <div
-        id="user-data"
-        class="flex flex-col gap-y-6 text-lg text-gray-800 serif"
-      >
-        <p>Cargando información...</p>
-      </div>
-    </section>
-  </main>
+  <article class="">
+    <div class="flex flex-col gap-y-6 text-lg">
+      <UserInfo id="name-info" name="Nombre de usuario" />
+      <UserInfo id="email-info" name="Email" />
+      <UserInfo id="date-info" name="Fecha de creación" />
+    </div>
+  </article>
 </Layout>
 
 <script>
-  import { AuthService } from "../services/auth.service";
+  import { SessionService } from "../services/session.service";
 
-  const { user } = await AuthService.getProfile();
-  const container = document.getElementById("user-data");
+  const user = SessionService.user;
 
-  console.log(user);
+  if (user) {
+    const $name = document.getElementById("name-info");
+    const $email = document.getElementById("email-info");
+    const $date = document.getElementById("date-info");
 
-  if (container) {
-    if (user) {
-      const fullName = user.name || "Error cargando el nombre";
-      const email = user.email || "Error cargando el email";
-      const createdAt = new Date(user.createdAt).toLocaleDateString("es-AR", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
+    if ($name && $email && $date) {
+      if (user) {
+        const name = user.name || "Error cargando el nombre";
+        const email = user.email || "Error cargando el email";
+        const date = new Date(user.createdAt).toLocaleDateString("es-AR", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+
+        $name.innerText = name;
+        $email.innerText = email;
+        $date.innerText = date;
+      }
+
+      const logoutBtn = document.getElementById("logout-btn");
+      logoutBtn?.addEventListener("click", async () => {
+        SessionService.delete();
+
+        window.location.href = "/iniciar-sesion";
       });
-
-      container.innerHTML = `
-      <div>
-        <h3 class="text-xl font-semibold mb-1">Nombre completo</h3>
-        <p>${fullName}</p>
-      </div>
-      <div>
-        <h3 class="text-xl font-semibold mb-1">Correo electrónico</h3>
-        <p>${email}</p>
-      </div>
-      <div>
-        <h3 class="text-xl font-semibold mb-1">Fecha de creación</h3>
-        <p>${createdAt}</p>
-      </div>
-    `;
-    } else {
-      container.innerHTML = `<p class="text-red-600">No hay sesión activa</p>`;
     }
   }
-
-  const logoutBtn = document.getElementById("logout-btn");
-  logoutBtn?.addEventListener("click", async () => {
-    localStorage.removeItem("session");
-
-    window.location.href = "/iniciar-sesion";
-  });
 </script>

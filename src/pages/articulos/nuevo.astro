@@ -1,67 +1,71 @@
 ---
+import ArticleInput from "../../components/ArticleInput.astro";
 import Layout from "../../layouts/Layout.astro";
 ---
 
 <Layout>
-  <form class="flex flex-col" id="form">
-    <input
+  <form class="flex flex-col pb-[5vw] mt-[60px]" id="form">
+    <ArticleInput
       placeholder="Título de tu artículo"
-      name="title"
-      required
       maxlength="50"
-      class="text-[#0e1c40] p-4 bg-gray-100 rounded-[4px] font-playfair-bold text-5xl mt-[60px] mb-[20px]"
+      name="title"
+      class="text-5xl font-title"
     />
 
-    <input
+    <ArticleInput
+      class="mt-[20px] text-2xl font-bold mb-[30px]"
       placeholder="Descripción de tu artículo"
       name="description"
-      required
-      class="text-gray-600 p-4 bg-gray-100 rounded-[4px] font-playfair-bold text-2xl mt-[20px] mb-[30px]"
     />
 
     <div class="grid gap-x-10 grid-cols-[2fr_1fr]">
-      <div class="flex flex-col justify-between">
+      <div class="flex flex-col justify-between gap-y-6">
         <div class="w-full bg-gray-100" id="editor"></div>
 
         <button
           id="create-article-button"
-          class="w-full h-[70px] rounded-[4px] cursor-pointer text-white text-3xl bg-blue-950"
+          class="w-full h-[70px] clickable bg-brand-orange rounded-[4px] text-white text-3xl"
           >Crear artículo</button
         >
       </div>
 
       <aside class="flex flex-col gap-y-5">
-        <input
-          placeholder="Nombre del autor del artículo"
-          name="author"
-          required
-          maxlength="30"
-          class="text-[#0e1c40] p-4 bg-gray-100 rounded-[4px] font-playfair-bold text-2xl"
-        />
-
-        <textarea
+        <ArticleInput
           placeholder="Subtítulo de tu artículo"
           name="subtitle"
           maxlength="100"
-          required
-          class="text-[#0e1c40] resize-none h-[200px] p-4 bg-gray-100 rounded-[4px] font-playfair-bold text-2xl"
-        ></textarea>
+          class="h-[200px] flex text-2xl"
+        />
 
         <div class="w-full flex flex-col gap-y-2">
-          <input
-            class="w-full aspect-video bg-gray-100 rounded-[4px]"
-            id="thumbnail_url"
-            name="thumbnail_url"
-            accept="image/*"
-            required
-            type="file"
-          />
-          <input
-            placeholder="Breve descripción de la miniatura"
+          <div class="w-full max-w-md mx-auto">
+            <input
+              type="file"
+              id="thumbnail_url"
+              name="thumbnail_url"
+              accept="image/*"
+              class="hidden"
+            />
+
+            <label
+              for="thumbnail_url"
+              class="cursor-pointer w-full aspect-video rounded-md border border-gray-300 overflow-hidden flex items-center justify-center bg-gray-200"
+            >
+              <img
+                id="thumbnail-preview"
+                class="w-full h-full object-cover hidden"
+                alt="Vista previa de la imagen seleccionada"
+              />
+              <span id="placeholder-text" class="text-gray-500 font-medium">
+                Clickeá para elegir la portada del artículo
+              </span>
+            </label>
+          </div>
+
+          <ArticleInput
+            placeholder="Breve descripción de la portada"
             name="thumbnail-alt"
-            required
             maxlength="30"
-            class="text-[#0e1c40] w-full p-4 bg-gray-100 rounded-[4px] font-playfair-bold text-[18px]"
           />
         </div>
       </aside>
@@ -72,8 +76,8 @@ import Layout from "../../layouts/Layout.astro";
 <script>
   // @ts-ignore
   import Editor from "@toast-ui/editor";
-  import "@toast-ui/editor/dist/toastui-editor.css";
   import { ArticlesService } from "../../services/articles.service";
+  import "@toast-ui/editor/dist/toastui-editor.css";
 
   const $editor = document.getElementById("editor");
 
@@ -87,21 +91,44 @@ import Layout from "../../layouts/Layout.astro";
   });
 
   const $form = document.getElementById("form") as HTMLFormElement;
+  const $thumbnailInputPlaceholder =
+    document.getElementById("placeholder-text");
   const $thumbnailFileInput = document.getElementById(
     "thumbnail_url"
   ) as HTMLInputElement;
+  const $thumbnailPreview = document.getElementById(
+    "thumbnail-preview"
+  ) as HTMLImageElement;
   const $createArticle = document.getElementById(
     "create-article-button"
   ) as HTMLButtonElement;
 
-  if ($form && $createArticle && $thumbnailFileInput) {
+  if (
+    $form &&
+    $createArticle &&
+    $thumbnailFileInput &&
+    $thumbnailPreview &&
+    $thumbnailInputPlaceholder
+  ) {
+    $thumbnailFileInput.addEventListener("change", (event) => {
+      const file = (event.target as HTMLInputElement).files?.[0];
+      if (file) {
+        $thumbnailPreview.src = URL.createObjectURL(file);
+        $thumbnailPreview.classList.remove("hidden");
+        $thumbnailInputPlaceholder.classList.add("hidden");
+      } else {
+        $thumbnailPreview.classList.add("hidden");
+        $thumbnailPreview.src = "";
+        $thumbnailInputPlaceholder.classList.remove("hidden");
+      }
+    });
+
     $form.addEventListener("submit", async (event) => {
       event.preventDefault();
 
       const formData = new FormData($form);
       const title = String(formData.get("title"));
       const subtitle = String(formData.get("subtitle"));
-      const author = String(formData.get("author"));
       const description = String(formData.get("description"));
       const thumbnailAlt = String(formData.get("thumbnail_alt"));
       const thumbnailFile = $thumbnailFileInput.files?.[0];
@@ -109,7 +136,6 @@ import Layout from "../../layouts/Layout.astro";
 
       formData.set("title", title);
       formData.set("subtitle", subtitle);
-      formData.set("author", author);
       formData.set("description", description);
       formData.set("thumbnailAlt", thumbnailAlt);
 
@@ -120,22 +146,7 @@ import Layout from "../../layouts/Layout.astro";
       formData.set("content", content);
 
       try {
-        const session = JSON.parse(localStorage.getItem("session") || "{}");
-
-        const res = await fetch("/api/articles", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${session.token}`,
-          },
-          body: formData,
-        });
-
-        if (!res.ok) {
-          const err = await res.json();
-          throw new Error(err.error || "Error al crear el artículo");
-        }
-
-        const newArticle = await res.json();
+        const newArticle = await ArticlesService.create(formData);
 
         console.log("Artículo creado:", newArticle);
         alert("¡Artículo creado con éxito!");

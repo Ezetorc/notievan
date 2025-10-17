@@ -3,6 +3,8 @@ import { PrismaClient } from "@prisma/client";
 export const prisma = new PrismaClient();
 
 async function main() {
+  await prisma.article.deleteMany()
+
   await prisma.user.update({
     where: {
       email: "ezetorc@gmail.com",
@@ -16,7 +18,6 @@ async function main() {
 main()
   .then(async () => {
     await prisma.$disconnect();
-    console.log("Successful")
   })
   .catch(async (error) => {
     console.error(error);

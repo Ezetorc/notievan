@@ -9,7 +9,7 @@ const { class: extraClass = "", id } = Astro.props;
 
 <a
   href={`/articulos/${id}`}
-  class={`hover:bg-gray-100 p-2 overflow-hidden transition-colors duration-100 ${extraClass}`}
+  class={`overflow-hidden transition-transform hover:-translate-y-2 duration-200 ${extraClass}`}
 >
   <slot /></a
 >

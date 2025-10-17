@@ -3,6 +3,7 @@ import TerciaryArticle from "../../components/TerciaryArticle.astro";
 import Layout from "../../layouts/Layout.astro";
 import { ArticlesService } from "../../services/articles.service";
 import { marked } from "marked";
+import { UsersService } from "../../services/users.service";
 
 const { id } = Astro.params;
 
@@ -17,26 +18,37 @@ if (article === undefined) {
 }
 
 const content = marked.parse(article.content);
-const mostPopularArticles = await ArticlesService.getMostPopular();
+const otherArticles = await ArticlesService.getAll(8);
+const authorName = await UsersService.getNameOfUserWithId(article?.authorId);
 ---
 
 <Layout>
-  <h1 class="text-[#0e1c40] font-playfair-bold text-5xl mt-[60px] mb-[20px]">
-    {article.title}
-  </h1>
+  <form class="flex flex-col" id="form">
+    <h1 class="text-[#0e1c40] font-title text-7xl mt-[60px] mb-[10px]">
+      {article.title}
+    </h1>
 
-  <h2 class="text-gray-600 font-playfair-bold text-2xl mt-[20px] mb-[30px]">
-    {article.description}
-  </h2>
+    <h2 class="text-gray-600 text-3xl mb-[15px]">
+      {article.description}
+    </h2>
 
-  <div class="grid grid-cols-[2fr_1fr]">
-    <article
-      class="max-w-3xl text-gray-800 leading-relaxed text-2xl space-y-6 prose prose-lg prose-slate"
-      set:html={content}
-    />
+    <h3 class="text-gray-600 text-[18px] mb-[30px]">
+      Por {authorName}
+    </h3>
 
-    <aside class="flex flex-col gap-y-5">
-      {mostPopularArticles.map((article) => <TerciaryArticle {article} />)}
-    </aside>
-  </div>
+    <div class="grid gap-x-10 grid-cols-[2fr_1fr]">
+      <article
+        class="w-full h-full text-pretty text-gray-800 leading-relaxed text-2xl space-y-6 prose prose-lg prose-slate break-words overflow-x-auto"
+        set:html={content}
+      />
+
+      <aside class="flex w-full h-full flex-col gap-y-5">
+        {
+          otherArticles
+            ?.filter((a) => a.id !== article.id)
+            .map((article) => <TerciaryArticle {article} />)
+        }
+      </aside>
+    </div>
+  </form>
 </Layout>

@@ -1,26 +1,66 @@
 ---
+import { INSTAGRAM } from "../configuration/information.configuration";
 import InstagramIcon from "./icons/InstagramIcon.astro";
+import PencilIcon from "./icons/PencilIcon.astro";
 import UserIcon from "./icons/UserIcon.astro";
 ---
 
 <header
-  class="w-full sticky z-20 bg-[#2a53c1] top-0 left-0 h-20 flex items-center justify-center px-4"
+  class="w-full fixed z-20 top-0 left-0 h-20 flex items-center justify-center
+         bg-gradient-to-r from-brand-blue to-[#0d3ea8] drop-shadow-2xl"
 >
   <div
-    class="w-full text-white text-2xl font-playfair-bold max-w-[1280px] min-w-[320px] flex justify-between items-center"
+    class="w-full text-white text-2xl max-w-[1280px] min-w-[320px] flex justify-between items-center"
   >
     <nav class="flex gap-x-8">
-      <a href="/">Inicio</a>
+      <a class="clickable" href="/">Inicio</a>
     </nav>
 
-    <div class="flex gap-x-8">
-      <a aria-label="Instagram" href="https://instagram.com" target="_blank">
+    <div class="flex gap-x-8" id="header-buttons">
+      <a
+        class="clickable"
+        aria-label="Instagram"
+        href={INSTAGRAM}
+        target="_blank"
+      >
         <InstagramIcon />
       </a>
 
-      <a aria-label="Cuenta" href="/cuenta">
+      <a
+        class="clickable"
+        id="account-link"
+        aria-label="Cuenta"
+        href="/registro"
+      >
         <UserIcon />
+      </a>
+
+      <a
+        class="hidden clickable"
+        id="article-creator"
+        aria-label="Crear artículo"
+        href="/articulos/nuevo"
+      >
+        <PencilIcon />
       </a>
     </div>
   </div>
 </header>
+
+<script>
+  import { SessionService } from "../services/session.service";
+
+  const $account = document.getElementById("account-link") as HTMLAnchorElement;
+  const $articleCreator = document.getElementById(
+    "article-creator"
+  ) as HTMLAnchorElement;
+  const session = SessionService.value;
+
+  if (session?.token) {
+    $account.href = "/cuenta";
+
+    if (session.user.role === "AUTHOR" && $articleCreator) {
+      $articleCreator.classList.remove("hidden");
+    }
+  }
+</script>

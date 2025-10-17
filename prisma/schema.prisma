@@ -12,11 +12,13 @@ model Article {
   title        String
   subtitle     String
   description  String
-  content      String
+  content      String   @db.LongText()
   createdAt    DateTime @default(now())
-  author       String
+  authorId     String
   thumbnailUrl String
   thumbnailAlt String
+
+  author User @relation(fields: [authorId], references: [id])
 }
 
 model User {
@@ -26,6 +28,8 @@ model User {
   password  String
   createdAt DateTime @default(now())
   role      Role     @default(USER)
+
+  articles Article[]
 }
 
 enum Role {

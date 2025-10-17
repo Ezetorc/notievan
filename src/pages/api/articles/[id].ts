@@ -1,21 +1,21 @@
 import type { APIRoute } from "astro";
 import { prisma } from "../../../configuration/prisma.configuration";
+import { InternalServerError } from "../../../models/internal-server-error.model";
+import { NotFoundError } from "../../../models/not-found-error.model";
+import { OkResponse } from "../../../models/ok-response.model";
 
 export const GET: APIRoute = async ({ params }) => {
   try {
     const article = await prisma.article.findUnique({
       where: { id: params.id },
     });
+
     if (!article) {
-      return new Response(JSON.stringify({ error: "Artículo no encontrado" }), {
-        status: 404,
-      });
+      return new NotFoundError("Article not found");
     }
-    return new Response(JSON.stringify(article), { status: 200 });
+    
+    return new OkResponse(article)
   } catch (error) {
-    return new Response(
-      JSON.stringify({ error: "Error al buscar el artículo" }),
-      { status: 500 }
-    );
+    return new InternalServerError();
   }
 };

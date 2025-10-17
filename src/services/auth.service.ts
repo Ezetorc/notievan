@@ -1,5 +1,6 @@
 import type { User } from "@prisma/client";
-import { BASE_URL } from "../configuration/env.configuration";
+import { BASE_URL } from "../configuration/public-env.configuration";
+import type { SanitizedUser } from "../models/sanitized-user.model";
 
 export class AuthService {
   private static API_BASE = `${BASE_URL}/api/auth`;
@@ -8,7 +9,7 @@ export class AuthService {
     name: string;
     email: string;
     password: string;
-  }) {
+  }): Promise<{ user: SanitizedUser; token: string }> {
     const res = await fetch(`${this.API_BASE}/register`, {
       method: "POST",
       headers: {
@@ -22,10 +23,15 @@ export class AuthService {
       throw new Error(error.error || "Error al registrarse");
     }
 
-    return res.json();
+    const response = await res.json();
+
+    return response.value;
   }
 
-  static async login(data: { email: string; password: string }) {
+  static async login(data: {
+    email: string;
+    password: string;
+  }): Promise<{ user: SanitizedUser; token: string }> {
     const res = await fetch(`${this.API_BASE}/login`, {
       method: "POST",
       headers: {
@@ -39,24 +45,8 @@ export class AuthService {
       throw new Error(error.error || "Error al loguearse");
     }
 
-    return res.json();
-  }
+    const response = await res.json();
 
-  static async getProfile(): Promise<{ user: User }> {
-    const session = JSON.parse(localStorage.getItem("session") || "{}");
-
-    const res = await fetch(`${this.API_BASE}/profile`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${session.token}`,
-      },
-    });
-
-    if (!res.ok) {
-      const error = await res.json();
-      throw new Error(error.error || "Error al loguearse");
-    }
-
-    return await res.json();
+    return response.value;
   }
 }

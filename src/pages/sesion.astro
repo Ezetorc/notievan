@@ -1,0 +1,87 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Input from "../components/Input.astro";
+import Hero from "../components/Hero.astro";
+---
+
+<Layout>
+  <Hero title="Sesión" description="Entrá a tu cuenta" />
+
+  <section class="w-[clamp(300px,100%,800px)]">
+    <form id="login-form" class="flex w-full flex-col gap-y-6">
+      <Input
+        id="email"
+        name="email"
+        placeholder="juanPEREZ@email.com"
+        type="email"
+        required>Correo electrónico</Input
+      >
+
+      <Input
+        id="password"
+        name="password"
+        placeholder="juanPEREZ123!"
+        type="password"
+        required>Contraseña</Input
+      >
+
+      <button
+        type="submit"
+        class="w-full cursor-pointer mt-6 bg-brand-orange clickable text-white py-3 px-6 rounded-md shadow serif hover:bg-gray-800 transition-colors"
+      >
+        Iniciar sesión
+      </button>
+
+      <p id="message" class="text-brand-red mt-2 hidden"></p>
+    </form>
+
+    <p class="text-center text-sm text-gray-600 mt-12 serif">
+      ¿No tenés cuenta?
+      <a href="/registro" class="underline cursor-pointer hover:text-gray-900"
+        >Crea una cuenta</a
+      >
+    </p>
+  </section>
+</Layout>
+
+<script>
+  import { AuthService } from "../services/auth.service";
+import { SessionService } from "../services/session.service";
+
+  const form = document.getElementById("login-form") as HTMLFormElement;
+  const message = document.getElementById("message") as HTMLParagraphElement;
+
+  if (form && message) {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      message.classList.add("hidden");
+
+      const formData = new FormData(form);
+      const emailValue = formData.get("email");
+      const passwordValue = formData.get("password");
+
+      if (!emailValue || !passwordValue) return;
+
+      const email = String(emailValue);
+      const password = String(passwordValue);
+
+      try {
+        const data = await AuthService.login({
+          email,
+          password,
+        });
+
+        SessionService.value = data;
+
+        alert(`¡Bienvenido, ${data.user?.email}!`);
+        window.location.href = "/";
+        form.reset();
+      } catch (error) {
+        if (error instanceof Error) {
+          message.textContent = error.message;
+          message.classList.remove("hidden");
+        }
+      }
+    });
+  }
+</script>
