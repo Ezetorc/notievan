@@ -1,0 +1,149 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout>
+  <form class="flex flex-col" id="form">
+    <input
+      placeholder="Título de tu artículo"
+      name="title"
+      required
+      maxlength="50"
+      class="text-[#0e1c40] p-4 bg-gray-100 rounded-[4px] font-playfair-bold text-5xl mt-[60px] mb-[20px]"
+    />
+
+    <input
+      placeholder="Descripción de tu artículo"
+      name="description"
+      required
+      class="text-gray-600 p-4 bg-gray-100 rounded-[4px] font-playfair-bold text-2xl mt-[20px] mb-[30px]"
+    />
+
+    <div class="grid gap-x-10 grid-cols-[2fr_1fr]">
+      <div class="flex flex-col justify-between">
+        <div class="w-full bg-gray-100" id="editor"></div>
+
+        <button
+          id="create-article-button"
+          class="w-full h-[70px] rounded-[4px] cursor-pointer text-white text-3xl bg-blue-950"
+          >Crear artículo</button
+        >
+      </div>
+
+      <aside class="flex flex-col gap-y-5">
+        <input
+          placeholder="Nombre del autor del artículo"
+          name="author"
+          required
+          maxlength="30"
+          class="text-[#0e1c40] p-4 bg-gray-100 rounded-[4px] font-playfair-bold text-2xl"
+        />
+
+        <textarea
+          placeholder="Subtítulo de tu artículo"
+          name="subtitle"
+          maxlength="100"
+          required
+          class="text-[#0e1c40] resize-none h-[200px] p-4 bg-gray-100 rounded-[4px] font-playfair-bold text-2xl"
+        ></textarea>
+
+        <div class="w-full flex flex-col gap-y-2">
+          <input
+            class="w-full aspect-video bg-gray-100 rounded-[4px]"
+            id="thumbnail_url"
+            name="thumbnail_url"
+            accept="image/*"
+            required
+            type="file"
+          />
+          <input
+            placeholder="Breve descripción de la miniatura"
+            name="thumbnail-alt"
+            required
+            maxlength="30"
+            class="text-[#0e1c40] w-full p-4 bg-gray-100 rounded-[4px] font-playfair-bold text-[18px]"
+          />
+        </div>
+      </aside>
+    </div>
+  </form>
+</Layout>
+
+<script>
+  // @ts-ignore
+  import Editor from "@toast-ui/editor";
+  import "@toast-ui/editor/dist/toastui-editor.css";
+  import { ArticlesService } from "../../services/articles.service";
+
+  const $editor = document.getElementById("editor");
+
+  const editor = new Editor({
+    el: $editor,
+    initialEditType: "markdown",
+    height: "1300px",
+    hideModeSwitch: true,
+    previewHighlight: false,
+    placeholder: "Contenido de tu artículo",
+  });
+
+  const $form = document.getElementById("form") as HTMLFormElement;
+  const $thumbnailFileInput = document.getElementById(
+    "thumbnail_url"
+  ) as HTMLInputElement;
+  const $createArticle = document.getElementById(
+    "create-article-button"
+  ) as HTMLButtonElement;
+
+  if ($form && $createArticle && $thumbnailFileInput) {
+    $form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const formData = new FormData($form);
+      const title = String(formData.get("title"));
+      const subtitle = String(formData.get("subtitle"));
+      const author = String(formData.get("author"));
+      const description = String(formData.get("description"));
+      const thumbnailAlt = String(formData.get("thumbnail_alt"));
+      const thumbnailFile = $thumbnailFileInput.files?.[0];
+      const content = editor.getMarkdown();
+
+      formData.set("title", title);
+      formData.set("subtitle", subtitle);
+      formData.set("author", author);
+      formData.set("description", description);
+      formData.set("thumbnailAlt", thumbnailAlt);
+
+      if (thumbnailFile) {
+        formData.set("thumbnailFile", thumbnailFile);
+      }
+
+      formData.set("content", content);
+
+      try {
+        const session = JSON.parse(localStorage.getItem("session") || "{}");
+
+        const res = await fetch("/api/articles", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${session.token}`,
+          },
+          body: formData,
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.error || "Error al crear el artículo");
+        }
+
+        const newArticle = await res.json();
+
+        console.log("Artículo creado:", newArticle);
+        alert("¡Artículo creado con éxito!");
+        window.location.href = "/articulos/" + newArticle.id;
+      } catch (err) {
+        console.error("Error creando artículo:", err);
+        alert("Error al crear el artículo");
+      }
+    });
+  }
+</script>

@@ -49,7 +49,7 @@ import Input from "../components/Input.astro";
 </Layout>
 
 <script>
-  import { supabase } from "../configuration/supabase.configuration.js";
+  import { AuthService } from "../services/auth.service";
 
   const form = document.getElementById("login-form") as HTMLFormElement;
   const message = document.getElementById(
@@ -70,17 +70,23 @@ import Input from "../components/Input.astro";
       const email = String(emailValue);
       const password = String(passwordValue);
 
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      try {
+        const data = await AuthService.login({
+          email,
+          password,
+        });
 
-      if (error) {
-        message.textContent = error.message;
-        message.classList.remove("hidden");
-      } else {
+        console.log("data: ", data);
+        localStorage.setItem("session", JSON.stringify(data));
+
         alert(`¡Bienvenido, ${data.user?.email}!`);
         window.location.href = "/";
+        form.reset();
+      } catch (error) {
+        if (error instanceof Error) {
+          message.textContent = error.message;
+          message.classList.remove("hidden");
+        }
       }
     });
   }

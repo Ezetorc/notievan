@@ -56,14 +56,13 @@ import Input from "../components/Input.astro";
 </Layout>
 
 <script>
-  import { supabase } from "../configuration/supabase.configuration";
+  import { AuthService } from "../services/auth.service";
 
   const $form = document.getElementById("register-form") as HTMLFormElement;
   const $message = document.getElementById("message") as HTMLParagraphElement;
 
   if ($form && $message) {
     $form.addEventListener("submit", async (event) => {
-      console.log("HOLA");
       event.preventDefault();
 
       const formData = new FormData($form);
@@ -77,30 +76,23 @@ import Input from "../components/Input.astro";
       const password = String(passwordValue);
       const name = String(nameValue);
 
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: { data: { full_name: name } },
-      });
+      try {
+        const data = await AuthService.register({
+          email,
+          password,
+          name,
+        });
 
-      console.log("data: ", data);
+        console.log("data: ", data);
+        localStorage.setItem("session", JSON.stringify(data));
 
-      if (error) {
-        $message.textContent = error.message;
-        $message.classList.remove("hidden");
-      } else {
-        const { data: profileData, error: profileError } = await supabase
-          .from("profiles")
-          .insert({ id: data.user!.id, name: data.user?.user_metadata.full_name });
-
-        if (profileError) {
-          $message.textContent = profileError.message;
-          $message.classList.remove("hidden");
-          return;
-        }
-
-        alert("Cuenta creada! Revisa tu email para confirmar.");
+        alert("Cuenta creada");
         $form.reset();
+      } catch (error) {
+        if (error instanceof Error) {
+          $message.textContent = error.message;
+          $message.classList.remove("hidden");
+        }
       }
     });
   }

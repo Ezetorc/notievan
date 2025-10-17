@@ -1,5 +1,5 @@
 ---
-import type { Article as ArticleData } from "../models/article.model";
+import type { Article as ArticleData } from "@prisma/client";
 import Article from "./Article.astro";
 import H3 from "./H3.astro";
 import H4 from "./H4.astro";
@@ -20,8 +20,8 @@ const { class: extraClass = "", article } = Astro.props;
       <Article id={article.id} class={`flex flex-col gap-y-6 ${extraClass}`}>
         <img
           loading="eager"
-          src={article.thumbnail.url}
-          alt={article.thumbnail.alt}
+          src={article.thumbnailUrl}
+          alt={article.thumbnailAlt}
           class="h-[clamp(100px,100%,200px)] w-full object-cover"
         />
 
@@ -31,7 +31,7 @@ const { class: extraClass = "", article } = Astro.props;
             <H3 class="text-[20px]">{article.title}</H3>
           </div>
 
-          <H5>{article.authorId}</H5>
+          <H5>{article.author}</H5>
         </div>
       </Article>
     ) : (

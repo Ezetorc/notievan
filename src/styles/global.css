@@ -5,7 +5,7 @@
   font-style: normal;
   font-weight: 300;
   font-display: swap;
-  src: url("src/assets/fonts/playfair-display-regular.ttf") format("truetype");
+  src: url("/src/assets/fonts/playfair-display-regular.ttf") format("truetype");
 }
 
 @font-face {
@@ -13,7 +13,7 @@
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url("src/assets/fonts/playfair-display-bold.ttf") format("truetype");
+  src: url("/src/assets/fonts/playfair-display-bold.ttf") format("truetype");
 }
 
 @font-face {
@@ -21,7 +21,7 @@
   font-style: normal;
   font-weight: 600;
   font-display: swap;
-  src: url("src/assets/fonts/playfair-display-semibold.ttf") format("truetype");
+  src: url("/src/assets/fonts/playfair-display-semibold.ttf") format("truetype");
 }
 
 @theme {
