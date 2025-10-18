@@ -6,7 +6,7 @@ import MainArticle from "../components/MainArticle.astro";
 import TerciaryArticle from "../components/TerciaryArticle.astro";
 import Hero from "../components/Hero.astro";
 
-const articles = await ArticlesService.getAll(4);
+const articles = await ArticlesService.getAll(8);
 ---
 
 <Layout>
@@ -30,4 +30,12 @@ const articles = await ArticlesService.getAll(4);
       class="col-span-3 row-span-5 col-start-7 row-start-4"
     />
   </main>
+
+  <section class="grid grid-cols-4 gap-4 mb-32 mt-8">
+    {
+      articles
+        .slice(4, 8)
+        .map((article) => <TerciaryArticle article={article} />)
+    }
+  </section>
 </Layout>

@@ -43,18 +43,19 @@ export const POST: APIRoute = async ({ request }) => {
   }
 };
 
-export const GET: APIRoute = async ({ params }) => {
+export const GET: APIRoute = async ({ request }) => {
   try {
-    const { amount } = params;
+    const url = new URL(request.url);
+    const amountParam = url.searchParams.get("amount");
+
     const articles = await prisma.article.findMany({
       orderBy: { createdAt: "desc" },
-      take: amount ? parseInt(amount) : 4,
+      take: amountParam ? parseInt(amountParam) : 4,
     });
-    
+
     return new OkResponse(articles);
   } catch (error) {
     console.error("Error obtaining articles:", error);
-
     return new InternalServerError();
   }
 };

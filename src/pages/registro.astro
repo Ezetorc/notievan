@@ -1,14 +1,41 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Hero from "../components/Hero.astro";
-import RegisterForm from "../components/RegisterForm.astro";
+import Input from "../components/Input.astro";
 ---
 
 <Layout>
   <Hero title="Registro" description="Creá tu cuenta" />
 
   <section class="w-[clamp(300px,100%,800px)]">
-    <RegisterForm client:load />
+    <form id="register-form" class="flex w-full flex-col gap-y-6">
+      <Input id="name" name="name" placeholder="Juan Pérez" type="text" required
+        >Nombre completo</Input
+      >
+      <Input
+        id="email"
+        name="email"
+        placeholder="juanPEREZ@email.com"
+        type="email"
+        required>Correo electrónico</Input
+      >
+      <Input
+        id="password"
+        name="password"
+        placeholder="juanPEREZ123!"
+        type="password"
+        required>Contraseña</Input
+      >
+
+      <button
+        type="submit"
+        class="w-full cursor-pointer mt-6 bg-brand-orange text-white py-3 px-6 rounded-md shadow serif clickable transition-colors"
+      >
+        Crear cuenta
+      </button>
+
+      <p id="message" class="text-brand-red mt-2 hidden"></p>
+    </form>
 
     <p class="text-center text-[18px] text-gray-600 mt-4">
       ¿Tenés cuenta?
@@ -18,3 +45,41 @@ import RegisterForm from "../components/RegisterForm.astro";
     </p>
   </section>
 </Layout>
+
+<script>
+  import { AuthService } from "../services/auth.service";
+  import { SessionService } from "../services/session.service";
+
+  const $form = document.getElementById("register-form") as HTMLFormElement;
+  const $message = document.getElementById("message") as HTMLParagraphElement;
+
+  if ($form && $message) {
+    $form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const formData = new FormData($form);
+      const emailValue = formData.get("email");
+      const passwordValue = formData.get("password");
+      const nameValue = formData.get("name");
+
+      if (!emailValue || !passwordValue || !nameValue) return;
+
+      try {
+        const data = await AuthService.register({
+          email: String(emailValue),
+          password: String(passwordValue),
+          name: String(nameValue),
+        });
+
+        SessionService.value = data;
+        alert("Cuenta creada");
+        $form.reset();
+      } catch (error) {
+        if (error instanceof Error) {
+          $message.textContent = error.message;
+          $message.classList.remove("hidden");
+        }
+      }
+    });
+  }
+</script>
