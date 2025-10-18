@@ -39,10 +39,8 @@ export class ArticlesService {
   static async getAll(amount: number = 4): Promise<Article[]> {
     const res = await fetch(`${this.API_BASE}?amount=${amount}`);
 
-    console.log("response: ", res);
-    console.log("success: ", res.ok);
-
     if (!res.ok) return [];
+
     const data = await res.json();
 
     return data.value;
