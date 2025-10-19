@@ -1,10 +1,7 @@
 ---
-import { ArticlesService } from "../services/articles.service";
 import Layout from "../layouts/Layout.astro";
 import Hero from "../components/Hero.astro";
-import BigArticle from "../components/BigArticle.astro";
-
-const articles = await ArticlesService.getAll(4);
+import { Articles } from "../components/Articles";
 ---
 
 <Layout>
@@ -13,12 +10,5 @@ const articles = await ArticlesService.getAll(4);
     description="Descubrí lo que está pasando en el Evan"
   />
 
-  <main
-    class="w-full min-h-[650px] grid
-         mobile:grid-rows-4 mobile:grid-cols-1
-         desktop:grid-rows-1 desktop:grid-cols-4
-         gap-8"
-  >
-    {articles.map((article) => <BigArticle {article} />)}
-  </main>
+  <Articles client:load />
 </Layout>

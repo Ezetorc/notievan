@@ -1,6 +1,6 @@
 ---
 import Hero from "../components/Hero.astro";
-import TerciaryArticle from "../components/TerciaryArticle.astro";
+import SmallArticle from "../components/SmallArticle";
 import UserInfo from "../components/UserInfo.astro";
 import Layout from "../layouts/Layout.astro";
 import { ArticlesService } from "../services/articles.service";
@@ -26,7 +26,7 @@ const articles = await ArticlesService.getOwn(5);
   </article>
 
   <section>
-    {articles.map((article) => <TerciaryArticle article={article} />)}
+    {articles.map((article) => <SmallArticle article={article} />)}
   </section>
 </Layout>
 
