@@ -1,12 +1,10 @@
 ---
 import { ArticlesService } from "../services/articles.service";
 import Layout from "../layouts/Layout.astro";
-import SecondaryArticle from "../components/SecondaryArticle.astro";
-import MainArticle from "../components/MainArticle.astro";
-import TerciaryArticle from "../components/TerciaryArticle.astro";
 import Hero from "../components/Hero.astro";
+import BigArticle from "../components/BigArticle.astro";
 
-const articles = await ArticlesService.getAll(8);
+const articles = await ArticlesService.getAll(4);
 ---
 
 <Layout>
@@ -15,27 +13,12 @@ const articles = await ArticlesService.getAll(8);
     description="Descubrí lo que está pasando en el Evan"
   />
 
-  <main class="w-full min-h-[700px] h-full mobile:flex mobile:flex-col tablet:grid tablet:grid-cols-12 tablet:grid-rows-8 gap-8">
-    <MainArticle article={articles[0]} class="col-span-6 row-span-8" />
-    <SecondaryArticle
-      article={articles[1]}
-      class="col-span-6 row-span-3 col-start-7"
-    />
-    <TerciaryArticle
-      article={articles[2]}
-      class="col-span-3 row-span-5 col-start-10 row-start-4"
-    />
-    <TerciaryArticle
-      article={articles[3]}
-      class="col-span-3 row-span-5 col-start-7 row-start-4"
-    />
+  <main
+    class="w-full min-h-[650px] grid
+         mobile:grid-rows-4 mobile:grid-cols-1
+         desktop:grid-rows-1 desktop:grid-cols-4
+         gap-8"
+  >
+    {articles.map((article) => <BigArticle {article} />)}
   </main>
-
-  <section class="w-full min-h-[300px] grid grid-cols-4 gap-4 mb-32 mt-8">
-    {
-      articles
-        .slice(4, 8)
-        .map((article) => <TerciaryArticle article={article} />)
-    }
-  </section>
 </Layout>

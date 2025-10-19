@@ -2,12 +2,13 @@
 import Layout from "../layouts/Layout.astro";
 import Input from "../components/Input.astro";
 import Hero from "../components/Hero.astro";
+import AuthSwipeLink from "../components/AuthSwipeLink.astro";
 ---
 
 <Layout>
   <Hero title="Sesión" description="Entrá a tu cuenta" />
 
-  <section class="w-[clamp(300px,100%,800px)]">
+  <section class="w-[clamp(300px,100%,800px)] mb-10">
     <form id="login-form" class="flex w-full flex-col gap-y-6">
       <Input
         id="email"
@@ -35,12 +36,12 @@ import Hero from "../components/Hero.astro";
       <p id="message" class="text-brand-red mt-2 hidden"></p>
     </form>
 
-    <p class="text-center text-sm text-gray-600 mt-12 serif">
+    <AuthSwipeLink>
       ¿No tenés cuenta?
       <a href="/registro" class="underline cursor-pointer hover:text-gray-900"
-        >Crea una cuenta</a
+        >Creá una cuenta</a
       >
-    </p>
+    </AuthSwipeLink>
   </section>
 </Layout>
 
