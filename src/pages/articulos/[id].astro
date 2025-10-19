@@ -4,6 +4,7 @@ import { ArticlesService } from "../../services/articles.service";
 import { marked } from "marked";
 import { UsersService } from "../../services/users.service";
 import { SmallArticle } from "../../components/SmallArticle";
+import { AsideArticles } from "../../components/AsideArticles";
 
 const { id } = Astro.params;
 
@@ -23,7 +24,7 @@ const authorName = await UsersService.getNameOfUserWithId(article?.authorId);
 ---
 
 <Layout>
-  <form class="flex flex-col" id="form">
+  <article class="flex flex-col">
     <h1 class="text-[#0e1c40] font-title text-7xl mt-[60px] mb-[10px]">
       {article.title}
     </h1>
@@ -42,13 +43,7 @@ const authorName = await UsersService.getNameOfUserWithId(article?.authorId);
         set:html={content}
       />
 
-      <aside class="flex w-full h-full flex-col gap-y-5">
-        {
-          otherArticles
-            ?.filter((a) => a.id !== article.id)
-            .map((article) => <SmallArticle {article} />)
-        }
-      </aside>
+      <AsideArticles client:load />
     </div>
-  </form>
+  </article>
 </Layout>

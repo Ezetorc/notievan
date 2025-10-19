@@ -4,7 +4,7 @@ import { ArticlesService } from "../services/articles.service";
 import type { Article } from "@prisma/client";
 
 export function Articles() {
-  const [articles, setArticles] = useState<Article[]>([]);
+  const [articles, setArticles] = useState<Array<Article | undefined>>([]);
 
   useEffect(() => {
     ArticlesService.getAll(4).then(setArticles);
@@ -17,9 +17,10 @@ export function Articles() {
          desktop:grid-rows-1 desktop:grid-cols-4
          gap-8"
     >
-      {articles.map((article) => (
-        <BigArticle key={article.id} article={article} />
-      ))}
+      <BigArticle article={articles[0]} />
+      <BigArticle article={articles[1]} />
+      <BigArticle article={articles[2]} />
+      <BigArticle article={articles[3]} />
     </main>
   );
 }
