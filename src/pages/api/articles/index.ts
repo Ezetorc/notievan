@@ -46,14 +46,31 @@ export const POST: APIRoute = async ({ request }) => {
 export const GET: APIRoute = async ({ request }) => {
   try {
     const url = new URL(request.url);
-    const amountParam = url.searchParams.get("amount");
+    const limitParam = url.searchParams.get("limit");
+    const pageParam = url.searchParams.get("page");
+
+    const limit = limitParam ? parseInt(limitParam) : 4;
+    const page = pageParam ? parseInt(pageParam) : 1;
+    const skip = (page - 1) * limit;
 
     const articles = await prisma.article.findMany({
       orderBy: { createdAt: "desc" },
-      take: amountParam ? parseInt(amountParam) : 4,
+      take: limit,
+      skip,
     });
 
-    return new OkResponse(articles);
+    const totalArticles = await prisma.article.count();
+    const totalPages = Math.ceil(totalArticles / limit);
+
+    return new OkResponse({
+      data: articles,
+      meta: {
+        page,
+        limit,
+        totalPages,
+        totalArticles,
+      },
+    });
   } catch (error) {
     console.error("Error obtaining articles:", error);
     return new InternalServerError();

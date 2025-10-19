@@ -9,9 +9,9 @@ import InstagramIcon from "./icons/InstagramIcon.astro";
          bg-gradient-to-r from-brand-blue to-[#0d3ea8] drop-shadow-2xl"
 >
   <div
-    class="w-full gap-x-[5px] text-white mobile:px-3 desktop:px-0 text-2xl max-w-[1270px] min-w-[320px] flex desktop:justify-between items-center"
+    class="w-full gap-x-[5px] text-white mobile:px-3 desktop:px-0 text-2xl max-w-[1270px] min-w-[320px] flex justify-between items-center"
   >
-    <nav class="flex items-center gap-x-[2vw]" id="header-buttons">
+    <nav class="flex items-center desktop:gap-x-[40px] mobile:gap-x-[25px]" id="header-buttons">
       <HeaderLink href="/">Inicio</HeaderLink>
 
       <!-- Links para usuario logueado -->
@@ -23,9 +23,6 @@ import InstagramIcon from "./icons/InstagramIcon.astro";
       <!-- Links para usuario no logueado -->
       <HeaderLink id="register-link" class="hidden" href="/registro"
         >Registrarse</HeaderLink
-      >
-      <HeaderLink id="login-link" class="hidden" href="/sesion"
-        >Iniciar sesión</HeaderLink
       >
     </nav>
 
@@ -49,9 +46,8 @@ import InstagramIcon from "./icons/InstagramIcon.astro";
     const $accountUser = document.getElementById("account-user");
     const $articleCreator = document.getElementById("article-creator");
     const $registerLink = document.getElementById("register-link");
-    const $loginLink = document.getElementById("login-link");
 
-    if (!$accountUser || !$articleCreator || !$registerLink || !$loginLink)
+    if (!$accountUser || !$articleCreator || !$registerLink)
       return;
 
     if (user) {
@@ -65,13 +61,11 @@ import InstagramIcon from "./icons/InstagramIcon.astro";
       }
 
       $registerLink.classList.add("hidden");
-      $loginLink.classList.add("hidden");
     } else {
       $accountUser.classList.add("hidden");
       $articleCreator.classList.add("hidden");
 
       $registerLink.classList.remove("hidden");
-      $loginLink.classList.remove("hidden");
     }
   }
 

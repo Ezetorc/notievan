@@ -36,8 +36,26 @@ export class ArticlesService {
     return data.value;
   }
 
-  static async getAll(amount: number = 4): Promise<Article[]> {
-    const res = await fetch(`${this.API_BASE}?amount=${amount}`);
+  static async getAll(
+    {
+      page = 0,
+      limit = 4,
+    }: {
+      page: number;
+      limit: number;
+    } = { page: 0, limit: 4 }
+  ): Promise<Article[]> {
+    const res = await fetch(`${this.API_BASE}?page=${page}&limit=${limit}`);
+
+    if (!res.ok) return [];
+
+    const data = await res.json();
+
+    return data.value.data as Article[];
+  }
+
+  static async getOwn(amount: number = 4): Promise<Article[]> {
+    const res = await fetch(`${this.API_BASE}/own?amount=${amount}`);
 
     if (!res.ok) return [];
 
@@ -46,8 +64,8 @@ export class ArticlesService {
     return data.value;
   }
 
-  static async getOwn(amount: number = 4): Promise<Article[]> {
-    const res = await fetch(`${this.API_BASE}/own?amount=${amount}`);
+  static async getRandom(omitId: string): Promise<Article[]> {
+    const res = await fetch(`${this.API_BASE}/random?omit=${omitId}`);
 
     if (!res.ok) return [];
 

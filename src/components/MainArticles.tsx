@@ -3,11 +3,11 @@ import BigArticle from "./BigArticle";
 import { ArticlesService } from "../services/articles.service";
 import type { Article } from "@prisma/client";
 
-export function Articles() {
+export function MainArticles() {
   const [articles, setArticles] = useState<Array<Article | undefined>>([]);
 
   useEffect(() => {
-    ArticlesService.getAll(4).then(setArticles);
+    ArticlesService.getAll({ page: 1, limit: 4 }).then(setArticles);
   }, []);
 
   return (

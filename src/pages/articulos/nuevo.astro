@@ -4,7 +4,13 @@ import Layout from "../../layouts/Layout.astro";
 ---
 
 <Layout>
-  <form class="flex flex-col pb-[5vw] mt-[60px]" id="form">
+  <div class="block md:hidden mt-20 text-center p-6">
+    <p class="text-3xl font-semibold text-red-600">
+      No puedes crear artículos desde el celular. Usa una computadora.
+    </p>
+  </div>
+
+  <form class="hidden md:flex flex-col pb-[5vw] mt-[60px]" id="form">
     <ArticleInput
       placeholder="Título de tu artículo"
       maxlength="50"
@@ -25,8 +31,9 @@ import Layout from "../../layouts/Layout.astro";
         <button
           id="create-article-button"
           class="w-full h-[70px] clickable bg-brand-orange rounded-[4px] text-white text-3xl"
-          >Crear artículo</button
         >
+          Crear artículo
+        </button>
       </div>
 
       <aside class="flex flex-col gap-y-5">
@@ -81,80 +88,82 @@ import Layout from "../../layouts/Layout.astro";
 
   const $editor = document.getElementById("editor");
 
-  const editor = new Editor({
-    el: $editor,
-    initialEditType: "markdown",
-    height: "1300px",
-    hideModeSwitch: true,
-    previewHighlight: false,
-    placeholder: "Contenido de tu artículo",
-  });
-
-  const $form = document.getElementById("form") as HTMLFormElement;
-  const $thumbnailInputPlaceholder =
-    document.getElementById("placeholder-text");
-  const $thumbnailFileInput = document.getElementById(
-    "thumbnail_url"
-  ) as HTMLInputElement;
-  const $thumbnailPreview = document.getElementById(
-    "thumbnail-preview"
-  ) as HTMLImageElement;
-  const $createArticle = document.getElementById(
-    "create-article-button"
-  ) as HTMLButtonElement;
-
-  if (
-    $form &&
-    $createArticle &&
-    $thumbnailFileInput &&
-    $thumbnailPreview &&
-    $thumbnailInputPlaceholder
-  ) {
-    $thumbnailFileInput.addEventListener("change", (event) => {
-      const file = (event.target as HTMLInputElement).files?.[0];
-      if (file) {
-        $thumbnailPreview.src = URL.createObjectURL(file);
-        $thumbnailPreview.classList.remove("hidden");
-        $thumbnailInputPlaceholder.classList.add("hidden");
-      } else {
-        $thumbnailPreview.classList.add("hidden");
-        $thumbnailPreview.src = "";
-        $thumbnailInputPlaceholder.classList.remove("hidden");
-      }
+  if ($editor) {
+    const editor = new Editor({
+      el: $editor,
+      initialEditType: "markdown",
+      height: "1300px",
+      hideModeSwitch: true,
+      previewHighlight: false,
+      placeholder: "Contenido de tu artículo",
     });
 
-    $form.addEventListener("submit", async (event) => {
-      event.preventDefault();
+    const $form = document.getElementById("form") as HTMLFormElement;
+    const $thumbnailInputPlaceholder =
+      document.getElementById("placeholder-text");
+    const $thumbnailFileInput = document.getElementById(
+      "thumbnail_url"
+    ) as HTMLInputElement;
+    const $thumbnailPreview = document.getElementById(
+      "thumbnail-preview"
+    ) as HTMLImageElement;
+    const $createArticle = document.getElementById(
+      "create-article-button"
+    ) as HTMLButtonElement;
 
-      const formData = new FormData($form);
-      const title = String(formData.get("title"));
-      const subtitle = String(formData.get("subtitle"));
-      const description = String(formData.get("description"));
-      const thumbnailAlt = String(formData.get("thumbnail_alt"));
-      const thumbnailFile = $thumbnailFileInput.files?.[0];
-      const content = editor.getMarkdown();
+    if (
+      $form &&
+      $createArticle &&
+      $thumbnailFileInput &&
+      $thumbnailPreview &&
+      $thumbnailInputPlaceholder
+    ) {
+      $thumbnailFileInput.addEventListener("change", (event) => {
+        const file = (event.target as HTMLInputElement).files?.[0];
+        if (file) {
+          $thumbnailPreview.src = URL.createObjectURL(file);
+          $thumbnailPreview.classList.remove("hidden");
+          $thumbnailInputPlaceholder.classList.add("hidden");
+        } else {
+          $thumbnailPreview.classList.add("hidden");
+          $thumbnailPreview.src = "";
+          $thumbnailInputPlaceholder.classList.remove("hidden");
+        }
+      });
 
-      formData.set("title", title);
-      formData.set("subtitle", subtitle);
-      formData.set("description", description);
-      formData.set("thumbnailAlt", thumbnailAlt);
+      $form.addEventListener("submit", async (event) => {
+        event.preventDefault();
 
-      if (thumbnailFile) {
-        formData.set("thumbnailFile", thumbnailFile);
-      }
+        const formData = new FormData($form);
+        const title = String(formData.get("title"));
+        const subtitle = String(formData.get("subtitle"));
+        const description = String(formData.get("description"));
+        const thumbnailAlt = String(formData.get("thumbnail_alt"));
+        const thumbnailFile = $thumbnailFileInput.files?.[0];
+        const content = editor.getMarkdown();
 
-      formData.set("content", content);
+        formData.set("title", title);
+        formData.set("subtitle", subtitle);
+        formData.set("description", description);
+        formData.set("thumbnailAlt", thumbnailAlt);
 
-      try {
-        const newArticle = await ArticlesService.create(formData);
+        if (thumbnailFile) {
+          formData.set("thumbnailFile", thumbnailFile);
+        }
 
-        console.log("Artículo creado:", newArticle);
-        alert("¡Artículo creado con éxito!");
-        window.location.href = "/articulos/" + newArticle.id;
-      } catch (err) {
-        console.error("Error creando artículo:", err);
-        alert("Error al crear el artículo");
-      }
-    });
+        formData.set("content", content);
+
+        try {
+          const newArticle = await ArticlesService.create(formData);
+
+          console.log("Artículo creado:", newArticle);
+          alert("¡Artículo creado con éxito!");
+          window.location.href = "/articulos/" + newArticle.id;
+        } catch (err) {
+          console.error("Error creando artículo:", err);
+          alert("Error al crear el artículo");
+        }
+      });
+    }
   }
 </script>

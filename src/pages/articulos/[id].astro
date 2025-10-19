@@ -3,7 +3,6 @@ import Layout from "../../layouts/Layout.astro";
 import { ArticlesService } from "../../services/articles.service";
 import { marked } from "marked";
 import { UsersService } from "../../services/users.service";
-import { SmallArticle } from "../../components/SmallArticle";
 import { AsideArticles } from "../../components/AsideArticles";
 
 const { id } = Astro.params;
@@ -19,7 +18,6 @@ if (article === undefined) {
 }
 
 const content = marked.parse(article.content);
-const otherArticles = await ArticlesService.getAll(4);
 const authorName = await UsersService.getNameOfUserWithId(article?.authorId);
 ---
 
@@ -43,7 +41,7 @@ const authorName = await UsersService.getNameOfUserWithId(article?.authorId);
         set:html={content}
       />
 
-      <AsideArticles client:load />
+      <AsideArticles excludeId={article.id} client:load />
     </div>
   </article>
 </Layout>
