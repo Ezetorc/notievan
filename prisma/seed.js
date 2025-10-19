@@ -4,14 +4,14 @@ export const prisma = new PrismaClient();
 
 async function main() {
   await prisma.article.deleteMany();
-  await prisma.user.deleteMany();
+  // await prisma.user.deleteMany();
 
-  const user = await prisma.user.create({
+  const user = await prisma.user.update({
+    where: {
+      id: "cmgy1sc9q0000ljpoap9tl673",
+    },
     data: {
       role: "AUTHOR",
-      email: "ezetorc@gmail.com",
-      name: "Ezequias Torczuk",
-      password: "password123",
     },
   });
 

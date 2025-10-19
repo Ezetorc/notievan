@@ -1,39 +1,23 @@
 ---
 import { INSTAGRAM } from "../configuration/information.configuration";
 import InstagramIcon from "./icons/InstagramIcon.astro";
-import PencilIcon from "./icons/PencilIcon.astro";
-import UserIcon from "./icons/UserIcon.astro";
 ---
 
 <header
-  class="w-full fixed z-20 top-0 left-0 h-20 flex items-center justify-center
+  class="w-full fixed z-20 top-0 left-0 mobile:h-25 desktop:h-20 flex items-center justify-center
          bg-gradient-to-r from-brand-blue to-[#0d3ea8] drop-shadow-2xl"
 >
   <div
-    class="w-full text-white text-2xl max-w-[1280px] min-w-[320px] flex justify-between items-center"
+    class="w-full text-white mobile:px-6 desktop:px-0 text-2xl max-w-[1270px] min-w-[320px] flex justify-between items-center"
   >
     <nav class="flex gap-x-8">
-      <a class="clickable" href="/">Inicio</a>
+      <a class="clickable mobile:text-4xl desktop:text-3xl" href="/">Inicio</a>
     </nav>
 
-    <div class="flex gap-x-8" id="header-buttons">
-      <a
-        class="clickable"
-        aria-label="Instagram"
-        href={INSTAGRAM}
-        target="_blank"
-      >
-        <InstagramIcon />
-      </a>
+    <div class="flex gap-x-12" id="header-buttons">
+      <div id="account-slot" class="gap-x-6 flex">
 
-      <a
-        class="clickable"
-        id="account-link"
-        aria-label="Cuenta"
-        href="/registro"
-      >
-        <UserIcon />
-      </a>
+      </div>
 
       <a
         class="hidden clickable"
@@ -41,7 +25,16 @@ import UserIcon from "./icons/UserIcon.astro";
         aria-label="Crear artículo"
         href="/articulos/nuevo"
       >
-        <PencilIcon />
+        Crear
+      </a>
+
+      <a
+        class="clickable mobile:scale-125 desktop:scale-100"
+        aria-label="Instagram"
+        href={INSTAGRAM}
+        target="_blank"
+      >
+        <InstagramIcon />
       </a>
     </div>
   </div>
@@ -50,17 +43,31 @@ import UserIcon from "./icons/UserIcon.astro";
 <script>
   import { SessionService } from "../services/session.service";
 
-  const $account = document.getElementById("account-link") as HTMLAnchorElement;
-  const $articleCreator = document.getElementById(
-    "article-creator"
-  ) as HTMLAnchorElement;
-  const session = SessionService.value;
+  function renderAccount() {
+    const user = SessionService.user;
+    const $slot = document.getElementById("account-slot");
+    const $articleCreator = document.getElementById("article-creator");
 
-  if (session?.token) {
-    $account.href = "/cuenta";
+    if (!$slot) return;
 
-    if (session.user.role === "AUTHOR" && $articleCreator) {
-      $articleCreator.classList.remove("hidden");
+    if (user) {
+      $slot.innerHTML = `
+        <a class="clickable" href="/cuenta">${user.name}</a>
+      `;
+
+      if (user.role === "AUTHOR" && $articleCreator) {
+        $articleCreator.classList.remove("hidden");
+      }
+    } else {
+      $slot.innerHTML = `
+        <a class="clickable" href="/registro" aria-label="Registrarse">Registrarse</a>
+        <a class="clickable" href="/sesion" aria-label="Iniciar sesión">Iniciar sesión</a>
+      `;
+      if ($articleCreator) $articleCreator.classList.add("hidden");
     }
   }
+
+  renderAccount();
+
+  document.addEventListener("astro:after-swap", renderAccount);
 </script>

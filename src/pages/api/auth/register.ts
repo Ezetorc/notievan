@@ -14,16 +14,14 @@ export const POST: APIRoute = async ({ request }) => {
     const { email, password, name } = body;
 
     if (!email || !password || !name) {
-      return new BadRequestError("Email, password and name are required");
+      return new BadRequestError("Email, nombre y contraseña son requeridos");
     }
 
-    const existingUser = await prisma.user.findUnique({
-      where: { email },
-    });
+    const existingEmail = await prisma.user.findUnique({ where: { email } });
+    if (existingEmail) return new ConflictError("El email ya está tomado");
 
-    if (existingUser) {
-      return new ConflictError("User already exists");
-    }
+    const existingName = await prisma.user.findUnique({ where: { name } });
+    if (existingName) return new ConflictError("El nombre ya está tomado");
 
     const hashedPassword = await bcrypt.hash(password, 10);
 

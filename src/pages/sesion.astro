@@ -46,7 +46,7 @@ import Hero from "../components/Hero.astro";
 
 <script>
   import { AuthService } from "../services/auth.service";
-import { SessionService } from "../services/session.service";
+  import { SessionService } from "../services/session.service";
 
   const form = document.getElementById("login-form") as HTMLFormElement;
   const message = document.getElementById("message") as HTMLParagraphElement;
@@ -72,10 +72,7 @@ import { SessionService } from "../services/session.service";
         });
 
         SessionService.value = data;
-
-        alert(`¡Bienvenido, ${data.user?.email}!`);
         window.location.href = "/";
-        form.reset();
       } catch (error) {
         if (error instanceof Error) {
           message.textContent = error.message;

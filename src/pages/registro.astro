@@ -34,7 +34,7 @@ import Input from "../components/Input.astro";
         Crear cuenta
       </button>
 
-      <p id="message" class="text-brand-red mt-2 hidden"></p>
+      <p id="message" class="text-brand-red mt-2 text-2xl hidden"></p>
     </form>
 
     <p class="text-center text-[18px] text-gray-600 mt-4">
@@ -72,8 +72,7 @@ import Input from "../components/Input.astro";
         });
 
         SessionService.value = data;
-        alert("Cuenta creada");
-        $form.reset();
+        window.location.href = "/";
       } catch (error) {
         if (error instanceof Error) {
           $message.textContent = error.message;

@@ -24,7 +24,7 @@ const authorName = await UsersService.getNameOfUserWithId(article?.authorId);
           loading="eager"
           src={article.thumbnailUrl}
           alt={article.thumbnailAlt}
-          class="h-[clamp(100px,100%,200px)] w-full object-cover"
+          class="h-[clamp(100px,100%,200px)] bg-gray-200 w-full object-cover"
         />
 
         <div class="flex flex-col justify-between">

@@ -14,7 +14,7 @@ export const POST: APIRoute = async ({ request }) => {
     const { email, password } = body;
 
     if (!email || !password) {
-      return new BadRequestError("Email and/or password is/are missing");
+      return new BadRequestError("Falta el email o la contraseña");
     }
 
     const user = await prisma.user.findUnique({
@@ -22,13 +22,13 @@ export const POST: APIRoute = async ({ request }) => {
     });
 
     if (!user) {
-      return new UnauthorizedError("Invalid credentials");
+      return new UnauthorizedError("Email incorrecto");
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-      return new UnauthorizedError("Invalid credentials");
+      return new UnauthorizedError("Contraseña incorrecta");
     }
 
     const token = getAuthorizationToken(user);

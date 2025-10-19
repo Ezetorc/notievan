@@ -13,7 +13,7 @@ export const GET: APIRoute = async ({ params }) => {
     });
 
     if (!article) {
-      return new NotFoundError("Article not found");
+      return new NotFoundError("Artículo no encontrado");
     }
 
     return new OkResponse(article);
@@ -26,7 +26,7 @@ export const DELETE: APIRoute = async ({ params, request }) => {
   try {
     const authHeader = request.headers.get("authorization");
     if (!authHeader) {
-      return new UnauthorizedError("No token provided");
+      return new UnauthorizedError("No se encontró token");
     }
 
     const user = await getUserFromToken(authHeader);
@@ -35,15 +35,15 @@ export const DELETE: APIRoute = async ({ params, request }) => {
     });
 
     if (!article) {
-      return new NotFoundError("Article not found");
+      return new NotFoundError("Artículo no encontrado");
     }
 
     if (user.id !== article.authorId) {
-      return new UnauthorizedError("You can't delete other's articles");
+      return new UnauthorizedError("No podés eliminar artículos de otra persona");
     }
 
     await prisma.article.delete({ where: { id: params.id } });
-    return new OkResponse("Article deleted");
+    return new OkResponse("Artículo eliminado");
   } catch (err) {
     console.error(err);
     return new InternalServerError();

@@ -1,21 +1,12 @@
-import jwt from "jsonwebtoken";
+import { parseJwt } from "./parse-jwt.utility";
 
 export function isTokenExpired(token: string): boolean {
-  try {
-    const decoded = jwt.decode(token);
+  const decoded = parseJwt(token);
+  if (!decoded || typeof decoded !== "object") return true;
 
-    if (!decoded) return true;
+  if (!("exp" in decoded)) return true;
 
-    if (typeof decoded === "string") return true;
+  const now = Date.now() / 1000;
 
-    if (!("exp" in decoded)) return true;
-
-    const now = Date.now() / 1000;
-
-    if (typeof decoded.exp !== "number") return true;
-
-    return decoded.exp < now;
-  } catch {
-    return true;
-  }
+  return typeof decoded.exp !== "number" || decoded.exp < now;
 }

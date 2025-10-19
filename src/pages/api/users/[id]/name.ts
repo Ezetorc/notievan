@@ -10,7 +10,7 @@ export const GET: APIRoute = async ({ params }) => {
     const { id } = params;
 
     if (id === undefined) {
-      return new BadRequestError("User ID is missing");
+      return new BadRequestError("Falta la ID del usuario");
     }
 
     const user = await prisma.user.findUnique({
@@ -19,7 +19,7 @@ export const GET: APIRoute = async ({ params }) => {
     });
 
     if (!user) {
-      return new NotFoundError("User not found");
+      return new NotFoundError("Usuario no encontrado");
     }
 
     return new OkResponse(user.name);

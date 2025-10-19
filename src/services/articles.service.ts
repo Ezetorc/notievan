@@ -45,4 +45,14 @@ export class ArticlesService {
 
     return data.value;
   }
+
+  static async getOwn(amount: number = 4): Promise<Article[]> {
+    const res = await fetch(`${this.API_BASE}/own?amount=${amount}`);
+
+    if (!res.ok) return [];
+
+    const data = await res.json();
+
+    return data.value;
+  }
 }

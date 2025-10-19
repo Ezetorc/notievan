@@ -17,30 +17,38 @@
   --color-brand-blue: #134abf;
   --color-brand-blue-light: #60a5fa;
   --color-brand-blue-soft: #dbeafe;
-
   --color-brand-red: #dc2626;
   --color-brand-red-soft: #fecaca;
   --color-brand-orange: #ff7878;
-
   --color-brand-gray: #6b7280;
   --color-brand-gray-light: #f3f4f6;
-
   --color-brand-white: #ffffff;
+
+  --breakpoint-mobile: 320px;
+  --breakpoint-tablet: 860px;
+  --breakpoint-desktop: 1280px;
 }
 
 * {
   box-sizing: border-box;
 }
 
+
+html,
 body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
   font-family: var(--font-text);
   background: linear-gradient(
     to bottom right,
     var(--color-brand-white),
     var(--color-brand-blue-soft)
   );
+  scroll-behavior: smooth;
 }
 
 .clickable {
-  @apply hover:-translate-y-[3px] transition-transform cursor-pointer;
+  @apply desktop:hover:-translate-y-[3px] desktop:transition-transform cursor-pointer;
 }

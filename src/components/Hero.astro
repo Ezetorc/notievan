@@ -2,10 +2,10 @@
 const { title = "Título", description = "Descripción" } = Astro.props;
 ---
 
-<section class="flex items-center my-3 gap-x-7">
+<section class="flex mobile:flex-col tablet:flex-row items-center my-10 gap-x-7">
   <h1 class="text-brand-blue font-title text-9xl mt-[15px]">{title}</h1>
 
-  <hr class="bg-brand-blue w-[5px] h-[100px]" />
+  <hr class="bg-brand-blue mobile:hidden tablet:block w-[5px] h-[100px]" />
 
   <h2 class="w-[20ch] text-brand-blue text-3xl">
     {description}

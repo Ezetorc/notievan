@@ -1,52 +1,80 @@
 ---
 import Hero from "../components/Hero.astro";
+import TerciaryArticle from "../components/TerciaryArticle.astro";
 import UserInfo from "../components/UserInfo.astro";
 import Layout from "../layouts/Layout.astro";
+import { ArticlesService } from "../services/articles.service";
+
+const articles = await ArticlesService.getOwn(5);
 ---
 
 <Layout>
   <Hero title="Cuenta" description="Mirá y cambiá tu información" />
 
-  <article class="">
+  <article class="flex flex-col gap-y-16">
     <div class="flex flex-col gap-y-6 text-lg">
       <UserInfo id="name-info" name="Nombre de usuario" />
       <UserInfo id="email-info" name="Email" />
       <UserInfo id="date-info" name="Fecha de creación" />
     </div>
+
+    <button
+      id="logout-btn"
+      class="w-fit px-4 py-3 clickable bg-brand-orange rounded-[4px] text-white text-3xl"
+      >Cerrar sesión</button
+    >
   </article>
+
+  <section>
+    {articles.map((article) => <TerciaryArticle article={article} />)}
+  </section>
 </Layout>
 
 <script>
   import { SessionService } from "../services/session.service";
 
-  const user = SessionService.user;
+  function renderAccount() {
+    const user = SessionService.user;
 
-  if (user) {
-    const $name = document.getElementById("name-info");
-    const $email = document.getElementById("email-info");
-    const $date = document.getElementById("date-info");
+    if (user) {
+      const $name = document.getElementById("name-info");
+      const $email = document.getElementById("email-info");
+      const $date = document.getElementById("date-info");
 
-    if ($name && $email && $date) {
-      if (user) {
-        const name = user.name || "Error cargando el nombre";
-        const email = user.email || "Error cargando el email";
-        const date = new Date(user.createdAt).toLocaleDateString("es-AR", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
+      if ($name && $email && $date) {
+        if (user) {
+          const name = user.name || "Error cargando el nombre";
+          const email = user.email || "Error cargando el email";
+          const date = new Date(user.createdAt).toLocaleDateString("es-AR", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          });
+
+          $name.innerText = name;
+          $email.innerText = email;
+          $date.innerText = date;
+        }
+
+        const logoutBtn = document.getElementById("logout-btn");
+        logoutBtn?.addEventListener("click", async () => {
+          SessionService.delete();
+
+          window.location.href = "/sesion";
         });
-
-        $name.innerText = name;
-        $email.innerText = email;
-        $date.innerText = date;
       }
 
       const logoutBtn = document.getElementById("logout-btn");
-      logoutBtn?.addEventListener("click", async () => {
-        SessionService.delete();
-
-        window.location.href = "/iniciar-sesion";
-      });
+      if (logoutBtn) {
+        logoutBtn.addEventListener("click", () => {
+          SessionService.delete();
+          window.location.href = "/sesion";
+        });
+      }
     }
   }
+
+  renderAccount();
+
+  document.addEventListener("astro:after-swap", renderAccount);
 </script>

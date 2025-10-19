@@ -14,7 +14,7 @@ export const POST: APIRoute = async ({ request }) => {
     const user = await getUserFromToken(authHeader);
 
     if (user.role !== "AUTHOR") {
-      return new ForbiddenError("You don't have access");
+      return new ForbiddenError("No tenés acceso");
     }
 
     const formData = await request.formData();
