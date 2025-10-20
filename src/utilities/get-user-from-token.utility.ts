@@ -11,10 +11,12 @@ export async function getUserFromToken(authHeader: string | null) {
   let payload: any;
 
   try {
-    payload = jwt.verify(token, config.jwt.secret);
-  } catch {
-    throw new Error("Token inválido o expirado");
-  }
+  payload = jwt.verify(token, config.jwt.secret, { algorithms: ["HS256"] });
+} catch (err: any) {
+  console.error("JWT verification error:", err.name, err.message);
+  throw new Error("Token inválido o expirado");
+}
+
 
   const user = await prisma.user.findUnique({
     where: { id: payload.sub },

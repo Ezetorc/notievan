@@ -55,6 +55,17 @@ export const GET: APIRoute = async ({ request }) => {
 
     const articles = await prisma.article.findMany({
       orderBy: { createdAt: "desc" },
+      select: {
+        authorId: true,
+        content: false,
+        createdAt: false,
+        description: true,
+        id: true,
+        subtitle: true,
+        thumbnailAlt: true,
+        thumbnailUrl: true,
+        title: true,
+      },
       take: limit,
       skip,
     });

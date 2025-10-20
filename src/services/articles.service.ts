@@ -54,14 +54,30 @@ export class ArticlesService {
     return data.value.data as Article[];
   }
 
-  static async getOwn(amount: number = 4): Promise<Article[]> {
-    const res = await fetch(`${this.API_BASE}/own?amount=${amount}`);
+  static async getOwn(
+    {
+      page = 0,
+      limit = 4,
+    }: {
+      page: number;
+      limit: number;
+    } = { page: 0, limit: 4 }
+  ): Promise<Article[]> {
+    const token = SessionService.token;
+    const res = await fetch(
+      `${this.API_BASE}/own?page=${page}&limit=${limit}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
     if (!res.ok) return [];
 
     const data = await res.json();
 
-    return data.value;
+    return data.value.data as Article[];
   }
 
   static async getRandom(omitId: string): Promise<Article[]> {

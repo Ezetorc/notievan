@@ -3,9 +3,9 @@ import { ArticlesService } from "../services/articles.service";
 import type { Article } from "@prisma/client";
 import { SmallArticle } from "./SmallArticle";
 
-export function SecondaryArticles() {
+export function AccountArticles() {
   const [articles, setArticles] = useState<Article[]>([]);
-  const [page, setPage] = useState(2);
+  const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const limit = 4;
 
@@ -14,7 +14,7 @@ export function SecondaryArticles() {
   }, [page]);
 
   const loadArticles = async (pageToLoad: number) => {
-    const data = await ArticlesService.getAll({ page: pageToLoad, limit });
+    const data = await ArticlesService.getOwn({ page: pageToLoad, limit });
 
     if (data.length < limit) setHasMore(false);
     setArticles((prev) => [...prev, ...data]);
