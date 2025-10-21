@@ -1,0 +1,93 @@
+---
+// ArticleDeleteModal.astro
+interface Props {
+  articleId: string;
+  authorId: string; // agregamos el id del autor del artículo
+}
+
+const { articleId, authorId } = Astro.props;
+---
+
+<div
+  id="modal"
+  data-article-id={articleId}
+  class="fixed z-[100] bg-[#000c] w-screen h-screen inset-0 place-items-center bg-opacity-50 items-center justify-center hidden"
+>
+  <div
+    class="bg-brand-blue p-6 rounded flex flex-col justify-between shadow-lg"
+  >
+    <div>
+      <h2 class="text-4xl text-white font-bold mb-4">¿Eliminar artículo?</h2>
+    </div>
+
+    <div class="flex gap-x-8">
+      <button
+        id="closeModal"
+        class="mt-4 text-2xl bg-brand-orange clickable text-white px-4 py-2 rounded"
+      >
+        Cerrar
+      </button>
+
+      <button
+        id="deleteArticle"
+        class="mt-4 text-2xl bg-brand-red clickable text-white px-4 py-2 rounded hidden"
+      >
+        Eliminar
+      </button>
+    </div>
+  </div>
+</div>
+
+<button id="openModal" class="clickable text-brand-red">Eliminar</button>
+
+<script>
+  import { ArticlesService } from "../services/articles.service";
+  import { SessionService } from "../services/session.service";
+
+  const modal = document.getElementById("modal");
+  const openModal = document.getElementById("openModal");
+  const closeModal = document.getElementById("closeModal");
+  const deleteBtn = document.getElementById("deleteArticle");
+
+  const articleId = modal?.dataset.articleId || "";
+  const authorId = modal?.dataset.authorId || ""; // vamos a setearlo en data-attribute
+
+  const user = SessionService.user;
+
+  // Mostrar botón solo si el usuario es el autor
+  if (user && user.id === authorId) {
+    deleteBtn?.classList.remove("hidden");
+  } else {
+    openModal?.classList.add("hidden"); // opcional: ocultar botón para abrir modal
+  }
+
+  // Abrir modal
+  openModal?.addEventListener("click", () => {
+    modal?.classList.remove("hidden");
+    modal?.classList.add("grid");
+  });
+
+  // Cerrar modal
+  closeModal?.addEventListener("click", () => {
+    modal?.classList.add("hidden");
+    modal?.classList.remove("grid");
+  });
+
+  // Eliminar artículo
+  deleteBtn?.addEventListener("click", async () => {
+    try {
+      const success = await ArticlesService.delete(articleId);
+      if (success) {
+        alert("Artículo eliminado ✅");
+        modal?.classList.add("hidden");
+        modal?.classList.remove("grid");
+        window.location.href = "/";
+      } else {
+        alert("Error al eliminar el artículo ❌");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error de conexión ❌");
+    }
+  });
+</script>

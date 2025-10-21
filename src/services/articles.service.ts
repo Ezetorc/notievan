@@ -26,6 +26,40 @@ export class ArticlesService {
     return response.value;
   }
 
+  static async update(data: FormData, id: string): Promise<Article> {
+    const token = SessionService.token;
+
+    const res = await fetch(`${this.API_BASE}/${id}`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: data,
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || "Error al editar el artículo");
+    }
+
+    const response = await res.json();
+
+    return response.value;
+  }
+
+  static async delete(id: string): Promise<boolean> {
+    const token = SessionService.token;
+
+    const res = await fetch(`${this.API_BASE}/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return res.ok;
+  }
+
   static async getById(id: string): Promise<Article | undefined> {
     const res = await fetch(`${this.API_BASE}/${id}`);
 

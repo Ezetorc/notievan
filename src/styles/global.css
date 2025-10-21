@@ -33,7 +33,6 @@
   box-sizing: border-box;
 }
 
-
 html,
 body {
   margin: 0;
@@ -51,4 +50,24 @@ body {
 
 .clickable {
   @apply desktop:hover:-translate-y-[3px] desktop:transition-transform cursor-pointer;
+}
+
+@keyframes appear-from-right {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.appear-from-right {
+  animation: appear-from-right 0.3s ease forwards;
+}
+
+.disappear-to-left {
+  animation: appear-from-right 0.3s ease reverse forwards;
 }

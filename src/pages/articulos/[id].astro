@@ -1,8 +1,5 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { ArticlesService } from "../../services/articles.service";
-import { marked } from "marked";
-import { UsersService } from "../../services/users.service";
 import { AsideArticles } from "../../components/AsideArticles";
 
 const { id } = Astro.params;
@@ -10,38 +7,158 @@ const { id } = Astro.params;
 if (id === undefined) {
   throw new Error("Parámetro ID no encontrado");
 }
-
-const article = await ArticlesService.getById(id);
-
-if (article === undefined) {
-  throw new Error("Artículo no encontrado");
-}
-
-const content = marked.parse(article.content);
-const authorName = await UsersService.getNameOfUserWithId(article?.authorId);
 ---
 
 <Layout>
   <article class="flex flex-col">
-    <h1 class="text-[#0e1c40] font-title text-7xl mt-[60px] mb-[10px]">
-      {article.title}
+    <section class="flex text-2xl gap-x-5 mt-[60px]">
+      <a id="edit-article-anchor" class="clickable hidden">Editar</a>
+      <div
+        id="modal"
+        data-article-id="${article.id}"
+        data-author-id="${article.authorId}"
+        class="fixed z-[100] bg-[#000c] w-screen h-screen inset-0 place-items-center bg-opacity-50 items-center justify-center hidden"
+      >
+        <div
+          class="bg-brand-blue p-6 rounded flex flex-col justify-between shadow-lg"
+        >
+          <div>
+            <h2 class="text-4xl text-white font-bold mb-4">
+              ¿Eliminar artículo?
+            </h2>
+          </div>
+          <div class="flex gap-x-8">
+            <button
+              id="closeModal"
+              class="mt-4 text-2xl bg-brand-orange clickable text-white px-4 py-2 rounded"
+              >Cerrar</button
+            >
+            <button
+              id="deleteArticle"
+              class="mt-4 text-2xl bg-brand-red clickable text-white px-4 py-2 rounded"
+              >Eliminar</button
+            >
+          </div>
+        </div>
+      </div>
+      <button id="openModal" class="clickable text-brand-red">Eliminar</button>
+    </section>
+
+    <h1
+      id="article-title"
+      class="text-[#0e1c40] font-title text-7xl mt-[20px] mb-[10px]"
+    >
     </h1>
-
-    <h2 class="text-gray-600 text-3xl mb-[15px]">
-      {article.description}
-    </h2>
-
-    <h3 class="text-gray-600 text-[18px] mb-[30px]">
-      Por {authorName}
-    </h3>
+    <h2 id="article-description" class="text-gray-600 text-3xl mb-[15px]"></h2>
+    <h3 id="article-author" class="text-gray-600 text-[18px] mb-[30px]"></h3>
 
     <div class="grid gap-x-10 gap-y-10 desktop:grid-cols-[2fr_1fr]">
       <article
+        id="article-content"
         class="w-full h-full text-pretty text-gray-800 leading-relaxed text-2xl space-y-6 prose prose-lg prose-slate break-words overflow-x-auto"
-        set:html={content}
-      />
+      >
+      </article>
 
-      <AsideArticles excludeId={article.id} client:load />
+      <AsideArticles excludeId={id} client:load />
     </div>
   </article>
 </Layout>
+
+<script>
+  import { ArticlesService } from "../../services/articles.service";
+  import { UsersService } from "../../services/users.service";
+  import { SessionService } from "../../services/session.service";
+  import { marked } from "marked";
+  import type { Article } from "@prisma/client";
+
+  const modalContainer = document.getElementById(
+    "delete-article-modal-container"
+  );
+
+  async function loadArticle() {
+    const pathParts = window.location.pathname.split("/");
+    const id = pathParts[pathParts.length - 1];
+
+    if (!id) {
+      console.error("No se encontró el parámetro ID en la URL");
+      return;
+    }
+
+    let article: Article | undefined;
+    try {
+      article = await ArticlesService.getById(id);
+    } catch (err) {
+      console.error("Error al obtener el artículo:", err);
+      alert("No se pudo cargar el artículo");
+      return;
+    }
+
+    if (article === undefined) {
+      throw new Error("Artículo no encontrado");
+    }
+
+    const $editAnchor = document.getElementById("edit-article-anchor");
+    const $title = document.getElementById("article-title");
+    const $desc = document.getElementById("article-description");
+    const $author = document.getElementById("article-author");
+    const $content = document.getElementById("article-content");
+    const modal = document.getElementById("modal");
+    const openBtn = document.getElementById("openModal");
+    const closeBtn = document.getElementById("closeModal");
+    const deleteBtn = document.getElementById("deleteArticle");
+    const authorName = await UsersService.getNameOfUserWithId(article.authorId);
+
+    if (
+      !$title ||
+      !$desc ||
+      !$author ||
+      !$content ||
+      !$editAnchor ||
+      !modalContainer ||
+      !modal ||
+      !openBtn ||
+      !closeBtn ||
+      !deleteBtn ||
+      !authorName
+    )
+      return;
+
+    $title.innerText = article.title;
+    $desc.innerText = article.description;
+    $author.innerText = `Por ${authorName}`;
+    $content.innerHTML = await marked.parse(article.content);
+
+    const user = SessionService.user;
+    if (user?.id === article.authorId) {
+      $editAnchor.classList.remove("hidden");
+
+      openBtn.addEventListener("click", () => {
+        modal.classList.remove("hidden");
+        modal.classList.add("grid");
+      });
+      closeBtn.addEventListener("click", () => {
+        modal.classList.add("hidden");
+        modal.classList.remove("grid");
+      });
+      deleteBtn.addEventListener("click", async () => {
+        try {
+          const success = await ArticlesService.delete(article.id);
+          if (success) {
+            alert("Artículo eliminado ✅");
+            modal.classList.add("hidden");
+            modal.classList.remove("grid");
+            window.location.href = "/";
+          } else {
+            alert("Error al eliminar el artículo ❌");
+          }
+        } catch (err) {
+          console.error(err);
+          alert("Error de conexión ❌");
+        }
+      });
+    }
+  }
+
+  loadArticle();
+  document.addEventListener("astro:after-swap", loadArticle);
+</script>

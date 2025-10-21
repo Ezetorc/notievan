@@ -35,7 +35,7 @@ export const POST: APIRoute = async ({ request }) => {
       },
     });
 
-    return new CreatedResponse(JSON.stringify(article));
+    return new CreatedResponse(article);
   } catch (error: any) {
     console.error("Error creating article:", error);
 

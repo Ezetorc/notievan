@@ -50,7 +50,7 @@ export const DELETE: APIRoute = async ({ params, request }) => {
   }
 };
 
-export const PUT: APIRoute = async ({ params, request }) => {
+export const PATCH: APIRoute = async ({ params, request }) => {
   try {
     const authHeader = request.headers.get("authorization");
     if (!authHeader) {
@@ -83,7 +83,6 @@ export const PUT: APIRoute = async ({ params, request }) => {
       data: {
         ...(title && { title }),
         ...(content && { content }),
-        updatedAt: new Date(),
       },
     });
 

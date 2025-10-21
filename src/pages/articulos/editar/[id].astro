@@ -1,12 +1,25 @@
 ---
-import ArticleInput from "../../components/ArticleInput.astro";
-import Layout from "../../layouts/Layout.astro";
+import ArticleInput from "../../../components/ArticleInput.astro";
+import Layout from "../../../layouts/Layout.astro";
+import { ArticlesService } from "../../../services/articles.service";
+
+const { id } = Astro.params;
+
+if (id === undefined) {
+  throw new Error("Parámetro ID no encontrado");
+}
+
+const article = await ArticlesService.getById(id);
+
+if (article === undefined) {
+  throw new Error("Artículo no encontrado");
+}
 ---
 
 <Layout>
   <div class="block md:hidden mt-20 text-center p-6">
     <p class="text-3xl font-semibold text-red-600">
-      No puedes crear artículos desde el celular. Usa una computadora.
+      No puedes editar artículos desde el celular. Usa una computadora.
     </p>
   </div>
 
@@ -16,6 +29,7 @@ import Layout from "../../layouts/Layout.astro";
       maxlength="50"
       name="subtitle"
       class="text-2xl font-bold font-text mb-[20px]"
+      value={article.subtitle}
     />
 
     <ArticleInput
@@ -23,12 +37,14 @@ import Layout from "../../layouts/Layout.astro";
       maxlength="50"
       name="title"
       class="text-5xl font-title"
+      value={article.title}
     />
 
     <ArticleInput
       class="mt-[20px] text-2xl mb-[30px]"
       placeholder="Descripción de tu artículo"
       name="description"
+      value={article.description}
     />
 
     <div class="grid gap-x-10 grid-cols-[2fr_1fr]">
@@ -36,10 +52,9 @@ import Layout from "../../layouts/Layout.astro";
         <textarea id="editor" name="content"></textarea>
 
         <button
-          id="create-article-button"
           class="w-full h-[70px] clickable bg-brand-orange rounded-[4px] text-white text-3xl"
         >
-          Crear artículo
+          Edit artículo
         </button>
       </div>
 
@@ -60,10 +75,11 @@ import Layout from "../../layouts/Layout.astro";
             >
               <img
                 id="thumbnail-preview"
-                class="w-full h-full object-cover hidden"
+                class="w-full h-full object-cover"
                 alt="Vista previa de la imagen seleccionada"
+                src={article.thumbnailUrl}
               />
-              <span id="placeholder-text" class="text-gray-500 font-medium">
+              <span id="placeholder-text" class="text-gray-500 font-medium hidden">
                 Clickeá para elegir la portada del artículo
               </span>
             </label>
@@ -73,6 +89,7 @@ import Layout from "../../layouts/Layout.astro";
             placeholder="Breve descripción de la portada"
             name="thumbnail-alt"
             maxlength="30"
+            value={article.thumbnailAlt}
           />
         </div>
       </aside>
@@ -83,9 +100,30 @@ import Layout from "../../layouts/Layout.astro";
 <script>
   import EasyMDE from "easymde";
   import "easymde/dist/easymde.min.css";
-  import { ArticlesService } from "../../services/articles.service";
+  import { ArticlesService } from "../../../services/articles.service";
+  import type { Article } from "@prisma/client";
 
-  async function loadForm() {
+  async function initEditor() {
+    const pathParts = window.location.pathname.split("/");
+    const id = pathParts[pathParts.length - 1];
+
+    if (!id) {
+      console.error("No se encontró el parámetro ID en la URL");
+      return;
+    }
+
+    let article: Article | undefined;
+
+    try {
+      article = await ArticlesService.getById(id);
+    } catch (err) {
+      console.error("Error al obtener el artículo:", err);
+      alert("No se pudo cargar el artículo");
+      return;
+    }
+
+    if (!article) return;
+
     const $textarea = document.getElementById("editor");
 
     let easyMDE: EasyMDE;
@@ -94,6 +132,7 @@ import Layout from "../../layouts/Layout.astro";
       easyMDE = new EasyMDE({
         element: $textarea,
         placeholder: "Contenido de tu artículo...",
+        initialValue: article.content,
         spellChecker: false,
         autofocus: true,
         autosave: {
@@ -133,11 +172,9 @@ import Layout from "../../layouts/Layout.astro";
       const $thumbnailPreview = document.getElementById(
         "thumbnail-preview"
       ) as HTMLImageElement;
-      const $createArticle = document.getElementById("create-article-button");
 
       if (
         $form &&
-        $createArticle &&
         $thumbnailFileInput &&
         $thumbnailPreview &&
         $thumbnailInputPlaceholder
@@ -160,57 +197,39 @@ import Layout from "../../layouts/Layout.astro";
           event.preventDefault();
 
           const formData = new FormData($form);
-          const title = String(formData.get("title")).trim();
-          const subtitle = String(formData.get("subtitle")).trim();
-          const description = String(formData.get("description")).trim();
-          const thumbnailAlt = String(formData.get("thumbnail-alt")).trim();
+          const title = String(formData.get("title"));
+          const subtitle = String(formData.get("subtitle"));
+          const description = String(formData.get("description"));
+          const thumbnailAlt = String(formData.get("thumbnail-alt"));
           const thumbnailFile = $thumbnailFileInput.files?.[0];
-          const content = easyMDE.value().trim();
-
-          if (!title) {
-            alert("El título es obligatorio");
-            return;
-          }
-
-          if (!subtitle) {
-            alert("El subtítulo es obligatorio");
-            return;
-          }
-
-          if (!description) {
-            alert("La descripción es obligatoria");
-            return;
-          }
-
-          if (!content) {
-            alert("El contenido del artículo no puede estar vacío");
-            return;
-          }
-
-          if (!thumbnailFile) {
-            alert("Debes seleccionar una imagen para la portada");
-            return;
-          }
+          const content = easyMDE.value();
 
           formData.set("title", title);
           formData.set("subtitle", subtitle);
           formData.set("description", description);
           formData.set("thumbnailAlt", thumbnailAlt);
+
+          if (thumbnailFile) {
+            formData.set("thumbnailFile", thumbnailFile);
+          }
+
           formData.set("content", content);
-          formData.set("thumbnailFile", thumbnailFile);
 
           try {
-            const newArticle = await ArticlesService.create(formData);
+            const newArticle = await ArticlesService.update(
+              formData,
+              article.id
+            );
+
             window.location.href = "/articulos/" + newArticle.id;
           } catch (err) {
-            console.error("Error creando artículo:", err);
-            alert("Error al crear el artículo");
+            console.error("Error editando artículo:", err);
+            alert("Error al editar el artículo");
           }
         });
       }
     }
   }
 
-  loadForm();
-  document.addEventListener("astro:after-swap", loadForm);
+  initEditor();
 </script>
