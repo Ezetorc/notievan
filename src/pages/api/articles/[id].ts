@@ -5,6 +5,7 @@ import { NotFoundError } from "../../../models/not-found-error.model";
 import { OkResponse } from "../../../models/ok-response.model";
 import { getUserFromToken } from "../../../utilities/get-user-from-token.utility";
 import { UnauthorizedError } from "../../../models/unauthorized-error.model";
+import { validateArticleFormData } from "../../../utilities/validate-article-form-data.utility";
 
 export const GET: APIRoute = async ({ params }) => {
   try {
@@ -39,7 +40,9 @@ export const DELETE: APIRoute = async ({ params, request }) => {
     }
 
     if (user.id !== article.authorId) {
-      return new UnauthorizedError("No podés eliminar artículos de otra persona");
+      return new UnauthorizedError(
+        "No podés eliminar artículos de otra persona"
+      );
     }
 
     await prisma.article.delete({ where: { id: params.id } });
@@ -71,10 +74,10 @@ export const PATCH: APIRoute = async ({ params, request }) => {
       return new UnauthorizedError("You can't update other's articles");
     }
 
-    const body = await request.json();
-    const { title, content } = body;
+    const formData = await request.formData();
+    const { title, content, description, subtitle, thumbnailAlt } = validateArticleFormData(formData);
 
-    if (!title && !content) {
+    if (!title && !content && !description && !subtitle && !thumbnailAlt) {
       return new InternalServerError("Nothing to update");
     }
 
@@ -83,6 +86,9 @@ export const PATCH: APIRoute = async ({ params, request }) => {
       data: {
         ...(title && { title }),
         ...(content && { content }),
+        ...(subtitle && { subtitle }),
+        ...(thumbnailAlt && { thumbnailAlt }),
+        ...(description && { description }),
       },
     });
 

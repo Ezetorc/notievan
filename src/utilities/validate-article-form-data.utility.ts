@@ -6,7 +6,16 @@ export function validateArticleFormData(formData: FormData) {
   const thumbnailAlt = String(formData.get("thumbnailAlt") || "");
   const file = formData.get("thumbnailFile") as File | null;
 
-  if (!title || !subtitle || !description || !content || !file) {
+  console.log(title, subtitle, description, content, thumbnailAlt, file);
+
+  if (
+    !title ||
+    !subtitle ||
+    !description ||
+    !content ||
+    !thumbnailAlt ||
+    !file
+  ) {
     throw new Error("Faltan campos obligatorios");
   }
 

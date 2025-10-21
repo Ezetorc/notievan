@@ -63,14 +63,14 @@ if (article === undefined) {
           <div class="w-full max-w-md mx-auto">
             <input
               type="file"
-              id="thumbnail_url"
-              name="thumbnail_url"
+              id="thumbnailFile"
+              name="thumbnailFile"
               accept="image/*"
               class="hidden"
             />
 
             <label
-              for="thumbnail_url"
+              for="thumbnailFile"
               class="cursor-pointer w-full aspect-video rounded-md border border-gray-300 overflow-hidden flex items-center justify-center bg-gray-200"
             >
               <img
@@ -79,7 +79,10 @@ if (article === undefined) {
                 alt="Vista previa de la imagen seleccionada"
                 src={article.thumbnailUrl}
               />
-              <span id="placeholder-text" class="text-gray-500 font-medium hidden">
+              <span
+                id="placeholder-text"
+                class="text-gray-500 font-medium hidden"
+              >
                 Clickeá para elegir la portada del artículo
               </span>
             </label>
@@ -87,7 +90,7 @@ if (article === undefined) {
 
           <ArticleInput
             placeholder="Breve descripción de la portada"
-            name="thumbnail-alt"
+            name="thumbnailAlt"
             maxlength="30"
             value={article.thumbnailAlt}
           />
@@ -167,7 +170,7 @@ if (article === undefined) {
       const $thumbnailInputPlaceholder =
         document.getElementById("placeholder-text");
       const $thumbnailFileInput = document.getElementById(
-        "thumbnail_url"
+        "thumbnailFile"
       ) as HTMLInputElement;
       const $thumbnailPreview = document.getElementById(
         "thumbnail-preview"
@@ -197,17 +200,8 @@ if (article === undefined) {
           event.preventDefault();
 
           const formData = new FormData($form);
-          const title = String(formData.get("title"));
-          const subtitle = String(formData.get("subtitle"));
-          const description = String(formData.get("description"));
-          const thumbnailAlt = String(formData.get("thumbnail-alt"));
           const thumbnailFile = $thumbnailFileInput.files?.[0];
           const content = easyMDE.value();
-
-          formData.set("title", title);
-          formData.set("subtitle", subtitle);
-          formData.set("description", description);
-          formData.set("thumbnailAlt", thumbnailAlt);
 
           if (thumbnailFile) {
             formData.set("thumbnailFile", thumbnailFile);
@@ -216,12 +210,12 @@ if (article === undefined) {
           formData.set("content", content);
 
           try {
-            const newArticle = await ArticlesService.update(
+            const updatedArticle = await ArticlesService.update(
               formData,
               article.id
             );
 
-            window.location.href = "/articulos/" + newArticle.id;
+            window.location.href = "/articulos/" + updatedArticle.id;
           } catch (err) {
             console.error("Error editando artículo:", err);
             alert("Error al editar el artículo");

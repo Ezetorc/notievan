@@ -12,14 +12,15 @@ if (id === undefined) {
 <Layout>
   <article class="flex flex-col">
     <section class="flex text-2xl gap-x-5 mt-[60px]">
-      <a id="edit-article-anchor" class="clickable hidden">Editar</a>
+      <a id="edit-article-anchor" href={`/articulos/editar/${id}`} class="clickable hidden">Editar</a>
       <div
-        id="modal"
+        id="delete-article-modal-container"
         data-article-id="${article.id}"
         data-author-id="${article.authorId}"
         class="fixed z-[100] bg-[#000c] w-screen h-screen inset-0 place-items-center bg-opacity-50 items-center justify-center hidden"
       >
         <div
+          id="modal"
           class="bg-brand-blue p-6 rounded flex flex-col justify-between shadow-lg"
         >
           <div>
@@ -71,18 +72,11 @@ if (id === undefined) {
   import { marked } from "marked";
   import type { Article } from "@prisma/client";
 
-  const modalContainer = document.getElementById(
-    "delete-article-modal-container"
-  );
-
   async function loadArticle() {
     const pathParts = window.location.pathname.split("/");
     const id = pathParts[pathParts.length - 1];
 
-    if (!id) {
-      console.error("No se encontró el parámetro ID en la URL");
-      return;
-    }
+    if (!id) return console.error("No se encontró el parámetro ID en la URL");
 
     let article: Article | undefined;
     try {
@@ -92,70 +86,71 @@ if (id === undefined) {
       alert("No se pudo cargar el artículo");
       return;
     }
-
-    if (article === undefined) {
-      throw new Error("Artículo no encontrado");
-    }
+    if (!article) throw new Error("Artículo no encontrado");
 
     const $editAnchor = document.getElementById("edit-article-anchor");
     const $title = document.getElementById("article-title");
     const $desc = document.getElementById("article-description");
     const $author = document.getElementById("article-author");
     const $content = document.getElementById("article-content");
-    const modal = document.getElementById("modal");
-    const openBtn = document.getElementById("openModal");
-    const closeBtn = document.getElementById("closeModal");
-    const deleteBtn = document.getElementById("deleteArticle");
-    const authorName = await UsersService.getNameOfUserWithId(article.authorId);
 
-    if (
-      !$title ||
-      !$desc ||
-      !$author ||
-      !$content ||
-      !$editAnchor ||
-      !modalContainer ||
-      !modal ||
-      !openBtn ||
-      !closeBtn ||
-      !deleteBtn ||
-      !authorName
-    )
-      return;
+    if (!$title || !$desc || !$author || !$content || !$editAnchor) return;
+
+    const authorName = await UsersService.getNameOfUserWithId(article.authorId);
 
     $title.innerText = article.title;
     $desc.innerText = article.description;
     $author.innerText = `Por ${authorName}`;
     $content.innerHTML = await marked.parse(article.content);
 
-    const user = SessionService.user;
-    if (user?.id === article.authorId) {
-      $editAnchor.classList.remove("hidden");
+    const modalContainer = document.getElementById(
+      "delete-article-modal-container"
+    );
+    if (modalContainer) {
+      modalContainer.dataset.articleId = article.id;
+      modalContainer.dataset.authorId = article.authorId;
 
-      openBtn.addEventListener("click", () => {
-        modal.classList.remove("hidden");
-        modal.classList.add("grid");
-      });
-      closeBtn.addEventListener("click", () => {
-        modal.classList.add("hidden");
-        modal.classList.remove("grid");
-      });
-      deleteBtn.addEventListener("click", async () => {
-        try {
-          const success = await ArticlesService.delete(article.id);
-          if (success) {
-            alert("Artículo eliminado ✅");
-            modal.classList.add("hidden");
-            modal.classList.remove("grid");
-            window.location.href = "/";
-          } else {
-            alert("Error al eliminar el artículo ❌");
+      const modal = document.getElementById("modal");
+      const openBtn = document.getElementById("openModal");
+      const closeBtn = document.getElementById("closeModal");
+      const deleteBtn = document.getElementById("deleteArticle");
+
+      const user = SessionService.user;
+
+      if (
+        user?.id === article.authorId &&
+        openBtn &&
+        closeBtn &&
+        deleteBtn &&
+        modal
+      ) {
+        $editAnchor.classList.remove("hidden");
+
+        openBtn.addEventListener("click", () => {
+          modal.classList.remove("hidden");
+          modal.classList.add("grid");
+        });
+        closeBtn.addEventListener("click", () => {
+          modal.classList.add("hidden");
+          modal.classList.remove("grid");
+        });
+        deleteBtn.addEventListener("click", async () => {
+          try {
+            const success = await ArticlesService.delete(article.id);
+            if (success) {
+              alert("Artículo eliminado ✅");
+              modal.classList.add("hidden");
+              modal.classList.remove("grid");
+              window.location.href = "/";
+            } else {
+              alert("Error al eliminar el artículo ❌");
+            }
+          } catch (err) {
+            console.error(err);
+            alert("Error de conexión ❌");
           }
-        } catch (err) {
-          console.error(err);
-          alert("Error de conexión ❌");
-        }
-      });
+        });
+      }
     }
   }
 
