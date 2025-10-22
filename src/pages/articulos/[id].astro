@@ -10,42 +10,54 @@ if (id === undefined) {
 ---
 
 <Layout>
-  <article class="flex flex-col">
-    <section class="flex text-2xl gap-x-5 mt-[60px]">
+  <div id="article-skeleton" class="animate-pulse mt-[60px]">
+    <div class="h-[70px] bg-gray-300 rounded w-[50%] mb-[10px]"></div>
+    <div class="h-[50px] bg-gray-300 rounded w-[75%] mb-[15px]"></div>
+    <div class="h-[20px] bg-gray-300 rounded w-[20%] mb-[30px]"></div>
+
+    <div class="space-y-3 w-[65%]">
+      <div class="h-[24px] bg-gray-300 rounded w-full"></div>
+      <div class="h-[24px] bg-gray-300 rounded w-full"></div>
+      <div class="h-[24px] bg-gray-300 rounded w-full"></div>
+      <div class="h-[24px] bg-gray-300 rounded w-[90%]"></div>
+    </div>
+  </div>
+
+  <div
+    id="delete-article-modal-container"
+    class="fixed z-[100] bg-[#000c] w-screen h-screen inset-0 place-items-center bg-opacity-50 items-center justify-center hidden"
+  >
+    <div
+      id="modal"
+      class="bg-brand-blue p-6 rounded flex flex-col justify-between shadow-lg"
+    >
+      <div>
+        <h2 class="text-4xl text-white font-bold mb-4">¿Eliminar artículo?</h2>
+      </div>
+      <div class="flex gap-x-8">
+        <button
+          id="close-modal"
+          class="mt-4 text-2xl bg-brand-orange clickable text-white px-4 py-2 rounded"
+          >Cerrar</button
+        >
+        <button
+          id="delete-article"
+          class="mt-4 text-2xl hidden bg-brand-red clickable text-white px-4 py-2 rounded"
+          >Eliminar</button
+        >
+      </div>
+    </div>
+  </div>
+
+  <article class="mb-[200px]" id="article-section">
+    <div id="actions-manager" class="hidden text-2xl space-x-5">
       <a
         id="edit-article-link"
         href={`/articulos/editar/${id}`}
-        class="clickable hidden">Editar</a
+        class="clickable">Editar</a
       >
-      <div
-        id="delete-article-modal-container"
-        class="fixed z-[100] bg-[#000c] w-screen h-screen inset-0 place-items-center bg-opacity-50 items-center justify-center hidden"
-      >
-        <div
-          id="modal"
-          class="bg-brand-blue p-6 rounded flex flex-col justify-between shadow-lg"
-        >
-          <div>
-            <h2 class="text-4xl text-white font-bold mb-4">
-              ¿Eliminar artículo?
-            </h2>
-          </div>
-          <div class="flex gap-x-8">
-            <button
-              id="close-modal"
-              class="mt-4 text-2xl bg-brand-orange clickable text-white px-4 py-2 rounded"
-              >Cerrar</button
-            >
-            <button
-              id="delete-article"
-              class="mt-4 text-2xl bg-brand-red clickable text-white px-4 py-2 rounded"
-              >Eliminar</button
-            >
-          </div>
-        </div>
-      </div>
       <button id="open-modal" class="clickable text-brand-red">Eliminar</button>
-    </section>
+    </div>
 
     <h1
       id="article-title"
@@ -67,6 +79,18 @@ if (id === undefined) {
   </article>
 </Layout>
 
+<style>
+  #article-content img {
+    max-width: 100%;
+    max-height: 500px;
+    width: auto;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    object-fit: contain;
+  }
+</style>
+
 <script>
   import { ArticlesService } from "../../services/articles.service";
   import { UsersService } from "../../services/users.service";
@@ -80,8 +104,10 @@ if (id === undefined) {
 
     if (!article) return;
 
-    const $editLink = $("#edit-article-link");
-    const $deleteLink = document.getElementById("delete-article");
+    const $skeleton = $("#article-skeleton");
+    const $article = $("#article-section");
+    const $deleteLink = $("#delete-article");
+    const $actionsManager = $("#actions-manager");
     const $title = $("#article-title");
     const $description = $("#article-description");
     const $author = $("#article-author");
@@ -96,18 +122,22 @@ if (id === undefined) {
       !$description ||
       !$author ||
       !$content ||
-      !$editLink ||
       !$modalContainer ||
       !$modal ||
       !$openModalButton ||
       !$closeModalButton ||
-      !$deleteLink
+      !$deleteLink ||
+      !$skeleton ||
+      !$article ||
+      !$actionsManager
     )
       return;
 
     const authorName = await UsersService.getNameOfUser(article.authorId);
     const content = await marked.parse(article.content);
 
+    $skeleton.classList.add("hidden");
+    $article.classList.remove("hidden");
     $title.innerText = article.title;
     $description.innerText = article.description;
     $author.innerText = `Por ${authorName}`;
@@ -119,7 +149,7 @@ if (id === undefined) {
 
     if (user?.id !== article.authorId) return;
 
-    $editLink.classList.remove("hidden");
+    $actionsManager.classList.remove("hidden");
 
     $openModalButton.addEventListener("click", () => {
       $modal.classList.remove("hidden");

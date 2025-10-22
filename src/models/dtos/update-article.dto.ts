@@ -5,6 +5,5 @@ export const UpdateArticleDto = z.object({
     subtitle: z.string().optional(),
     description: z.string().optional(),
     content: z.string().optional(),
-    thumbnailFile: z.string().optional(),
-    thumbnailAlt: z.string().optional(),
+    image: z.string().optional(),
 });

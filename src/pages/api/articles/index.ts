@@ -16,6 +16,8 @@ export const POST: APIRoute = async ({ request }) => {
   try {
     const user = await authMiddleware(request)
 
+    console.log("user: ", user)
+
     if (user.role !== Role.AUTHOR) {
       return new ForbiddenError("No tenés acceso");
     }
@@ -23,13 +25,17 @@ export const POST: APIRoute = async ({ request }) => {
     const formData = await request.formData();
     const body = Object.fromEntries(formData.entries());
     const data = CreateArticleDto.parse(body);
-    const uploadResult = await CloudinaryService.upload(data.thumbnailFile, "articles");
+
+    console.log("data: ", data)
+    const uploadResult = await CloudinaryService.upload(data.image, "articles");
+
+    console.log("llegó acá")
 
     const article = await prisma.article.create({
       data: {
         ...data,
         authorId: user.id,
-        thumbnailUrl: uploadResult.secure_url,
+        image: uploadResult.secure_url,
       },
     });
 
@@ -61,8 +67,7 @@ export const GET: APIRoute = async ({ request }) => {
         description: true,
         id: true,
         subtitle: true,
-        thumbnailAlt: true,
-        thumbnailUrl: true,
+        image: true,
         title: true,
       },
       take: limit,

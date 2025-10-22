@@ -15,8 +15,7 @@ model Article {
   content      String   @db.Text()
   createdAt    DateTime @default(now())
   authorId     String
-  thumbnailUrl String
-  thumbnailAlt String
+  image String
 
   author User @relation(fields: [authorId], references: [id])
 }

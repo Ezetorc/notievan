@@ -41,7 +41,6 @@ import InstagramIcon from "./icons/InstagramIcon.astro";
 </header>
 
 <script>
-  import { Role } from "@prisma/client";
   import { SessionService } from "../services/session.service";
   import { $ } from "../utilities/$.utility";
 
@@ -58,7 +57,7 @@ import InstagramIcon from "./icons/InstagramIcon.astro";
       $accountUser.classList.remove("hidden");
       $registerLink.classList.add("hidden");
 
-      if (user.role === Role.AUTHOR) {
+      if (user.role === "AUTHOR") {
         $articleCreator.classList.remove("hidden");
       } else {
         $articleCreator.classList.add("hidden");

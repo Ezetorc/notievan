@@ -36,6 +36,7 @@ import Layout from "../../layouts/Layout.astro";
         <markdown-editor
           id="content-input"
           placeholder="Contenido del artículo..."
+          class="w-[920px]"
           autosave></markdown-editor>
 
         <button
@@ -50,18 +51,18 @@ import Layout from "../../layouts/Layout.astro";
           <div class="w-full max-w-md mx-auto">
             <input
               type="file"
-              id="thumbnail-file"
-              name="thumbnailFile"
+              id="image-input"
+              name="image"
               accept="image/*"
               class="hidden"
             />
 
             <label
-              for="thumbnail-file"
+              for="image-input"
               class="cursor-pointer w-full aspect-video rounded-md border border-gray-300 overflow-hidden flex items-center justify-center bg-gray-200"
             >
               <img
-                id="thumbnail-preview"
+                id="image-preview"
                 class="w-full h-full object-cover hidden"
                 alt="Vista previa de la imagen seleccionada"
               />
@@ -70,12 +71,6 @@ import Layout from "../../layouts/Layout.astro";
               </span>
             </label>
           </div>
-
-          <ArticleInput
-            placeholder="Breve descripción de la portada"
-            name="thumbnail-alt"
-            maxlength="50"
-          />
         </div>
       </aside>
     </div>
@@ -92,21 +87,21 @@ import Layout from "../../layouts/Layout.astro";
   async function render() {
     const $editor = $("#content-input") as MarkdownEditor;
     const $form = $("#form") as HTMLFormElement;
-    const $thumbnailFileInput = $("#thumbnail-file") as HTMLInputElement;
-    const $thumbnailPreview = $("#thumbnail-preview") as HTMLImageElement;
+    const $imageInput = $("#image-input") as HTMLInputElement;
+    const $imagePreview = $("#image-preview") as HTMLImageElement;
 
-    if (!$form || !$thumbnailFileInput || !$thumbnailPreview) return;
+    if (!$form || !$imageInput || !$imagePreview) return;
 
-    $thumbnailFileInput.addEventListener("change", (event) => {
+    $imageInput.addEventListener("change", (event) => {
       const eventTarget = event.target as HTMLInputElement;
       const file = eventTarget.files?.[0];
 
       if (file) {
-        $thumbnailPreview.src = URL.createObjectURL(file);
-        $thumbnailPreview.classList.remove("hidden");
+        $imagePreview.src = URL.createObjectURL(file);
+        $imagePreview.classList.remove("hidden");
       } else {
-        $thumbnailPreview.classList.add("hidden");
-        $thumbnailPreview.src = "";
+        $imagePreview.classList.add("hidden");
+        $imagePreview.src = "";
       }
     });
 
@@ -114,7 +109,7 @@ import Layout from "../../layouts/Layout.astro";
       event.preventDefault();
 
       const formData = new FormData($form);
-      const thumbnailFile = $thumbnailFileInput.files?.[0];
+      const image = $imageInput.files?.[0];
       const content = $editor.value;
 
       if (!content) {
@@ -122,13 +117,13 @@ import Layout from "../../layouts/Layout.astro";
         return;
       }
 
-      if (!thumbnailFile) {
+      if (!image) {
         alert("Debes seleccionar una imagen para la portada");
         return;
       }
 
       formData.set("content", content);
-      formData.set("thumbnailFile", thumbnailFile);
+      formData.set("image", image);
 
       try {
         const newArticle = await ArticlesService.create(formData);

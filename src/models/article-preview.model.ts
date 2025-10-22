@@ -4,6 +4,5 @@ export type ArticlePreview = {
     subtitle: string;
     description: string;
     authorId: string;
-    thumbnailUrl: string;
-    thumbnailAlt: string;
+    image: string
 }

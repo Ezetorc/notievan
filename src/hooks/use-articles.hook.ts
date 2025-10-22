@@ -12,7 +12,7 @@ type UseArticlesOptions = {
 export function useArticles({
     type = "all",
     excludeId,
-    initialPage = 0,
+    initialPage = 1,
     limit = 4,
 }: UseArticlesOptions) {
     const [articles, setArticles] = useState<Article[]>([]);

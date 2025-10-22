@@ -29,8 +29,8 @@ export function SmallArticle({ article }: Props) {
     <Article id={article.id} className="flex flex-col gap-y-4 w-full">
       <img
         loading="eager"
-        src={article.thumbnailUrl}
-        alt={article.thumbnailAlt}
+        src={article.image}
+        alt={article.title}
         className="min-h-[100px] max-h-[200px] h-full aspect-[9/16] bg-gray-200 w-full object-cover"
       />
 
