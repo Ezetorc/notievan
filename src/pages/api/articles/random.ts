@@ -9,7 +9,9 @@ import { OmitIdParamDto } from "../../../models/dtos/omit-id-param.dto";
 export const GET: APIRoute = async ({ request }) => {
   try {
     const url = new URL(request.url);
-    const { omit } = OmitIdParamDto.parse(url.searchParams.get("omit"));
+    const { omit } = OmitIdParamDto.parse({
+      omit: url.searchParams.get("omit"),
+    });
 
     const allArticleIds = await prisma.article.findMany({
       where: omit ? { id: { not: omit } } : {},

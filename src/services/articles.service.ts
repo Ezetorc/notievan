@@ -69,7 +69,7 @@ export class ArticlesService {
 
   static async getAll(
     {
-      page = 0,
+      page = 1,
       limit = 4,
     }: {
       page?: number;
@@ -89,7 +89,7 @@ export class ArticlesService {
 
   static async getOwn(
     {
-      page = 0,
+      page = 1,
       limit = 4,
     }: {
       page?: number;

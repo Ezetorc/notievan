@@ -4,7 +4,6 @@ import { InternalServerError } from "../../../models/errors/internal-server.erro
 import { NotFoundError } from "../../../models/errors/not-found.error";
 import { OkResponse } from "../../../models/responses/ok.response";
 import { UnauthorizedError } from "../../../models/errors/unauthorized.error";
-import { validateArticleFormData } from "../../../utilities/validate-article-form-data.utility";
 import { UserIdParamDto } from "../../../models/dtos/user-id-param.dto";
 import { BadRequestError } from "../../../models/errors/bad-request.error";
 import { ZodError } from "zod";
