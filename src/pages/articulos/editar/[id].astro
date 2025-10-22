@@ -1,18 +1,11 @@
 ---
 import ArticleInput from "../../../components/ArticleInput.astro";
 import Layout from "../../../layouts/Layout.astro";
-import { ArticlesService } from "../../../services/articles.service";
 
 const { id } = Astro.params;
 
 if (id === undefined) {
   throw new Error("Parámetro ID no encontrado");
-}
-
-const article = await ArticlesService.getById(id);
-
-if (article === undefined) {
-  throw new Error("Artículo no encontrado");
 }
 ---
 
@@ -29,7 +22,6 @@ if (article === undefined) {
       maxlength="50"
       name="subtitle"
       class="text-2xl font-bold font-text mb-[20px]"
-      value={article.subtitle}
     />
 
     <ArticleInput
@@ -37,14 +29,12 @@ if (article === undefined) {
       maxlength="50"
       name="title"
       class="text-5xl font-title"
-      value={article.title}
     />
 
     <ArticleInput
       class="mt-[20px] text-2xl mb-[30px]"
       placeholder="Descripción de tu artículo"
       name="description"
-      value={article.description}
     />
 
     <div class="grid gap-x-10 grid-cols-[2fr_1fr]">
@@ -64,7 +54,24 @@ if (article === undefined) {
 
       <aside class="flex flex-col gap-y-5">
         <div class="w-full flex flex-col gap-y-2">
-          <div class="w-full max-w-md mx-auto">
+          <div class="flex gap-2 mb-2">
+            <button
+              type="button"
+              id="upload-tab"
+              class="flex-1 py-2 px-4 clickable bg-gray-200 rounded-md font-semibold"
+            >
+              Subir archivo
+            </button>
+            <button
+              type="button"
+              id="url-tab"
+              class="flex-1 py-2 px-4 clickable bg-gray-200 rounded-md font-semibold"
+            >
+              Usar URL
+            </button>
+          </div>
+
+          <div id="upload-container">
             <input
               type="file"
               id="image-input"
@@ -72,7 +79,6 @@ if (article === undefined) {
               accept="image/*"
               class="hidden"
             />
-
             <label
               for="image-input"
               class="cursor-pointer w-full aspect-video rounded-md border border-gray-300 overflow-hidden flex items-center justify-center bg-gray-200"
@@ -90,89 +96,158 @@ if (article === undefined) {
               </span>
             </label>
           </div>
+
+          <div id="url-container" class="hidden">
+            <input
+              type="url"
+              id="image-url"
+              name="image"
+              placeholder="Pegar URL de la imagen"
+              class="w-full border border-gray-300 bg-gray-200 rounded-md p-2 text-lg"
+            />
+            <img
+              id="url-preview"
+              class="w-full h-48 object-cover mt-2 hidden rounded-md"
+              alt="Vista previa de la imagen por URL"
+            />
+          </div>
         </div>
       </aside>
     </div>
   </form>
+
+  <script src="../../../components/MarkdownEditor.ts"></script>
+
+  <script>
+    import type { MarkdownEditor } from "../../../components/MarkdownEditor";
+    import { ArticlesService } from "../../../services/articles.service";
+    import { $ } from "../../../utilities/$.utility";
+    import { getArticleFromPath } from "../../../utilities/get-id-from-path.utility";
+
+    async function render() {
+      const article = await getArticleFromPath();
+
+      if (!article) return;
+
+      const $editor = $("#content-input") as MarkdownEditor;
+      const $form = $("#form") as HTMLFormElement;
+
+      const $imageInput = $("#image-input") as HTMLInputElement;
+      const $imagePreview = $("#image-preview") as HTMLImageElement;
+      const $imagePlaceholder = $("#placeholder-text");
+      const $imageTab = $("#upload-tab");
+      const $imageContainer = $("#upload-container");
+
+      const $urlTab = $("#url-tab");
+      const $urlPreview = $("#url-preview") as HTMLImageElement;
+      const $urlContainer = $("#url-container");
+      const $urlInput = $("#image-url") as HTMLInputElement;
+
+      const $subtitle = $form?.querySelector(
+        '[name="subtitle"]'
+      ) as HTMLInputElement;
+      const $title = $form?.querySelector('[name="title"]') as HTMLInputElement;
+      const $description = $form?.querySelector(
+        '[name="description"]'
+      ) as HTMLInputElement;
+
+      if (
+        !$form ||
+        !$imageInput ||
+        !$imagePreview ||
+        !$imagePlaceholder ||
+        !$imageTab ||
+        !$imageContainer ||
+        !$urlTab ||
+        !$urlContainer ||
+        !$urlInput ||
+        !$urlPreview ||
+        !$subtitle ||
+        !$description ||
+        !$title
+      )
+        return;
+
+      $editor.value = article.content;
+      $subtitle.value = article.subtitle;
+      $title.value = article.title;
+      $description.value = article.description;
+
+      $imageTab.addEventListener("click", () => {
+        $imageContainer.classList.remove("hidden");
+        $urlContainer.classList.add("hidden");
+      });
+
+      $urlTab.addEventListener("click", () => {
+        $urlContainer.classList.remove("hidden");
+        $imageContainer.classList.add("hidden");
+      });
+
+      $urlInput.addEventListener("input", () => {
+        const url = $urlInput.value;
+
+        if (url) {
+          $urlPreview.src = url;
+          $urlPreview.classList.remove("hidden");
+        } else {
+          $urlPreview.classList.add("hidden");
+        }
+      });
+
+      $imageInput.addEventListener("change", (event) => {
+        const eventTarget = event.target as HTMLInputElement;
+        const file = eventTarget.files?.[0];
+
+        if (file) {
+          $imagePreview.src = URL.createObjectURL(file);
+          $imagePreview.classList.remove("hidden");
+          $imagePlaceholder.classList.add("hidden");
+        } else {
+          $imagePreview.classList.add("hidden");
+          $imagePlaceholder.classList.remove("hidden");
+          $imagePreview.src = "";
+        }
+      });
+
+      $form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const formData = new FormData($form);
+        const file = $imageInput.files?.[0];
+        const content = $editor.value;
+        const url = $urlInput.value.trim();
+
+        if (!$imageContainer.classList.contains("hidden") && !file) {
+          alert("Debes seleccionar una imagen para la portada");
+          return;
+        }
+
+        if (!$urlContainer.classList.contains("hidden") && !url) {
+          alert("Debes pegar la URL de la portada");
+          return;
+        }
+
+        formData.set("content", content);
+
+        if (!$imageContainer.classList.contains("hidden") && file) {
+          formData.set("image", file);
+        } else if (!$urlContainer.classList.contains("hidden") && url) {
+          formData.set("image", url);
+        }
+
+        try {
+          await ArticlesService.update(formData, article.id);
+
+          window.location.href = "/articulos/" + article.id;
+        } catch (error) {
+          console.error("Error creando artículo: ", error);
+
+          alert("Error al crear el artículo");
+        }
+      });
+    }
+
+    render();
+    document.addEventListener("astro:after-swap", render);
+  </script>
 </Layout>
-
-<script src="../../../components/MarkdownEditor.ts"></script>
-
-<script>
-  import type { MarkdownEditor } from "../../../components/MarkdownEditor";
-  import { ArticlesService } from "../../../services/articles.service";
-  import { $ } from "../../../utilities/$.utility";
-  import { getArticleFromPath } from "../../../utilities/get-id-from-path.utility";
-
-  async function render() {
-    const article = await getArticleFromPath();
-
-    if (!article) return;
-
-    const $editor = $("#content-input") as MarkdownEditor;
-    const $form = $("#form") as HTMLFormElement;
-    const $imageInput = $("#image-input") as HTMLInputElement;
-    const $imagePreview = $("#image-preview") as HTMLImageElement;
-    const $imagePlaceholder = $("#placeholder-text");
-
-    if (
-      !$form ||
-      !$imageInput ||
-      !$imagePreview ||
-      !$editor ||
-      !$imagePlaceholder
-    )
-      return;
-
-    $editor.value = article.content;
-
-    $imageInput.addEventListener("change", (event) => {
-      const eventTarget = event.target as HTMLInputElement;
-      const file = eventTarget.files?.[0];
-
-      if (file) {
-        $imagePreview.src = URL.createObjectURL(file);
-        $imagePreview.classList.remove("hidden");
-        $imagePlaceholder.classList.add("hidden");
-      } else {
-        $imagePreview.classList.add("hidden");
-        $imagePlaceholder.classList.remove("hidden");
-        $imagePreview.src = "";
-      }
-    });
-
-    $form.addEventListener("submit", async (event) => {
-      event.preventDefault();
-
-      const formData = new FormData($form);
-      const image = $imageInput.files?.[0];
-      const content = $editor.value;
-
-      if (!content) {
-        alert("El contenido del artículo no puede estar vacío");
-        return;
-      }
-
-      if (!image) {
-        alert("Debes seleccionar una imagen para la portada");
-        return;
-      }
-
-      formData.set("content", content);
-      formData.set("image", image);
-
-      try {
-        const newArticle = await ArticlesService.update(formData, article.id);
-
-        window.location.href = "/articulos/" + newArticle.id;
-      } catch (error) {
-        console.error("Error creando artículo: ", error);
-
-        alert("Error al crear el artículo");
-      }
-    });
-  }
-
-  render();
-  document.addEventListener("astro:after-swap", render);
-</script>

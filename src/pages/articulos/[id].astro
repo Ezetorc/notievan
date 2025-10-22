@@ -10,19 +10,6 @@ if (id === undefined) {
 ---
 
 <Layout>
-  <div id="article-skeleton" class="animate-pulse mt-[60px]">
-    <div class="h-[70px] bg-gray-300 rounded w-[50%] mb-[10px]"></div>
-    <div class="h-[50px] bg-gray-300 rounded w-[75%] mb-[15px]"></div>
-    <div class="h-[20px] bg-gray-300 rounded w-[20%] mb-[30px]"></div>
-
-    <div class="space-y-3 w-[65%]">
-      <div class="h-[24px] bg-gray-300 rounded w-full"></div>
-      <div class="h-[24px] bg-gray-300 rounded w-full"></div>
-      <div class="h-[24px] bg-gray-300 rounded w-full"></div>
-      <div class="h-[24px] bg-gray-300 rounded w-[90%]"></div>
-    </div>
-  </div>
-
   <div
     id="delete-article-modal-container"
     class="fixed z-[100] bg-[#000c] w-screen h-screen inset-0 place-items-center bg-opacity-50 items-center justify-center hidden"
@@ -42,10 +29,23 @@ if (id === undefined) {
         >
         <button
           id="delete-article"
-          class="mt-4 text-2xl hidden bg-brand-red clickable text-white px-4 py-2 rounded"
+          class="mt-4 text-2xl bg-brand-red clickable text-white px-4 py-2 rounded"
           >Eliminar</button
         >
       </div>
+    </div>
+  </div>
+
+  <div id="article-skeleton" class="animate-pulse mt-[60px]">
+    <div class="h-[70px] bg-gray-300 rounded w-[50%] mb-[10px]"></div>
+    <div class="h-[50px] bg-gray-300 rounded w-[75%] mb-[15px]"></div>
+    <div class="h-[20px] bg-gray-300 rounded w-[20%] mb-[30px]"></div>
+
+    <div class="space-y-3 w-[65%]">
+      <div class="h-[24px] bg-gray-300 rounded w-full"></div>
+      <div class="h-[24px] bg-gray-300 rounded w-full"></div>
+      <div class="h-[24px] bg-gray-300 rounded w-full"></div>
+      <div class="h-[24px] bg-gray-300 rounded w-[90%]"></div>
     </div>
   </div>
 
@@ -110,7 +110,6 @@ if (id === undefined) {
     const $author = $("#article-author");
     const $content = $("#article-content");
     const $modalContainer = $("#delete-article-modal-container");
-    const $modal = $("#modal");
     const $openModalButton = $("#open-modal");
     const $closeModalButton = $("#close-modal");
 
@@ -120,7 +119,6 @@ if (id === undefined) {
       !$author ||
       !$content ||
       !$modalContainer ||
-      !$modal ||
       !$openModalButton ||
       !$closeModalButton ||
       !$deleteLink ||
@@ -149,13 +147,13 @@ if (id === undefined) {
     $actionsManager.classList.remove("hidden");
 
     $openModalButton.addEventListener("click", () => {
-      $modal.classList.remove("hidden");
-      $modal.classList.add("grid");
+      $modalContainer.classList.remove("hidden");
+      $modalContainer.classList.add("grid");
     });
 
     $closeModalButton.addEventListener("click", () => {
-      $modal.classList.add("hidden");
-      $modal.classList.remove("grid");
+      $modalContainer.classList.add("hidden");
+      $modalContainer.classList.remove("grid");
     });
 
     $deleteLink.addEventListener("click", async () => {
@@ -164,8 +162,8 @@ if (id === undefined) {
 
         if (success) {
           alert("Artículo eliminado ✅");
-          $modal.classList.add("hidden");
-          $modal.classList.remove("grid");
+          $modalContainer.classList.add("hidden");
+          $modalContainer.classList.remove("grid");
           window.location.href = "/";
         } else {
           alert("Error al eliminar el artículo ❌");

@@ -9,6 +9,7 @@ import { BadRequestError } from "../../../models/errors/bad-request.error";
 import { ZodError } from "zod";
 import { authMiddleware } from "../../../middlewares/auth.middleware";
 import { UpdateArticleDto } from "../../../models/dtos/update-article.dto";
+import { CloudinaryService } from "../../../services/cloudinary.service";
 
 export const GET: APIRoute = async ({ params }) => {
   try {
@@ -52,6 +53,15 @@ export const DELETE: APIRoute = async ({ params, request }) => {
 
     await prisma.article.delete({ where: { id: params.id } });
 
+    if (article.image) {
+      const publicId = CloudinaryService.extractIdOf(article.image);
+
+      if (publicId) {
+        await CloudinaryService.delete(publicId);
+      }
+    }
+
+
     return new OkResponse("Artículo eliminado");
   } catch (error) {
     console.error("Error in DELETE /api/articles/[id]:", error);
@@ -73,14 +83,38 @@ export const PATCH: APIRoute = async ({ params, request }) => {
       return new NotFoundError("Artículo no encontrado");
     }
 
-    const user = await authMiddleware(request)
+    const user = await authMiddleware(request);
 
     if (user.id !== article.authorId) {
       return new UnauthorizedError("No se puede editar artículos de otros");
     }
 
     const formData = await request.formData();
-    const body = Object.fromEntries(formData.entries());
+
+    const body: Record<string, any> = {};
+    formData.forEach((value, key) => {
+      body[key] = value;
+    });
+
+    if (body.image) {
+      const newImage = body.image;
+
+      if (article.image) {
+        const publicId = CloudinaryService.extractIdOf(article.image);
+        if (publicId) {
+          await CloudinaryService.delete(publicId);
+        }
+      }
+
+      if (newImage instanceof File) {
+        const uploadResult = await CloudinaryService.upload(newImage);
+        body.image = uploadResult.secure_url;
+      }
+      else if (typeof newImage === "string") {
+        body.image = newImage;
+      }
+    }
+
     const data = UpdateArticleDto.parse(body);
 
     await prisma.article.update({ where: { id }, data });

@@ -142,7 +142,8 @@ import Layout from "../../layouts/Layout.astro";
       !$imageContainer ||
       !$urlTab ||
       !$urlContainer ||
-      !$urlInput
+      !$urlInput ||
+      !$urlPreview
     )
       return;
 
@@ -205,7 +206,7 @@ import Layout from "../../layouts/Layout.astro";
       if (!$imageContainer.classList.contains("hidden") && file) {
         formData.set("image", file);
       } else if (!$urlContainer.classList.contains("hidden") && url) {
-        formData.set("imageUrl", url);
+        formData.set("image", url);
       }
 
       try {
