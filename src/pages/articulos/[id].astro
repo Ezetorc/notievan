@@ -96,7 +96,7 @@ if (id === undefined) {
 
     if (!$title || !$desc || !$author || !$content || !$editAnchor) return;
 
-    const authorName = await UsersService.getNameOfUserWithId(article.authorId);
+    const authorName = await UsersService.getNameOfUser(article.authorId);
 
     $title.innerText = article.title;
     $desc.innerText = article.description;

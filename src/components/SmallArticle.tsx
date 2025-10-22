@@ -15,7 +15,7 @@ export function SmallArticle({ article }: Props) {
 
   useEffect(() => {
     async function fetchAuthor(article: ArticleData) {
-      const name = await UsersService.getNameOfUserWithId(article.authorId);
+      const name = await UsersService.getNameOfUser(article.authorId);
       setAuthorName(name);
     }
 

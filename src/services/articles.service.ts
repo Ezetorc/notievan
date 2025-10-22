@@ -1,3 +1,4 @@
+import axios from "axios";
 import type { Article } from "@prisma/client";
 import { SessionService } from "./session.service";
 import { publicEnv } from "../configuration/public-env.configuration";
@@ -6,68 +7,64 @@ export class ArticlesService {
   private static API_BASE = `${publicEnv.baseUrl}/api/articles`;
 
   static async create(data: FormData): Promise<Article> {
-    const token = SessionService.token;
+    try {
+      const token = SessionService.token;
+      const response = await axios.post<{ value: Article }>(this.API_BASE, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    const res = await fetch(this.API_BASE, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: data,
-    });
+      return response.data.value;
+    } catch (error: any) {
+      const message = error.response?.data?.error || "Error al crear el artículo";
 
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.error || "Error al crear el artículo");
+      throw new Error(message);
     }
-
-    const response = await res.json();
-
-    return response.value;
   }
 
   static async update(data: FormData, id: string): Promise<Article> {
-    const token = SessionService.token;
+    try {
+      const token = SessionService.token;
 
-    const res = await fetch(`${this.API_BASE}/${id}`, {
-      method: "PATCH",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: data,
-    });
+      const response = await axios.patch<{ value: Article }>(`${this.API_BASE}/${id}`, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.error || "Error al editar el artículo");
+      return response.data.value;
+    } catch (error: any) {
+      const message = error.response?.data?.error || "Error al editar el artículo";
+
+      throw new Error(message);
     }
-
-    const response = await res.json();
-
-    return response.value;
   }
 
   static async delete(id: string): Promise<boolean> {
-    const token = SessionService.token;
+    try {
+      const token = SessionService.token;
 
-    const res = await fetch(`${this.API_BASE}/${id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+      await axios.delete(`${this.API_BASE}/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    return res.ok;
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   static async getById(id: string): Promise<Article | undefined> {
-    const res = await fetch(`${this.API_BASE}/${id}`);
+    try {
+      const response = await axios.get<{ value: Article }>(`${this.API_BASE}/${id}`);
 
-    if (!res.ok) return undefined;
-
-    const data = await res.json();
-
-    return data.value;
+      return response.data.value;
+    } catch {
+      return undefined;
+    }
   }
 
   static async getAll(
@@ -75,17 +72,19 @@ export class ArticlesService {
       page = 0,
       limit = 4,
     }: {
-      page: number;
-      limit: number;
-    } = { page: 0, limit: 4 }
+      page?: number;
+      limit?: number;
+    } = {}
   ): Promise<Article[]> {
-    const res = await fetch(`${this.API_BASE}?page=${page}&limit=${limit}`);
+    try {
+      const response = await axios.get<{ value: { data: Article[] } }>(
+        `${this.API_BASE}?page=${page}&limit=${limit}`
+      );
 
-    if (!res.ok) return [];
-
-    const data = await res.json();
-
-    return data.value.data as Article[];
+      return response.data.value.data;
+    } catch {
+      return [];
+    }
   }
 
   static async getOwn(
@@ -93,34 +92,37 @@ export class ArticlesService {
       page = 0,
       limit = 4,
     }: {
-      page: number;
-      limit: number;
-    } = { page: 0, limit: 4 }
+      page?: number;
+      limit?: number;
+    } = {}
   ): Promise<Article[]> {
-    const token = SessionService.token;
-    const res = await fetch(
-      `${this.API_BASE}/own?page=${page}&limit=${limit}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    try {
+      const token = SessionService.token;
 
-    if (!res.ok) return [];
+      const response = await axios.get<{ value: { data: Article[] } }>(
+        `${this.API_BASE}/own?page=${page}&limit=${limit}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    const data = await res.json();
-
-    return data.value.data as Article[];
+      return response.data.value.data;
+    } catch {
+      return [];
+    }
   }
 
   static async getRandom(omitId: string): Promise<Article[]> {
-    const res = await fetch(`${this.API_BASE}/random?omit=${omitId}`);
+    try {
+      const response = await axios.get<{ value: Article[] }>(
+        `${this.API_BASE}/random?omit=${omitId}`
+      );
 
-    if (!res.ok) return [];
-
-    const data = await res.json();
-
-    return data.value;
+      return response.data.value;
+    } catch {
+      return [];
+    }
   }
 }

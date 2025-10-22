@@ -1,51 +1,33 @@
+import axios from "axios";
 import { publicEnv } from "../configuration/public-env.configuration";
-import type { SanitizedUser } from "../models/sanitized-user.model";
+import type { AuthResponse } from "../models/auth-response.model";
+import type { RegisterDtoType } from "../models/dtos/register.dto";
+import type { LoginDtoType } from "../models/dtos/login.dto";
 
 export class AuthService {
   private static API_BASE = `${publicEnv.baseUrl}/api/auth`;
 
-  static async register(data: {
-    name: string;
-    email: string;
-    password: string;
-  }): Promise<{ user: SanitizedUser; token: string }> {
-    const res = await fetch(`${this.API_BASE}/register`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
+  static async register(data: RegisterDtoType) {
+    try {
+      const response = await axios.post<{ value: AuthResponse }>(`${this.API_BASE}/register`, data);
 
-    if (!res.ok) {
-      const error = await res.json();
-      throw new Error(error.error || "Error al registrarse");
+      return response.data.value;
+    } catch (error: any) {
+      const message = error.response?.data?.error || "Error al registrarse";
+
+      throw new Error(message);
     }
-
-    const response = await res.json();
-
-    return response.value;
   }
 
-  static async login(data: {
-    email: string;
-    password: string;
-  }): Promise<{ user: SanitizedUser; token: string }> {
-    const res = await fetch(`${this.API_BASE}/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
+  static async login(data: LoginDtoType) {
+    try {
+      const response = await axios.post<{ value: AuthResponse }>(`${this.API_BASE}/login`, data);
 
-    if (!res.ok) {
-      const error = await res.json();
-      throw new Error(error.error || "Error al loguearse");
+      return response.data.value;
+    } catch (error: any) {
+      const message = error.response?.data?.error || "Error al loguearse";
+
+      throw new Error(message);
     }
-
-    const response = await res.json();
-
-    return response.value;
   }
 }
