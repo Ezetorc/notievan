@@ -17,13 +17,13 @@ import InstagramIcon from "./icons/InstagramIcon.astro";
     >
       <HeaderLink href="/">Inicio</HeaderLink>
 
-      <!-- Links para usuario logueado -->
-      <HeaderLink id="account-user" class="hidden" href="/cuenta" />
+      <HeaderLink id="account-user" class="hidden" href="/cuenta"
+        >Cuenta</HeaderLink
+      >
       <HeaderLink id="article-creator" class="hidden" href="/articulos/nuevo"
         >Crear</HeaderLink
       >
 
-      <!-- Links para usuario no logueado -->
       <HeaderLink id="register-link" class="hidden" href="/registro"
         >Registrarse</HeaderLink
       >
@@ -43,35 +43,33 @@ import InstagramIcon from "./icons/InstagramIcon.astro";
 <script>
   import { Role } from "@prisma/client";
   import { SessionService } from "../services/session.service";
+  import { $ } from "../utilities/$.utility";
 
-  function renderAccount() {
-    const user = SessionService.user;
-
-    const $accountUser = document.getElementById("account-user");
-    const $articleCreator = document.getElementById("article-creator");
-    const $registerLink = document.getElementById("register-link");
+  function render() {
+    const $articleCreator = $("#article-creator");
+    const $registerLink = $("#register-link");
+    const $accountUser = $("#account-user");
 
     if (!$accountUser || !$articleCreator || !$registerLink) return;
 
+    const user = SessionService.user;
+
     if (user) {
-      $accountUser.innerText = "Cuenta";
       $accountUser.classList.remove("hidden");
+      $registerLink.classList.add("hidden");
 
       if (user.role === Role.AUTHOR) {
         $articleCreator.classList.remove("hidden");
       } else {
         $articleCreator.classList.add("hidden");
       }
-
-      $registerLink.classList.add("hidden");
     } else {
       $accountUser.classList.add("hidden");
       $articleCreator.classList.add("hidden");
-
       $registerLink.classList.remove("hidden");
     }
   }
 
-  renderAccount();
-  document.addEventListener("astro:after-swap", renderAccount);
+  render();
+  document.addEventListener("astro:after-swap", render);
 </script>

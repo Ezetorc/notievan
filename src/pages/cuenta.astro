@@ -1,7 +1,6 @@
 ---
 import { AccountArticles } from "../components/AccountArticles";
 import Hero from "../components/Hero.astro";
-import { SmallArticle } from "../components/SmallArticle";
 import UserInfo from "../components/UserInfo.astro";
 import Layout from "../layouts/Layout.astro";
 ---
@@ -17,7 +16,7 @@ import Layout from "../layouts/Layout.astro";
     </div>
 
     <button
-      id="logout-btn"
+      id="logout-button"
       class="w-fit px-4 py-3 clickable bg-brand-orange rounded-[4px] text-white text-3xl"
       >Cerrar sesión</button
     >
@@ -28,49 +27,33 @@ import Layout from "../layouts/Layout.astro";
 
 <script>
   import { SessionService } from "../services/session.service";
+  import { $ } from "../utilities/$.utility";
+  import { getLocaleDate } from "../utilities/get-locale-date.utility";
 
-  function renderAccount() {
+  function render() {
+    const $name = $("#name-info");
+    const $email = $("#email-info");
+    const $date = $("#date-info");
+    const $logoutButton = $("#logout-button");
     const user = SessionService.user;
 
-    if (user) {
-      const $name = document.getElementById("name-info");
-      const $email = document.getElementById("email-info");
-      const $date = document.getElementById("date-info");
+    if (!$name || !$email || !$date || !$logoutButton || !user) return;
 
-      if ($name && $email && $date) {
-        if (user) {
-          const name = user.name || "Error cargando el nombre";
-          const email = user.email || "Error cargando el email";
-          const date = new Date(user.createdAt).toLocaleDateString("es-AR", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          });
+    const name = user.name || "Error cargando el nombre";
+    const email = user.email || "Error cargando el email";
+    const date = getLocaleDate(user.createdAt);
 
-          $name.innerText = name;
-          $email.innerText = email;
-          $date.innerText = date;
-        }
+    $name.innerText = name;
+    $email.innerText = email;
+    $date.innerText = date;
 
-        const logoutBtn = document.getElementById("logout-btn");
-        logoutBtn?.addEventListener("click", async () => {
-          SessionService.delete();
+    $logoutButton.addEventListener("click", () => {
+      SessionService.delete();
 
-          window.location.href = "/sesion";
-        });
-      }
-
-      const logoutBtn = document.getElementById("logout-btn");
-      if (logoutBtn) {
-        logoutBtn.addEventListener("click", () => {
-          SessionService.delete();
-          window.location.href = "/sesion";
-        });
-      }
-    }
+      window.location.href = "/sesion";
+    });
   }
 
-  renderAccount();
-
-  document.addEventListener("astro:after-swap", renderAccount);
+  render();
+  document.addEventListener("astro:after-swap", render);
 </script>

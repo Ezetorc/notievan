@@ -33,10 +33,12 @@ import Layout from "../../layouts/Layout.astro";
 
     <div class="grid gap-x-10 grid-cols-[2fr_1fr]">
       <div class="flex flex-col justify-between gap-y-6">
-        <textarea id="editor" name="content"></textarea>
+        <markdown-editor
+          id="content-input"
+          placeholder="Contenido del artículo..."
+          autosave></markdown-editor>
 
         <button
-          id="create-article-button"
           class="w-full h-[70px] clickable bg-brand-orange rounded-[4px] text-white text-3xl"
         >
           Crear artículo
@@ -48,14 +50,14 @@ import Layout from "../../layouts/Layout.astro";
           <div class="w-full max-w-md mx-auto">
             <input
               type="file"
-              id="thumbnail_url"
-              name="thumbnail_url"
+              id="thumbnail-file"
+              name="thumbnailFile"
               accept="image/*"
               class="hidden"
             />
 
             <label
-              for="thumbnail_url"
+              for="thumbnail-file"
               class="cursor-pointer w-full aspect-video rounded-md border border-gray-300 overflow-hidden flex items-center justify-center bg-gray-200"
             >
               <img
@@ -72,7 +74,7 @@ import Layout from "../../layouts/Layout.astro";
           <ArticleInput
             placeholder="Breve descripción de la portada"
             name="thumbnail-alt"
-            maxlength="30"
+            maxlength="50"
           />
         </div>
       </aside>
@@ -80,137 +82,66 @@ import Layout from "../../layouts/Layout.astro";
   </form>
 </Layout>
 
+<script src="../../components/MarkdownEditor.ts"></script>
+
 <script>
-  import EasyMDE from "easymde";
-  import "easymde/dist/easymde.min.css";
+  import type { MarkdownEditor } from "../../components/MarkdownEditor";
   import { ArticlesService } from "../../services/articles.service";
+  import { $ } from "../../utilities/$.utility";
 
-  async function loadForm() {
-    const $textarea = document.getElementById("editor");
+  async function render() {
+    const $editor = $("#content-input") as MarkdownEditor;
+    const $form = $("#form") as HTMLFormElement;
+    const $thumbnailFileInput = $("#thumbnail-file") as HTMLInputElement;
+    const $thumbnailPreview = $("#thumbnail-preview") as HTMLImageElement;
 
-    let easyMDE: EasyMDE;
+    if (!$form || !$thumbnailFileInput || !$thumbnailPreview) return;
 
-    if ($textarea) {
-      easyMDE = new EasyMDE({
-        element: $textarea,
-        placeholder: "Contenido de tu artículo...",
-        spellChecker: false,
-        autofocus: true,
-        autosave: {
-          enabled: true,
-          uniqueId: "article-editor",
-          delay: 1000,
-        },
-        toolbar: [
-          "preview",
-          "|",
-          "bold",
-          "italic",
-          "heading",
-          "|",
-          "quote",
-          "unordered-list",
-          "ordered-list",
-          "|",
-          "link",
-          "image",
-          "table",
-          "|",
-          "guide",
-        ],
-        minHeight: "500px",
-      });
+    $thumbnailFileInput.addEventListener("change", (event) => {
+      const eventTarget = event.target as HTMLInputElement;
+      const file = eventTarget.files?.[0];
 
-      easyMDE.codemirror.getWrapperElement().style.fontSize = "24px";
-      easyMDE.codemirror.getWrapperElement().style.lineHeight = "1.6";
-
-      const $form = document.getElementById("form") as HTMLFormElement;
-      const $thumbnailInputPlaceholder =
-        document.getElementById("placeholder-text");
-      const $thumbnailFileInput = document.getElementById(
-        "thumbnail_url"
-      ) as HTMLInputElement;
-      const $thumbnailPreview = document.getElementById(
-        "thumbnail-preview"
-      ) as HTMLImageElement;
-      const $createArticle = document.getElementById("create-article-button");
-
-      if (
-        $form &&
-        $createArticle &&
-        $thumbnailFileInput &&
-        $thumbnailPreview &&
-        $thumbnailInputPlaceholder
-      ) {
-        $thumbnailFileInput.addEventListener("change", (event) => {
-          const file = (event.target as HTMLInputElement).files?.[0];
-
-          if (file) {
-            $thumbnailPreview.src = URL.createObjectURL(file);
-            $thumbnailPreview.classList.remove("hidden");
-            $thumbnailInputPlaceholder.classList.add("hidden");
-          } else {
-            $thumbnailPreview.classList.add("hidden");
-            $thumbnailPreview.src = "";
-            $thumbnailInputPlaceholder.classList.remove("hidden");
-          }
-        });
-
-        $form.addEventListener("submit", async (event) => {
-          event.preventDefault();
-
-          const formData = new FormData($form);
-          const title = String(formData.get("title")).trim();
-          const subtitle = String(formData.get("subtitle")).trim();
-          const description = String(formData.get("description")).trim();
-          const thumbnailAlt = String(formData.get("thumbnail-alt")).trim();
-          const thumbnailFile = $thumbnailFileInput.files?.[0];
-          const content = easyMDE.value().trim();
-
-          if (!title) {
-            alert("El título es obligatorio");
-            return;
-          }
-
-          if (!subtitle) {
-            alert("El subtítulo es obligatorio");
-            return;
-          }
-
-          if (!description) {
-            alert("La descripción es obligatoria");
-            return;
-          }
-
-          if (!content) {
-            alert("El contenido del artículo no puede estar vacío");
-            return;
-          }
-
-          if (!thumbnailFile) {
-            alert("Debes seleccionar una imagen para la portada");
-            return;
-          }
-
-          formData.set("title", title);
-          formData.set("subtitle", subtitle);
-          formData.set("description", description);
-          formData.set("thumbnailAlt", thumbnailAlt);
-          formData.set("content", content);
-          formData.set("thumbnailFile", thumbnailFile);
-
-          try {
-            const newArticle = await ArticlesService.create(formData);
-            window.location.href = "/articulos/" + newArticle.id;
-          } catch (err) {
-            console.error("Error creando artículo:", err);
-            alert("Error al crear el artículo");
-          }
-        });
+      if (file) {
+        $thumbnailPreview.src = URL.createObjectURL(file);
+        $thumbnailPreview.classList.remove("hidden");
+      } else {
+        $thumbnailPreview.classList.add("hidden");
+        $thumbnailPreview.src = "";
       }
-    }
+    });
+
+    $form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const formData = new FormData($form);
+      const thumbnailFile = $thumbnailFileInput.files?.[0];
+      const content = $editor.value;
+
+      if (!content) {
+        alert("El contenido del artículo no puede estar vacío");
+        return;
+      }
+
+      if (!thumbnailFile) {
+        alert("Debes seleccionar una imagen para la portada");
+        return;
+      }
+
+      formData.set("content", content);
+      formData.set("thumbnailFile", thumbnailFile);
+
+      try {
+        const newArticle = await ArticlesService.create(formData);
+
+        window.location.href = "/articulos/" + newArticle.id;
+      } catch (error) {
+        console.error("Error creando artículo: ", error);
+
+        alert("Error al crear el artículo");
+      }
+    });
   }
 
-  loadForm();
-  document.addEventListener("astro:after-swap", loadForm);
+  render();
+  document.addEventListener("astro:after-swap", render);
 </script>

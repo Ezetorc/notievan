@@ -50,30 +50,26 @@ const { articleId, authorId } = Astro.props;
   const deleteBtn = document.getElementById("deleteArticle");
 
   const articleId = modal?.dataset.articleId || "";
-  const authorId = modal?.dataset.authorId || ""; // vamos a setearlo en data-attribute
+  const authorId = modal?.dataset.authorId || "";
 
   const user = SessionService.user;
 
-  // Mostrar botón solo si el usuario es el autor
   if (user && user.id === authorId) {
     deleteBtn?.classList.remove("hidden");
   } else {
-    openModal?.classList.add("hidden"); // opcional: ocultar botón para abrir modal
+    openModal?.classList.add("hidden");
   }
 
-  // Abrir modal
   openModal?.addEventListener("click", () => {
     modal?.classList.remove("hidden");
     modal?.classList.add("grid");
   });
 
-  // Cerrar modal
   closeModal?.addEventListener("click", () => {
     modal?.classList.add("hidden");
     modal?.classList.remove("grid");
   });
 
-  // Eliminar artículo
   deleteBtn?.addEventListener("click", async () => {
     try {
       const success = await ArticlesService.delete(articleId);

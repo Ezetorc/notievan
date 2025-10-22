@@ -7,8 +7,6 @@ export function SecondaryArticles() {
     initialPage: 2,
   });
 
-  console.log(articles)
-
   if (articles.length === 0) return null;
 
   return (

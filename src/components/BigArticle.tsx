@@ -1,28 +1,16 @@
 import type { Article as ArticleData } from "@prisma/client";
-import { useEffect, useState } from "react";
-import { UsersService } from "../services/users.service";
 import { Article } from "./Article";
 import { H3 } from "./H3";
 import { H4 } from "./H4";
 import { H5 } from "./H5";
+import { useAuthorName } from "../hooks/use-author-name.hook";
 
 interface Props {
   article?: ArticleData;
 }
 
-export default function BigArticle({ article }: Props) {
-  const [authorName, setAuthorName] = useState("...");
-
-  useEffect(() => {
-    async function fetchAuthor(article: ArticleData) {
-      const name = await UsersService.getNameOfUser(article.authorId);
-      setAuthorName(name);
-    }
-
-    if (article) {
-      fetchAuthor(article);
-    }
-  }, [article]);
+export function BigArticle({ article }: Props) {
+  const authorName = useAuthorName(article?.authorId);
 
   if (!article) {
     return (

@@ -12,11 +12,13 @@ if (id === undefined) {
 <Layout>
   <article class="flex flex-col">
     <section class="flex text-2xl gap-x-5 mt-[60px]">
-      <a id="edit-article-anchor" href={`/articulos/editar/${id}`} class="clickable hidden">Editar</a>
+      <a
+        id="edit-article-link"
+        href={`/articulos/editar/${id}`}
+        class="clickable hidden">Editar</a
+      >
       <div
         id="delete-article-modal-container"
-        data-article-id="${article.id}"
-        data-author-id="${article.authorId}"
         class="fixed z-[100] bg-[#000c] w-screen h-screen inset-0 place-items-center bg-opacity-50 items-center justify-center hidden"
       >
         <div
@@ -30,19 +32,19 @@ if (id === undefined) {
           </div>
           <div class="flex gap-x-8">
             <button
-              id="closeModal"
+              id="close-modal"
               class="mt-4 text-2xl bg-brand-orange clickable text-white px-4 py-2 rounded"
               >Cerrar</button
             >
             <button
-              id="deleteArticle"
+              id="delete-article"
               class="mt-4 text-2xl bg-brand-red clickable text-white px-4 py-2 rounded"
               >Eliminar</button
             >
           </div>
         </div>
       </div>
-      <button id="openModal" class="clickable text-brand-red">Eliminar</button>
+      <button id="open-modal" class="clickable text-brand-red">Eliminar</button>
     </section>
 
     <h1
@@ -70,90 +72,85 @@ if (id === undefined) {
   import { UsersService } from "../../services/users.service";
   import { SessionService } from "../../services/session.service";
   import { marked } from "marked";
-  import type { Article } from "@prisma/client";
+  import { getArticleFromPath } from "../../utilities/get-id-from-path.utility";
+  import { $ } from "../../utilities/$.utility";
 
-  async function loadArticle() {
-    const pathParts = window.location.pathname.split("/");
-    const id = pathParts[pathParts.length - 1];
+  async function render() {
+    const article = await getArticleFromPath();
 
-    if (!id) return console.error("No se encontró el parámetro ID en la URL");
+    if (!article) return;
 
-    let article: Article | undefined;
-    try {
-      article = await ArticlesService.getById(id);
-    } catch (err) {
-      console.error("Error al obtener el artículo:", err);
-      alert("No se pudo cargar el artículo");
+    const $editLink = $("#edit-article-link");
+    const $deleteLink = document.getElementById("delete-article");
+    const $title = $("#article-title");
+    const $description = $("#article-description");
+    const $author = $("#article-author");
+    const $content = $("#article-content");
+    const $modalContainer = $("#delete-article-modal-container");
+    const $modal = $("#modal");
+    const $openModalButton = $("#open-modal");
+    const $closeModalButton = $("#close-modal");
+
+    if (
+      !$title ||
+      !$description ||
+      !$author ||
+      !$content ||
+      !$editLink ||
+      !$modalContainer ||
+      !$modal ||
+      !$openModalButton ||
+      !$closeModalButton ||
+      !$deleteLink
+    )
       return;
-    }
-    if (!article) throw new Error("Artículo no encontrado");
-
-    const $editAnchor = document.getElementById("edit-article-anchor");
-    const $title = document.getElementById("article-title");
-    const $desc = document.getElementById("article-description");
-    const $author = document.getElementById("article-author");
-    const $content = document.getElementById("article-content");
-
-    if (!$title || !$desc || !$author || !$content || !$editAnchor) return;
 
     const authorName = await UsersService.getNameOfUser(article.authorId);
+    const content = await marked.parse(article.content);
 
     $title.innerText = article.title;
-    $desc.innerText = article.description;
+    $description.innerText = article.description;
     $author.innerText = `Por ${authorName}`;
-    $content.innerHTML = await marked.parse(article.content);
+    $content.innerHTML = content;
+    $modalContainer.dataset.articleId = article.id;
+    $modalContainer.dataset.authorId = article.authorId;
 
-    const modalContainer = document.getElementById(
-      "delete-article-modal-container"
-    );
-    if (modalContainer) {
-      modalContainer.dataset.articleId = article.id;
-      modalContainer.dataset.authorId = article.authorId;
+    const user = SessionService.user;
 
-      const modal = document.getElementById("modal");
-      const openBtn = document.getElementById("openModal");
-      const closeBtn = document.getElementById("closeModal");
-      const deleteBtn = document.getElementById("deleteArticle");
+    if (user?.id !== article.authorId) return;
 
-      const user = SessionService.user;
+    $editLink.classList.remove("hidden");
 
-      if (
-        user?.id === article.authorId &&
-        openBtn &&
-        closeBtn &&
-        deleteBtn &&
-        modal
-      ) {
-        $editAnchor.classList.remove("hidden");
+    $openModalButton.addEventListener("click", () => {
+      $modal.classList.remove("hidden");
+      $modal.classList.add("grid");
+    });
 
-        openBtn.addEventListener("click", () => {
-          modal.classList.remove("hidden");
-          modal.classList.add("grid");
-        });
-        closeBtn.addEventListener("click", () => {
-          modal.classList.add("hidden");
-          modal.classList.remove("grid");
-        });
-        deleteBtn.addEventListener("click", async () => {
-          try {
-            const success = await ArticlesService.delete(article.id);
-            if (success) {
-              alert("Artículo eliminado ✅");
-              modal.classList.add("hidden");
-              modal.classList.remove("grid");
-              window.location.href = "/";
-            } else {
-              alert("Error al eliminar el artículo ❌");
-            }
-          } catch (err) {
-            console.error(err);
-            alert("Error de conexión ❌");
-          }
-        });
+    $closeModalButton.addEventListener("click", () => {
+      $modal.classList.add("hidden");
+      $modal.classList.remove("grid");
+    });
+
+    $deleteLink.addEventListener("click", async () => {
+      try {
+        const success = await ArticlesService.delete(article.id);
+
+        if (success) {
+          alert("Artículo eliminado ✅");
+          $modal.classList.add("hidden");
+          $modal.classList.remove("grid");
+          window.location.href = "/";
+        } else {
+          alert("Error al eliminar el artículo ❌");
+        }
+      } catch (error) {
+        console.error(error);
+
+        alert("Error de conexión ❌");
       }
-    }
+    });
   }
 
-  loadArticle();
-  document.addEventListener("astro:after-swap", loadArticle);
+  render();
+  document.addEventListener("astro:after-swap", render);
 </script>

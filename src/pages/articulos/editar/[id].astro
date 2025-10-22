@@ -49,12 +49,15 @@ if (article === undefined) {
 
     <div class="grid gap-x-10 grid-cols-[2fr_1fr]">
       <div class="flex flex-col justify-between gap-y-6">
-        <textarea id="editor" name="content"></textarea>
+        <markdown-editor
+          id="content-input"
+          placeholder="Contenido del artículo..."
+          autosave></markdown-editor>
 
         <button
           class="w-full h-[70px] clickable bg-brand-orange rounded-[4px] text-white text-3xl"
         >
-          Edit artículo
+          Editar artículo
         </button>
       </div>
 
@@ -63,7 +66,7 @@ if (article === undefined) {
           <div class="w-full max-w-md mx-auto">
             <input
               type="file"
-              id="thumbnailFile"
+              id="thumbnail-file"
               name="thumbnailFile"
               accept="image/*"
               class="hidden"
@@ -100,130 +103,74 @@ if (article === undefined) {
   </form>
 </Layout>
 
+<script src="../../../components/MarkdownEditor.ts"></script>
+
 <script>
-  import EasyMDE from "easymde";
-  import "easymde/dist/easymde.min.css";
+  import type { MarkdownEditor } from "../../../components/MarkdownEditor";
   import { ArticlesService } from "../../../services/articles.service";
-  import type { Article } from "@prisma/client";
+  import { $ } from "../../../utilities/$.utility";
+  import { getArticleFromPath } from "../../../utilities/get-id-from-path.utility";
 
-  async function initEditor() {
-    const pathParts = window.location.pathname.split("/");
-    const id = pathParts[pathParts.length - 1];
-
-    if (!id) {
-      console.error("No se encontró el parámetro ID en la URL");
-      return;
-    }
-
-    let article: Article | undefined;
-
-    try {
-      article = await ArticlesService.getById(id);
-    } catch (err) {
-      console.error("Error al obtener el artículo:", err);
-      alert("No se pudo cargar el artículo");
-      return;
-    }
+  async function render() {
+    const article = await getArticleFromPath();
 
     if (!article) return;
 
-    const $textarea = document.getElementById("editor");
+    const $editor = $("#content-input") as MarkdownEditor;
+    const $form = $("#form") as HTMLFormElement;
+    const $thumbnailFileInput = $("#thumbnail-file") as HTMLInputElement;
+    const $thumbnailPreview = $("#thumbnail-preview") as HTMLImageElement;
 
-    let easyMDE: EasyMDE;
+    if (!$form || !$thumbnailFileInput || !$thumbnailPreview || !$editor)
+      return;
 
-    if ($textarea) {
-      easyMDE = new EasyMDE({
-        element: $textarea,
-        placeholder: "Contenido de tu artículo...",
-        initialValue: article.content,
-        spellChecker: false,
-        autofocus: true,
-        autosave: {
-          enabled: true,
-          uniqueId: "article-editor",
-          delay: 1000,
-        },
-        toolbar: [
-          "preview",
-          "|",
-          "bold",
-          "italic",
-          "heading",
-          "|",
-          "quote",
-          "unordered-list",
-          "ordered-list",
-          "|",
-          "link",
-          "image",
-          "table",
-          "|",
-          "guide",
-        ],
-        minHeight: "500px",
-      });
+    $editor.value = article.content;
 
-      easyMDE.codemirror.getWrapperElement().style.fontSize = "24px";
-      easyMDE.codemirror.getWrapperElement().style.lineHeight = "1.6";
+    $thumbnailFileInput.addEventListener("change", (event) => {
+      const eventTarget = event.target as HTMLInputElement;
+      const file = eventTarget.files?.[0];
 
-      const $form = document.getElementById("form") as HTMLFormElement;
-      const $thumbnailInputPlaceholder =
-        document.getElementById("placeholder-text");
-      const $thumbnailFileInput = document.getElementById(
-        "thumbnailFile"
-      ) as HTMLInputElement;
-      const $thumbnailPreview = document.getElementById(
-        "thumbnail-preview"
-      ) as HTMLImageElement;
-
-      if (
-        $form &&
-        $thumbnailFileInput &&
-        $thumbnailPreview &&
-        $thumbnailInputPlaceholder
-      ) {
-        $thumbnailFileInput.addEventListener("change", (event) => {
-          const file = (event.target as HTMLInputElement).files?.[0];
-
-          if (file) {
-            $thumbnailPreview.src = URL.createObjectURL(file);
-            $thumbnailPreview.classList.remove("hidden");
-            $thumbnailInputPlaceholder.classList.add("hidden");
-          } else {
-            $thumbnailPreview.classList.add("hidden");
-            $thumbnailPreview.src = "";
-            $thumbnailInputPlaceholder.classList.remove("hidden");
-          }
-        });
-
-        $form.addEventListener("submit", async (event) => {
-          event.preventDefault();
-
-          const formData = new FormData($form);
-          const thumbnailFile = $thumbnailFileInput.files?.[0];
-          const content = easyMDE.value();
-
-          if (thumbnailFile) {
-            formData.set("thumbnailFile", thumbnailFile);
-          }
-
-          formData.set("content", content);
-
-          try {
-            const updatedArticle = await ArticlesService.update(
-              formData,
-              article.id
-            );
-
-            window.location.href = "/articulos/" + updatedArticle.id;
-          } catch (err) {
-            console.error("Error editando artículo:", err);
-            alert("Error al editar el artículo");
-          }
-        });
+      if (file) {
+        $thumbnailPreview.src = URL.createObjectURL(file);
+        $thumbnailPreview.classList.remove("hidden");
+      } else {
+        $thumbnailPreview.classList.add("hidden");
+        $thumbnailPreview.src = "";
       }
-    }
+    });
+
+    $form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const formData = new FormData($form);
+      const thumbnailFile = $thumbnailFileInput.files?.[0];
+      const content = $editor.value;
+
+      if (!content) {
+        alert("El contenido del artículo no puede estar vacío");
+        return;
+      }
+
+      if (!thumbnailFile) {
+        alert("Debes seleccionar una imagen para la portada");
+        return;
+      }
+
+      formData.set("content", content);
+      formData.set("thumbnailFile", thumbnailFile);
+
+      try {
+        const newArticle = await ArticlesService.update(formData, article.id);
+
+        window.location.href = "/articulos/" + newArticle.id;
+      } catch (error) {
+        console.error("Error creando artículo: ", error);
+
+        alert("Error al crear el artículo");
+      }
+    });
   }
 
-  initEditor();
+  render();
+  document.addEventListener("astro:after-swap", render);
 </script>

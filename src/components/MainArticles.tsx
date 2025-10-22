@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import BigArticle from "./BigArticle";
+import { BigArticle } from "./BigArticle";
 import { ArticlesService } from "../services/articles.service";
 import type { Article } from "@prisma/client";
 

@@ -9,7 +9,7 @@ import AuthSwipeLink from "../components/AuthSwipeLink.astro";
   <Hero title="Sesión" description="Entrá a tu cuenta" />
 
   <section class="w-[clamp(300px,100%,800px)] mb-10">
-    <form id="login-form" class="flex w-full flex-col gap-y-6">
+    <form id="form" class="flex w-full flex-col gap-y-6">
       <Input
         id="email"
         name="email"
@@ -50,38 +50,37 @@ import AuthSwipeLink from "../components/AuthSwipeLink.astro";
 <script>
   import { AuthService } from "../services/auth.service";
   import { SessionService } from "../services/session.service";
+  import { $ } from "../utilities/$.utility";
 
-  const form = document.getElementById("login-form") as HTMLFormElement;
-  const message = document.getElementById("message") as HTMLParagraphElement;
+  async function render() {
+    const $form = $("#form") as HTMLFormElement;
+    const $message = $("#message");
 
-  if (form && message) {
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      message.classList.add("hidden");
+    if (!$form || !$message) return;
 
-      const formData = new FormData(form);
-      const emailValue = formData.get("email");
-      const passwordValue = formData.get("password");
+    $form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      $message.classList.add("hidden");
 
-      if (!emailValue || !passwordValue) return;
+      const formData = new FormData($form);
+      const email = String(formData.get("email"));
+      const password = String(formData.get("password"));
 
-      const email = String(emailValue);
-      const password = String(passwordValue);
+      if (!email || !password) return;
 
       try {
-        const data = await AuthService.login({
-          email,
-          password,
-        });
+        const data = await AuthService.login({ email, password });
 
         SessionService.value = data;
         window.location.href = "/";
       } catch (error) {
         if (error instanceof Error) {
-          message.textContent = error.message;
-          message.classList.remove("hidden");
+          $message.textContent = error.message;
+          $message.classList.remove("hidden");
         }
       }
     });
   }
+
+  render();
 </script>
