@@ -1,56 +1,55 @@
 import type { APIRoute } from "astro";
 import { prisma } from "../../../configuration/prisma.configuration";
-import { getUserFromToken } from "../../../utilities/get-user-from-token.utility";
-import { uploadToCloudinary } from "../../../utilities/upload-to-cloudinary.utility";
-import { validateArticleFormData } from "../../../utilities/validate-article-form-data.utility";
-import { InternalServerError } from "../../../models/internal-server-error.model";
-import { CreatedResponse } from "../../../models/created-response.model";
-import { ForbiddenError } from "../../../models/forbidden-error.model";
-import { OkResponse } from "../../../models/ok-response.model";
+import { InternalServerError } from "../../../models/errors/internal-server.error";
+import { CreatedResponse } from "../../../models/responses/created.response";
+import { ForbiddenError } from "../../../models/errors/forbidden.error";
+import { OkResponse } from "../../../models/responses/ok.response";
+import { authMiddleware } from "../../../middlewares/auth.middleware";
+import { Role } from "@prisma/client";
+import { CreateArticleDto } from "../../../models/dtos/create-article.dto";
+import { CloudinaryService } from "../../../services/cloudinary.service";
+import { ZodError } from "zod";
+import { BadRequestError } from "../../../models/errors/bad-request.error";
+import { PaginationParamsDto } from "../../../models/dtos/pagination-params.dto";
 
 export const POST: APIRoute = async ({ request }) => {
   try {
-    const authHeader = request.headers.get("authorization");
-    const user = await getUserFromToken(authHeader);
+    const user = await authMiddleware(request)
 
-    if (user.role !== "AUTHOR") {
+    if (user.role !== Role.AUTHOR) {
       return new ForbiddenError("No tenés acceso");
     }
 
     const formData = await request.formData();
-    const { title, subtitle, description, content, thumbnailAlt, file } =
-      validateArticleFormData(formData);
-
-    const uploadResult = await uploadToCloudinary(file, "articles");
+    const body = Object.fromEntries(formData.entries());
+    const data = CreateArticleDto.parse(body);
+    const uploadResult = await CloudinaryService.upload(data.thumbnailFile, "articles");
 
     const article = await prisma.article.create({
       data: {
-        title,
-        subtitle,
-        description,
-        content,
+        ...data,
         authorId: user.id,
         thumbnailUrl: uploadResult.secure_url,
-        thumbnailAlt,
       },
     });
 
     return new CreatedResponse(article);
-  } catch (error: any) {
-    console.error("Error creating article:", error);
+  } catch (error) {
+    console.error("Error in POST /api/articles:", error);
 
-    return new InternalServerError(error.message);
+    if (error instanceof ZodError) {
+      return new BadRequestError(error.errors);
+    }
+
+    return new InternalServerError();
   }
 };
 
 export const GET: APIRoute = async ({ request }) => {
   try {
     const url = new URL(request.url);
-    const limitParam = url.searchParams.get("limit");
-    const pageParam = url.searchParams.get("page");
-
-    const limit = limitParam ? parseInt(limitParam) : 4;
-    const page = pageParam ? parseInt(pageParam) : 1;
+    const query = Object.fromEntries(url.searchParams.entries());
+    const { limit, page } = PaginationParamsDto.parse(query);
     const skip = (page - 1) * limit;
 
     const articles = await prisma.article.findMany({
@@ -83,7 +82,12 @@ export const GET: APIRoute = async ({ request }) => {
       },
     });
   } catch (error) {
-    console.error("Error obtaining articles:", error);
+    console.error("Error in GET /api/articles:", error);
+
+    if (error instanceof ZodError) {
+      return new BadRequestError(error.errors);
+    }
+
     return new InternalServerError();
   }
 };

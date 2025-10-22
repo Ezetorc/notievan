@@ -1,9 +1,8 @@
-import type { User } from "@prisma/client";
-import { BASE_URL } from "../configuration/public-env.configuration";
+import { publicEnv } from "../configuration/public-env.configuration";
 import type { SanitizedUser } from "../models/sanitized-user.model";
 
 export class AuthService {
-  private static API_BASE = `${BASE_URL}/api/auth`;
+  private static API_BASE = `${publicEnv.baseUrl}/api/auth`;
 
   static async register(data: {
     name: string;

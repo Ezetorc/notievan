@@ -1,15 +1,15 @@
 import type { User } from "@prisma/client";
-import { config } from "../configuration/private-env.configuration";
 import jwt from "jsonwebtoken";
+import { privateEnv } from "../configuration/private-env.configuration";
 
 export function getAuthorizationToken(user: User) {
   return jwt.sign(
     {
       sub: user.id,
       email: user.email,
-      role: user.role || "USER",
+      role: user.role,
     },
-    config.jwt.secret,
-    { expiresIn: config.jwt.expiresIn as any }
+    privateEnv.jwt.secret,
+    { expiresIn: privateEnv.jwt.expiresIn as any }
   );
 }

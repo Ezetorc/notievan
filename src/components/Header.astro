@@ -11,7 +11,10 @@ import InstagramIcon from "./icons/InstagramIcon.astro";
   <div
     class="w-full gap-x-[5px] text-white mobile:px-3 desktop:px-0 text-2xl max-w-[1270px] min-w-[320px] flex justify-between items-center"
   >
-    <nav class="flex items-center desktop:gap-x-[40px] mobile:gap-x-[25px]" id="header-buttons">
+    <nav
+      class="flex items-center desktop:gap-x-[40px] mobile:gap-x-[25px]"
+      id="header-buttons"
+    >
       <HeaderLink href="/">Inicio</HeaderLink>
 
       <!-- Links para usuario logueado -->
@@ -38,6 +41,7 @@ import InstagramIcon from "./icons/InstagramIcon.astro";
 </header>
 
 <script>
+  import { Role } from "@prisma/client";
   import { SessionService } from "../services/session.service";
 
   function renderAccount() {
@@ -47,14 +51,13 @@ import InstagramIcon from "./icons/InstagramIcon.astro";
     const $articleCreator = document.getElementById("article-creator");
     const $registerLink = document.getElementById("register-link");
 
-    if (!$accountUser || !$articleCreator || !$registerLink)
-      return;
+    if (!$accountUser || !$articleCreator || !$registerLink) return;
 
     if (user) {
       $accountUser.innerText = "Cuenta";
       $accountUser.classList.remove("hidden");
 
-      if (user.role === "AUTHOR") {
+      if (user.role === Role.AUTHOR) {
         $articleCreator.classList.remove("hidden");
       } else {
         $articleCreator.classList.add("hidden");

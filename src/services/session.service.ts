@@ -1,6 +1,6 @@
 import type { SanitizedUser } from "../models/sanitized-user.model";
 import type { Session } from "../models/session.model";
-import { isTokenExpired } from "../utilities/is-token-expired.utility";
+import { isTokenValid } from "../utilities/is-token-valid.utility";
 
 export class SessionService {
   private static name = "session";
@@ -39,8 +39,8 @@ export class SessionService {
     return this.value?.user;
   }
 
-  static get isExpired(): boolean {
-    return this.token ? isTokenExpired(this.token) : true;
+  static get isValid(): boolean {
+    return this.token ? isTokenValid(this.token) : true;
   }
 
   static set value(newValue: Session) {

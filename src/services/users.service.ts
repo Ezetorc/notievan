@@ -1,7 +1,7 @@
-import { BASE_URL } from "../configuration/public-env.configuration";
+import { publicEnv } from "../configuration/public-env.configuration";
 
 export class UsersService {
-  private static API_BASE = `${BASE_URL}/api/users`;
+  private static API_BASE = `${publicEnv.baseUrl}/api/users`;
 
   static async getNameOfUserWithId(id?: string): Promise<string> {
     if (!id) return "";

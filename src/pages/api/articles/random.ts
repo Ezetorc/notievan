@@ -1,15 +1,18 @@
 import type { APIRoute } from "astro";
 import { prisma } from "../../../configuration/prisma.configuration";
-import { InternalServerError } from "../../../models/internal-server-error.model";
-import { OkResponse } from "../../../models/ok-response.model";
+import { InternalServerError } from "../../../models/errors/internal-server.error";
+import { OkResponse } from "../../../models/responses/ok.response";
+import { BadRequestError } from "../../../models/errors/bad-request.error";
+import { ZodError } from "zod";
+import { OmitIdParamDto } from "../../../models/dtos/omit-id-param.dto";
 
 export const GET: APIRoute = async ({ request }) => {
   try {
     const url = new URL(request.url);
-    const omitId = url.searchParams.get("omit");
+    const { omit } = OmitIdParamDto.parse(url.searchParams.get("omit"));
 
     const allArticleIds = await prisma.article.findMany({
-      where: omitId ? { id: { not: omitId } } : {},
+      where: omit ? { id: { not: omit } } : {},
       select: { id: true },
     });
 
@@ -24,7 +27,12 @@ export const GET: APIRoute = async ({ request }) => {
 
     return new OkResponse(articles);
   } catch (error) {
-    console.error("Error obtaining random articles:", error);
+    console.error("Error in GET /api/articles/random:", error);
+
+    if (error instanceof ZodError) {
+      return new BadRequestError(error.errors);
+    }
+
     return new InternalServerError();
   }
 };

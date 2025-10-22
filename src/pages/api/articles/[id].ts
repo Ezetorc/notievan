@@ -1,16 +1,22 @@
 import type { APIRoute } from "astro";
 import { prisma } from "../../../configuration/prisma.configuration";
-import { InternalServerError } from "../../../models/internal-server-error.model";
-import { NotFoundError } from "../../../models/not-found-error.model";
-import { OkResponse } from "../../../models/ok-response.model";
-import { getUserFromToken } from "../../../utilities/get-user-from-token.utility";
-import { UnauthorizedError } from "../../../models/unauthorized-error.model";
+import { InternalServerError } from "../../../models/errors/internal-server.error";
+import { NotFoundError } from "../../../models/errors/not-found.error";
+import { OkResponse } from "../../../models/responses/ok.response";
+import { UnauthorizedError } from "../../../models/errors/unauthorized.error";
 import { validateArticleFormData } from "../../../utilities/validate-article-form-data.utility";
+import { UserIdParamDto } from "../../../models/dtos/user-id-param.dto";
+import { BadRequestError } from "../../../models/errors/bad-request.error";
+import { ZodError } from "zod";
+import { authMiddleware } from "../../../middlewares/auth.middleware";
+import { UpdateArticleDto } from "../../../models/dtos/update-article.dto";
 
 export const GET: APIRoute = async ({ params }) => {
   try {
+    const { id } = UserIdParamDto.parse(params);
+
     const article = await prisma.article.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!article) {
@@ -19,21 +25,21 @@ export const GET: APIRoute = async ({ params }) => {
 
     return new OkResponse(article);
   } catch (error) {
+    console.error("Error in GET /api/articles/[id]:", error);
+
+    if (error instanceof ZodError) {
+      return new BadRequestError(error.errors);
+    }
+
     return new InternalServerError();
   }
 };
 
 export const DELETE: APIRoute = async ({ params, request }) => {
   try {
-    const authHeader = request.headers.get("authorization");
-    if (!authHeader) {
-      return new UnauthorizedError("No se encontró token");
-    }
-
-    const user = await getUserFromToken(authHeader);
-    const article = await prisma.article.findUnique({
-      where: { id: params.id },
-    });
+    const { id } = UserIdParamDto.parse(params);
+    const user = await authMiddleware(request)
+    const article = await prisma.article.findUnique({ where: { id } });
 
     if (!article) {
       return new NotFoundError("Artículo no encontrado");
@@ -46,55 +52,48 @@ export const DELETE: APIRoute = async ({ params, request }) => {
     }
 
     await prisma.article.delete({ where: { id: params.id } });
+
     return new OkResponse("Artículo eliminado");
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.error("Error in DELETE /api/articles/[id]:", error);
+
+    if (error instanceof ZodError) {
+      return new BadRequestError(error.errors);
+    }
+
     return new InternalServerError();
   }
 };
 
 export const PATCH: APIRoute = async ({ params, request }) => {
   try {
-    const authHeader = request.headers.get("authorization");
-    if (!authHeader) {
-      return new UnauthorizedError("No token provided");
-    }
-
-    const user = await getUserFromToken(authHeader);
-
-    const article = await prisma.article.findUnique({
-      where: { id: params.id },
-    });
+    const { id } = UserIdParamDto.parse(params);
+    const article = await prisma.article.findUnique({ where: { id } });
 
     if (!article) {
-      return new NotFoundError("Article not found");
+      return new NotFoundError("Artículo no encontrado");
     }
 
+    const user = await authMiddleware(request)
+
     if (user.id !== article.authorId) {
-      return new UnauthorizedError("You can't update other's articles");
+      return new UnauthorizedError("No se puede editar artículos de otros");
     }
 
     const formData = await request.formData();
-    const { title, content, description, subtitle, thumbnailAlt } = validateArticleFormData(formData);
+    const body = Object.fromEntries(formData.entries());
+    const data = UpdateArticleDto.parse(body);
 
-    if (!title && !content && !description && !subtitle && !thumbnailAlt) {
-      return new InternalServerError("Nothing to update");
+    await prisma.article.update({ where: { id }, data });
+
+    return new OkResponse("Artículo editado");
+  } catch (error) {
+    console.error("Error in PATCH /api/articles/[id]:", error);
+
+    if (error instanceof ZodError) {
+      return new BadRequestError(error.errors);
     }
 
-    const updatedArticle = await prisma.article.update({
-      where: { id: params.id },
-      data: {
-        ...(title && { title }),
-        ...(content && { content }),
-        ...(subtitle && { subtitle }),
-        ...(thumbnailAlt && { thumbnailAlt }),
-        ...(description && { description }),
-      },
-    });
-
-    return new OkResponse(updatedArticle);
-  } catch (err) {
-    console.error(err);
     return new InternalServerError();
   }
 };

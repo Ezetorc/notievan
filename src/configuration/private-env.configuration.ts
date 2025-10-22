@@ -1,4 +1,4 @@
-type Config = {
+type PrivateEnv = {
   jwt: {
     secret: string;
     expiresIn: string;
@@ -14,11 +14,11 @@ function getEnvVar(key: string, fallback?: string): string {
   const value = process.env[key] || fallback;
 
   if (!value) throw new Error(`Missing environment variable: ${key}`);
-  
+
   return value;
 }
 
-export const config: Config = {
+export const privateEnv: PrivateEnv = {
   jwt: {
     secret: getEnvVar("JWT_SECRET", "JWT_SECRET"),
     expiresIn: getEnvVar("JWT_EXPIRES_IN", "24h"),

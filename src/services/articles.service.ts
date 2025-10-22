@@ -1,9 +1,9 @@
 import type { Article } from "@prisma/client";
-import { BASE_URL } from "../configuration/public-env.configuration";
 import { SessionService } from "./session.service";
+import { publicEnv } from "../configuration/public-env.configuration";
 
 export class ArticlesService {
-  private static API_BASE = `${BASE_URL}/api/articles`;
+  private static API_BASE = `${publicEnv.baseUrl}/api/articles`;
 
   static async create(data: FormData): Promise<Article> {
     const token = SessionService.token;

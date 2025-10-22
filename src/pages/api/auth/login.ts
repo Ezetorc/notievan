@@ -1,21 +1,20 @@
 import type { APIRoute } from "astro";
 import bcrypt from "bcryptjs";
+import { ZodError } from "zod";
 import { prisma } from "../../../configuration/prisma.configuration";
-import { BadRequestError } from "../../../models/bad-request-error.model";
-import { UnauthorizedError } from "../../../models/unauthorized-error.model";
-import { OkResponse } from "../../../models/ok-response.model";
-import { getAuthorizationToken } from "../../../utilities/get-authorization-token.utility";
-import { InternalServerError } from "../../../models/internal-server-error.model";
+import { LoginDto } from "../../../models/dtos/login.dto";
+import { BadRequestError } from "../../../models/errors/bad-request.error";
+import { InternalServerError } from "../../../models/errors/internal-server.error";
+import { UnauthorizedError } from "../../../models/errors/unauthorized.error";
+import { OkResponse } from "../../../models/responses/ok.response";
 import { SanitizedUser } from "../../../models/sanitized-user.model";
+import { getAuthorizationToken } from "../../../utilities/get-authorization-token.utility";
 
 export const POST: APIRoute = async ({ request }) => {
   try {
     const body = await request.json();
-    const { email, password } = body;
 
-    if (!email || !password) {
-      return new BadRequestError("Falta el email o la contraseña");
-    }
+    const { email, password } = LoginDto.parse(body);
 
     const user = await prisma.user.findUnique({
       where: { email },
@@ -37,8 +36,12 @@ export const POST: APIRoute = async ({ request }) => {
       user: new SanitizedUser(user),
       token,
     });
-  } catch (error) {
-    console.error("Error during login:", error);
+  } catch (error: any) {
+    console.error("Error in POST /api/auth/login:", error);
+
+    if (error instanceof ZodError) {
+      return new BadRequestError(error.errors);
+    }
 
     return new InternalServerError();
   }

@@ -1,27 +1,25 @@
 import type { APIRoute } from "astro";
 import bcrypt from "bcryptjs";
+import { ZodError } from "zod";
 import { prisma } from "../../../configuration/prisma.configuration";
-import { getAuthorizationToken } from "../../../utilities/get-authorization-token.utility";
-import { CreatedResponse } from "../../../models/created-response.model";
-import { InternalServerError } from "../../../models/internal-server-error.model";
-import { BadRequestError } from "../../../models/bad-request-error.model";
-import { ConflictError } from "../../../models/conflict-error.model";
+import { RegisterDto } from "../../../models/dtos/register.dto";
+import { BadRequestError } from "../../../models/errors/bad-request.error";
+import { ConflictError } from "../../../models/errors/conflict.error";
+import { InternalServerError } from "../../../models/errors/internal-server.error";
+import { CreatedResponse } from "../../../models/responses/created.response";
 import { SanitizedUser } from "../../../models/sanitized-user.model";
+import { getAuthorizationToken } from "../../../utilities/get-authorization-token.utility";
 
 export const POST: APIRoute = async ({ request }) => {
   try {
     const body = await request.json();
-    const { email, password, name } = body;
-
-    if (!email || !password || !name) {
-      return new BadRequestError("Email, nombre y contraseña son requeridos");
-    }
+    const { email, password, name } = RegisterDto.parse(body);
 
     const existingEmail = await prisma.user.findUnique({ where: { email } });
-    if (existingEmail) return new ConflictError("El email ya está tomado");
+    if (existingEmail) return new ConflictError("Email en uso");
 
     const existingName = await prisma.user.findUnique({ where: { name } });
-    if (existingName) return new ConflictError("El nombre ya está tomado");
+    if (existingName) return new ConflictError("Nombre en uso");
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -39,8 +37,12 @@ export const POST: APIRoute = async ({ request }) => {
       user: new SanitizedUser(newUser),
       token,
     });
-  } catch (error) {
-    console.error("Error during register", error);
+  } catch (error: any) {
+    console.error("Error in POST /api/auth/register:", error);
+
+    if (error instanceof ZodError) {
+      return new BadRequestError(error.errors);
+    }
 
     return new InternalServerError();
   }
