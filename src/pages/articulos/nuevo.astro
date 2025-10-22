@@ -36,7 +36,7 @@ import Layout from "../../layouts/Layout.astro";
         <markdown-editor
           id="content-input"
           placeholder="Contenido del artículo..."
-          class="w-[920px]"
+          class="w-[850px]"
           autosave></markdown-editor>
 
         <button
@@ -48,7 +48,24 @@ import Layout from "../../layouts/Layout.astro";
 
       <aside class="flex flex-col gap-y-5">
         <div class="w-full flex flex-col gap-y-2">
-          <div class="w-full max-w-md mx-auto">
+          <div class="flex gap-2 mb-2">
+            <button
+              type="button"
+              id="upload-tab"
+              class="flex-1 py-2 px-4 clickable bg-gray-200 rounded-md font-semibold"
+            >
+              Subir archivo
+            </button>
+            <button
+              type="button"
+              id="url-tab"
+              class="flex-1 py-2 px-4 clickable bg-gray-200 rounded-md font-semibold"
+            >
+              Usar URL
+            </button>
+          </div>
+
+          <div id="upload-container">
             <input
               type="file"
               id="image-input"
@@ -56,7 +73,6 @@ import Layout from "../../layouts/Layout.astro";
               accept="image/*"
               class="hidden"
             />
-
             <label
               for="image-input"
               class="cursor-pointer w-full aspect-video rounded-md border border-gray-300 overflow-hidden flex items-center justify-center bg-gray-200"
@@ -66,10 +82,28 @@ import Layout from "../../layouts/Layout.astro";
                 class="w-full h-full object-cover hidden"
                 alt="Vista previa de la imagen seleccionada"
               />
-              <span id="placeholder-text" class="text-gray-500 font-medium">
+              <span
+                id="placeholder-text"
+                class="text-gray-500 text-2xl text-center p-4"
+              >
                 Clickeá para elegir la portada del artículo
               </span>
             </label>
+          </div>
+
+          <div id="url-container" class="hidden">
+            <input
+              type="url"
+              id="image-url"
+              name="image"
+              placeholder="Pegar URL de la imagen"
+              class="w-full border border-gray-300 bg-gray-200 rounded-md p-2 text-lg"
+            />
+            <img
+              id="url-preview"
+              class="w-full h-48 object-cover mt-2 hidden rounded-md"
+              alt="Vista previa de la imagen por URL"
+            />
           </div>
         </div>
       </aside>
@@ -87,10 +121,51 @@ import Layout from "../../layouts/Layout.astro";
   async function render() {
     const $editor = $("#content-input") as MarkdownEditor;
     const $form = $("#form") as HTMLFormElement;
+
     const $imageInput = $("#image-input") as HTMLInputElement;
     const $imagePreview = $("#image-preview") as HTMLImageElement;
+    const $imagePlaceholder = $("#placeholder-text");
+    const $imageTab = $("#upload-tab");
+    const $imageContainer = $("#upload-container");
 
-    if (!$form || !$imageInput || !$imagePreview) return;
+    const $urlTab = $("#url-tab");
+    const $urlPreview = $("#url-preview") as HTMLImageElement;
+    const $urlContainer = $("#url-container");
+    const $urlInput = $("#image-url") as HTMLInputElement;
+
+    if (
+      !$form ||
+      !$imageInput ||
+      !$imagePreview ||
+      !$imagePlaceholder ||
+      !$imageTab ||
+      !$imageContainer ||
+      !$urlTab ||
+      !$urlContainer ||
+      !$urlInput
+    )
+      return;
+
+    $imageTab.addEventListener("click", () => {
+      $imageContainer.classList.remove("hidden");
+      $urlContainer.classList.add("hidden");
+    });
+
+    $urlTab.addEventListener("click", () => {
+      $urlContainer.classList.remove("hidden");
+      $imageContainer.classList.add("hidden");
+    });
+
+    $urlInput.addEventListener("input", () => {
+      const url = $urlInput.value;
+
+      if (url) {
+        $urlPreview.src = url;
+        $urlPreview.classList.remove("hidden");
+      } else {
+        $urlPreview.classList.add("hidden");
+      }
+    });
 
     $imageInput.addEventListener("change", (event) => {
       const eventTarget = event.target as HTMLInputElement;
@@ -99,8 +174,10 @@ import Layout from "../../layouts/Layout.astro";
       if (file) {
         $imagePreview.src = URL.createObjectURL(file);
         $imagePreview.classList.remove("hidden");
+        $imagePlaceholder.classList.add("hidden");
       } else {
         $imagePreview.classList.add("hidden");
+        $imagePlaceholder.classList.remove("hidden");
         $imagePreview.src = "";
       }
     });
@@ -109,21 +186,27 @@ import Layout from "../../layouts/Layout.astro";
       event.preventDefault();
 
       const formData = new FormData($form);
-      const image = $imageInput.files?.[0];
       const content = $editor.value;
+      const file = $imageInput.files?.[0];
+      const url = $urlInput.value.trim();
 
-      if (!content) {
-        alert("El contenido del artículo no puede estar vacío");
-        return;
-      }
-
-      if (!image) {
+      if (!$imageContainer.classList.contains("hidden") && !file) {
         alert("Debes seleccionar una imagen para la portada");
         return;
       }
 
+      if (!$urlContainer.classList.contains("hidden") && !url) {
+        alert("Debes pegar la URL de la portada");
+        return;
+      }
+
       formData.set("content", content);
-      formData.set("image", image);
+
+      if (!$imageContainer.classList.contains("hidden") && file) {
+        formData.set("image", file);
+      } else if (!$urlContainer.classList.contains("hidden") && url) {
+        formData.set("imageUrl", url);
+      }
 
       try {
         const newArticle = await ArticlesService.create(formData);

@@ -5,5 +5,6 @@ export const CreateArticleDto = z.object({
     subtitle: z.string(),
     description: z.string(),
     content: z.string(),
-    image: z.instanceof(File),
+    image: z.union([z.string(), z.any()])
 });
+

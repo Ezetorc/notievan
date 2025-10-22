@@ -79,14 +79,11 @@ if (id === undefined) {
   </article>
 </Layout>
 
-<style>
+<style is:global>
   #article-content img {
     max-width: 100%;
     max-height: 500px;
-    width: auto;
-    height: auto;
-    display: block;
-    margin: 0 auto;
+    aspect-ratio: 16/9;
     object-fit: contain;
   }
 </style>

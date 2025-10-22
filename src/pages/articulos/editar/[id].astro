@@ -52,6 +52,7 @@ if (article === undefined) {
         <markdown-editor
           id="content-input"
           placeholder="Contenido del artículo..."
+          class="w-[850px]"
           autosave></markdown-editor>
 
         <button
@@ -78,13 +79,12 @@ if (article === undefined) {
             >
               <img
                 id="image-preview"
-                class="w-full h-full object-cover"
+                class="w-full h-full object-cover hidden"
                 alt="Vista previa de la imagen seleccionada"
-                src={article.image}
               />
               <span
                 id="placeholder-text"
-                class="text-gray-500 font-medium hidden"
+                class="text-gray-500 text-2xl text-center p-4"
               >
                 Clickeá para elegir la portada del artículo
               </span>
@@ -113,8 +113,15 @@ if (article === undefined) {
     const $form = $("#form") as HTMLFormElement;
     const $imageInput = $("#image-input") as HTMLInputElement;
     const $imagePreview = $("#image-preview") as HTMLImageElement;
+    const $imagePlaceholder = $("#placeholder-text");
 
-    if (!$form || !$imageInput || !$imagePreview || !$editor)
+    if (
+      !$form ||
+      !$imageInput ||
+      !$imagePreview ||
+      !$editor ||
+      !$imagePlaceholder
+    )
       return;
 
     $editor.value = article.content;
@@ -126,8 +133,10 @@ if (article === undefined) {
       if (file) {
         $imagePreview.src = URL.createObjectURL(file);
         $imagePreview.classList.remove("hidden");
+        $imagePlaceholder.classList.add("hidden");
       } else {
         $imagePreview.classList.add("hidden");
+        $imagePlaceholder.classList.remove("hidden");
         $imagePreview.src = "";
       }
     });
