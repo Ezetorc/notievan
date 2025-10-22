@@ -1,27 +1,12 @@
-import { useEffect, useState } from "react";
-import { ArticlesService } from "../services/articles.service";
+import { useArticles } from "../hooks/use-articles.hook";
 import { SmallArticle } from "./SmallArticle";
-import type { Article as ArticleData } from "@prisma/client";
 
-interface Props {
-  excludeId: string;
-}
+export function AsideArticles({ excludeId }: { excludeId: string }) {
+  const { articles, loading } = useArticles({ type: "random", excludeId });
 
-export function AsideArticles({ excludeId }: Props) {
-  const [articles, setArticles] = useState<ArticleData[] | null>(null);
-
-  useEffect(() => {
-    async function fetchArticles() {
-      const articles = await ArticlesService.getRandom(excludeId);
-      setArticles(articles);
-    }
-
-    fetchArticles();
-  }, [excludeId]);
-
-  if (!articles) {
+  if (loading || !articles.length) {
     return (
-      <aside className="flex w-full h-full flex-col gap-y-5">
+      <aside className="flex flex-col gap-y-5">
         {Array.from({ length: 4 }).map((_, i) => (
           <SmallArticle key={i} />
         ))}
@@ -30,7 +15,7 @@ export function AsideArticles({ excludeId }: Props) {
   }
 
   return (
-    <aside className="flex w-full h-full flex-col gap-y-5">
+    <aside className="flex flex-col gap-y-5">
       {articles.map((article) => (
         <SmallArticle key={article.id} article={article} />
       ))}
