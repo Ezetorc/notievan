@@ -15,9 +15,19 @@ import "../styles/global.css";
     <ClientRouter />
   </head>
   <body>
+    <script>
+      import { SessionService } from "../services/session.service";
+
+      if (!SessionService.isValid) {
+        SessionService.delete();
+      }
+    </script>
+
     <Header />
 
-    <main class="flex mobile:px-4 desktop:px-0 mt-24 flex-col max-w-[1280px] mx-auto">
+    <main
+      class="flex mobile:px-4 desktop:px-0 mt-24 flex-col max-w-[1280px] mx-auto"
+    >
       <slot />
     </main>
   </body>

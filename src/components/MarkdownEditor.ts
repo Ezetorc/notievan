@@ -14,11 +14,6 @@ export class MarkdownEditor extends HTMLElement {
             placeholder: this.getAttribute("placeholder") || "Escribí algo...",
             spellChecker: false,
             autofocus: this.hasAttribute("autofocus"),
-            autosave: {
-                enabled: this.hasAttribute("autosave"),
-                uniqueId: this.getAttribute("autosave-id") || "markdown-editor",
-                delay: 1000,
-            },
             minHeight: "500px",
             toolbar: [
                 "preview",

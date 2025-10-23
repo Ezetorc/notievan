@@ -7,7 +7,8 @@ export function isTokenValid(token: string): boolean {
     if (!decoded.exp) return true;
 
     const now = Date.now() / 1000;
-    return decoded.exp < now;
+
+    return decoded.exp > now;
   } catch {
     return true;
   }

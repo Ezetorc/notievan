@@ -1,8 +1,7 @@
 ---
-// ArticleDeleteModal.astro
 interface Props {
   articleId: string;
-  authorId: string; // agregamos el id del autor del artículo
+  authorId: string;
 }
 
 const { articleId, authorId } = Astro.props;
@@ -11,6 +10,7 @@ const { articleId, authorId } = Astro.props;
 <div
   id="modal"
   data-article-id={articleId}
+  data-author-id={authorId}
   class="fixed z-[100] bg-[#000c] w-screen h-screen inset-0 place-items-center bg-opacity-50 items-center justify-center hidden"
 >
   <div

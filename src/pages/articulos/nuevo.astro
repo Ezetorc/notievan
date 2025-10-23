@@ -36,10 +36,10 @@ import Layout from "../../layouts/Layout.astro";
         <markdown-editor
           id="content-input"
           placeholder="Contenido del artículo..."
-          class="w-[850px]"
-          autosave></markdown-editor>
+          class="w-[850px]"></markdown-editor>
 
         <button
+          type="submit"
           class="w-full h-[70px] clickable bg-brand-orange rounded-[4px] text-white text-3xl"
         >
           Crear artículo
@@ -190,6 +190,11 @@ import Layout from "../../layouts/Layout.astro";
       const content = $editor.value;
       const file = $imageInput.files?.[0];
       const url = $urlInput.value.trim();
+
+      if (!content) {
+        alert("Debes agregar contenido al artículo");
+        return;
+      }
 
       if (!$imageContainer.classList.contains("hidden") && !file) {
         alert("Debes seleccionar una imagen para la portada");

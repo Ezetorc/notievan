@@ -12,7 +12,6 @@ export const GET: APIRoute = async ({ request }) => {
     const user = await authMiddleware(request)
     const url = new URL(request.url);
     const query = Object.fromEntries(url.searchParams.entries());
-    console.log(query)
     const { limit, page } = PaginationParamsDto.parse(query);
     const skip = (page - 1) * limit;
 
