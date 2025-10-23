@@ -8,27 +8,25 @@ datasource db {
 }
 
 model Article {
-  id           String   @id @default(cuid())
-  title        String
-  subtitle     String
-  description  String
-  content      String   @db.Text()
-  createdAt    DateTime @default(now())
-  authorId     String
-  image String
-
-  author User @relation(fields: [authorId], references: [id])
+  id          String   @id @default(cuid())
+  title       String
+  subtitle    String
+  description String
+  content     String
+  createdAt   DateTime @default(now())
+  authorId    String
+  image       String
+  author      User     @relation(fields: [authorId], references: [id])
 }
 
 model User {
-  id        String   @id @default(cuid())
-  name      String   @unique
-  email     String   @unique
+  id        String    @id @default(cuid())
+  name      String    @unique
+  email     String    @unique
   password  String
-  createdAt DateTime @default(now())
-  role      Role     @default(USER)
-
-  articles Article[]
+  createdAt DateTime  @default(now())
+  role      Role      @default(USER)
+  articles  Article[]
 }
 
 enum Role {
