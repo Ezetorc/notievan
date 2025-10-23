@@ -14,7 +14,7 @@
   "dependencies": {
     "@astrojs/react": "^4.4.0",
     "@astrojs/vercel": "^8.0.4",
-    "@prisma/client": "^6.17.1",
+    "@prisma/client": "^6.18.0",
     "@tailwindcss/vite": "4.1.14",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
@@ -26,13 +26,13 @@
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",
     "marked": "16.4.0",
-    "prisma": "^6.17.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "tailwindcss": "4.1.14",
     "zod": "^3.25.76"
   },
   "devDependencies": {
-    "@types/jsonwebtoken": "^9.0.10"
+    "@types/jsonwebtoken": "^9.0.10",
+    "prisma": "^6.18.0"
   }
 }

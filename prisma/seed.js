@@ -7,7 +7,7 @@ async function main() {
 
   await prisma.user.update({
     where: {
-      id: "cmh2e2v1x0000lja0qm2o5ivq",
+      id: "cmh3m35q00000l104ppv7qeoz",
     },
     data: {
       role: "AUTHOR",

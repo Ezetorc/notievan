@@ -7,7 +7,7 @@ export class UsersService {
   static async getNameOfUser(id?: string): Promise<string> {
     try {
       if (!id) return "";
-
+      
       const response = await axios.get<{ value: string }>(`${this.API_BASE}/${id}/name`)
 
       return response.data.value;
