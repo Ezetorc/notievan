@@ -1,7 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Hero from "../components/Hero.astro";
-import IndexPageArticles from "../components/IndexPageArticles";
+import { MainArticles } from "../components/MainArticles";
+import { SecondaryArticles } from "../components/SecondaryArticles";
 ---
 
 <Layout>
@@ -10,5 +11,6 @@ import IndexPageArticles from "../components/IndexPageArticles";
     description="Descubrí lo que está pasando en el Evan"
   />
 
-  <IndexPageArticles client:load />
+  <MainArticles client:load />
+  <SecondaryArticles client:load />
 </Layout>

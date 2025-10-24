@@ -1,7 +1,8 @@
 import { usePaginatedArticles } from "../hooks/use-paginated-articles.hook";
+import { QueryProvider } from "./QueryProvider";
 import { SmallArticle } from "./SmallArticle";
 
-export function SecondaryArticles() {
+function SecondaryArticlesLogic() {
   const { articles, hasMore, loadMore } = usePaginatedArticles({
     type: "all",
     initialPage: 2,
@@ -26,5 +27,13 @@ export function SecondaryArticles() {
         </button>
       )}
     </section>
+  );
+}
+
+export function SecondaryArticles() {
+  return (
+    <QueryProvider>
+      <SecondaryArticlesLogic />
+    </QueryProvider>
   );
 }

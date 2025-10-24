@@ -1,7 +1,8 @@
 import { BigArticle } from "./BigArticle";
 import { useArticles } from "../hooks/use-articles.hook";
+import { QueryProvider } from "./QueryProvider";
 
-export function MainArticles() {
+function MainArticlesLogic() {
   const { articles } = useArticles();
 
   return (
@@ -16,5 +17,13 @@ export function MainArticles() {
       <BigArticle article={articles[2]} />
       <BigArticle article={articles[3]} />
     </main>
+  );
+}
+
+export function MainArticles() {
+  return (
+    <QueryProvider>
+      <MainArticlesLogic />
+    </QueryProvider>
   );
 }
