@@ -45,11 +45,11 @@ if (id === undefined) {
           class="w-[850px]"></markdown-editor>
 
         <button
+          id="edit-button"
           class="w-full h-[70px] clickable bg-brand-orange rounded-[4px] text-white text-3xl"
         >
           Editar artículo
         </button>
-        
       </div>
 
       <aside class="flex flex-col gap-y-5">
@@ -115,6 +115,7 @@ if (id === undefined) {
     import { ArticlesService } from "../../../services/articles.service";
     import { $ } from "../../../utilities/$.utility";
     import { getArticleFromPath } from "../../../utilities/get-id-from-path.utility";
+    import { setButtonLoading } from "../../../utilities/set-button-loading.utility";
 
     async function render() {
       const article = await getArticleFromPath();
@@ -123,6 +124,7 @@ if (id === undefined) {
 
       const $editor = $("#content-input") as MarkdownEditor;
       const $form = $("#form") as HTMLFormElement;
+      const $editButton = $("#edit-button") as HTMLButtonElement;
 
       const $imageInput = $("#image-input") as HTMLInputElement;
       const $imagePreview = $("#image-preview") as HTMLImageElement;
@@ -154,7 +156,8 @@ if (id === undefined) {
         !$urlPreview ||
         !$subtitle ||
         !$description ||
-        !$title
+        !$title ||
+        !$editButton
       )
         return;
 
@@ -162,7 +165,7 @@ if (id === undefined) {
       $subtitle.value = article.subtitle;
       $title.value = article.title;
       $description.value = article.description;
-      $imagePreview.src = article.image
+      $imagePreview.src = article.image;
 
       $imageTab.addEventListener("click", () => {
         $imageContainer.classList.remove("hidden");
@@ -215,6 +218,7 @@ if (id === undefined) {
         }
 
         try {
+          setButtonLoading($editButton);
           await ArticlesService.update(formData, article.id);
 
           window.location.href = "/articulos/" + article.id;

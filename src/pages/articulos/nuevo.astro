@@ -40,6 +40,7 @@ import Layout from "../../layouts/Layout.astro";
 
         <button
           type="submit"
+          id="create-button"
           class="w-full h-[70px] clickable bg-brand-orange rounded-[4px] text-white text-3xl"
         >
           Crear artículo
@@ -117,10 +118,12 @@ import Layout from "../../layouts/Layout.astro";
   import type { MarkdownEditor } from "../../components/MarkdownEditor";
   import { ArticlesService } from "../../services/articles.service";
   import { $ } from "../../utilities/$.utility";
+  import { setButtonLoading } from "../../utilities/set-button-loading.utility";
 
   async function render() {
     const $editor = $("#content-input") as MarkdownEditor;
     const $form = $("#form") as HTMLFormElement;
+    const $createButton = $("#create-button") as HTMLButtonElement;
 
     const $imageInput = $("#image-input") as HTMLInputElement;
     const $imagePreview = $("#image-preview") as HTMLImageElement;
@@ -143,7 +146,8 @@ import Layout from "../../layouts/Layout.astro";
       !$urlTab ||
       !$urlContainer ||
       !$urlInput ||
-      !$urlPreview
+      !$urlPreview ||
+      !$createButton
     )
       return;
 
@@ -215,6 +219,8 @@ import Layout from "../../layouts/Layout.astro";
       }
 
       try {
+        setButtonLoading($createButton);
+
         const newArticle = await ArticlesService.create(formData);
 
         window.location.href = "/articulos/" + newArticle.id;
