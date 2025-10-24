@@ -1,7 +1,8 @@
 import { usePaginatedArticles } from "../hooks/use-paginated-articles.hook";
+import { QueryProvider } from "./QueryProvider";
 import { SmallArticle } from "./SmallArticle";
 
-export function AccountArticles() {
+function AccountArticlesLogic() {
   const { articles, hasMore, loadMore } = usePaginatedArticles({ type: "own" });
 
   if (articles.length === 0) return null;
@@ -23,5 +24,13 @@ export function AccountArticles() {
         </button>
       )}
     </section>
+  );
+}
+
+export function AccountArticles() {
+  return (
+    <QueryProvider>
+      <AccountArticlesLogic />
+    </QueryProvider>
   );
 }

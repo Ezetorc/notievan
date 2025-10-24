@@ -13,6 +13,7 @@ import Layout from "../layouts/Layout.astro";
       <UserInfo id="name-info" name="Nombre de usuario" />
       <UserInfo id="email-info" name="Email" />
       <UserInfo id="date-info" name="Fecha de creación" />
+      <UserInfo id="id-info" name="Identificador de usuario" />
     </div>
 
     <button
@@ -34,18 +35,21 @@ import Layout from "../layouts/Layout.astro";
     const $name = $("#name-info");
     const $email = $("#email-info");
     const $date = $("#date-info");
+    const $id = $("#id-info");
     const $logoutButton = $("#logout-button");
     const user = SessionService.user;
 
-    if (!$name || !$email || !$date || !$logoutButton || !user) return;
+    if (!$name || !$email || !$date || !$logoutButton || !user || !$id) return;
 
     const name = user.name || "Error cargando el nombre";
     const email = user.email || "Error cargando el email";
+    const id = user.id || "Error cargando el id";
     const date = getLocaleDate(user.createdAt);
 
     $name.innerText = name;
     $email.innerText = email;
     $date.innerText = date;
+    $id.innerText = id;
 
     $logoutButton.addEventListener("click", () => {
       SessionService.delete();
