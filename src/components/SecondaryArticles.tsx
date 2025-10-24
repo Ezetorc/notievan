@@ -1,8 +1,8 @@
-import { useArticles } from "../hooks/use-articles.hook";
+import { usePaginatedArticles } from "../hooks/use-paginated-articles.hook";
 import { SmallArticle } from "./SmallArticle";
 
 export function SecondaryArticles() {
-  const { articles, hasMore, loadMore } = useArticles({
+  const { articles, hasMore, loadMore } = usePaginatedArticles({
     type: "all",
     initialPage: 2,
   });

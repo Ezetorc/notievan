@@ -1,14 +1,8 @@
-import { useEffect, useState } from "react";
 import { BigArticle } from "./BigArticle";
-import { ArticlesService } from "../services/articles.service";
-import type { Article } from "@prisma/client";
+import { useArticles } from "../hooks/use-articles.hook";
 
 export function MainArticles() {
-  const [articles, setArticles] = useState<Array<Article | undefined>>([]);
-
-  useEffect(() => {
-    ArticlesService.getAll({ page: 1, limit: 4 }).then(setArticles);
-  }, []);
+  const { articles } = useArticles();
 
   return (
     <main

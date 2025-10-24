@@ -1,8 +1,8 @@
-import { useArticles } from "../hooks/use-articles.hook";
+import { usePaginatedArticles } from "../hooks/use-paginated-articles.hook";
 import { SmallArticle } from "./SmallArticle";
 
 export function AccountArticles() {
-  const { articles, hasMore, loadMore } = useArticles({ type: "own" });
+  const { articles, hasMore, loadMore } = usePaginatedArticles({ type: "own" });
 
   if (articles.length === 0) return null;
 

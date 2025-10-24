@@ -1,8 +1,12 @@
-import { useArticles } from "../hooks/use-articles.hook";
+import { usePaginatedArticles } from "../hooks/use-paginated-articles.hook";
+import { QueryProvider } from "./QueryProvider";
 import { SmallArticle } from "./SmallArticle";
 
-export function AsideArticles({ excludeId }: { excludeId: string }) {
-  const { articles, loading } = useArticles({ type: "random", excludeId });
+function AsideArticlesLogic({ excludeId }: { excludeId: string }) {
+  const { articles, loading } = usePaginatedArticles({
+    type: "random",
+    excludeId,
+  });
 
   if (loading || !articles.length) {
     return (
@@ -20,5 +24,13 @@ export function AsideArticles({ excludeId }: { excludeId: string }) {
         <SmallArticle key={article.id} article={article} />
       ))}
     </aside>
+  );
+}
+
+export function AsideArticles({ excludeId }: { excludeId: string }) {
+  return (
+    <QueryProvider>
+      <AsideArticlesLogic excludeId={excludeId} />
+    </QueryProvider>
   );
 }
