@@ -63,7 +63,7 @@ export default function SignUpPage() {
 						Contraseña
 					</SignInput>
 
-					{error && <ErrorMessage>{error}</ErrorMessage>}
+					<ErrorMessage value={error} />
 
 					<button
 						type='submit'

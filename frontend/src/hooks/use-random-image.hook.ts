@@ -1,15 +1,15 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query'
 
 export function useRandomImage({
 	id,
 	width = 1200,
 	height = 675,
-	enabled,
+	enabled
 }: {
-	id?: string;
-	width?: number;
-	height?: number;
-	enabled?: boolean;
+	id?: string
+	width?: number
+	height?: number
+	enabled?: boolean
 }) {
 	const { data, isLoading, isError, error, refetch } = useQuery({
 		queryKey: ['random-image', id],
@@ -19,14 +19,14 @@ export function useRandomImage({
 			),
 		retry: false,
 		staleTime: 1000 * 60 * 5,
-		enabled: enabled && Boolean(id),
-	});
+		enabled: enabled && Boolean(id)
+	})
 
 	return {
 		image: data,
 		isLoading,
 		error,
 		isError,
-		refetch,
-	};
+		refetch
+	}
 }

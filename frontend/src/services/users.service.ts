@@ -17,7 +17,9 @@ export class UsersService {
 	static async getNameOfUser(id?: string): Promise<string> {
 		if (!id) return ''
 
-		const response = await HttpClient.get<string>(`${UsersService.API_BASE}/${id}/name`)
+		const response = await HttpClient.get<string>(
+			`${UsersService.API_BASE}/${id}/name`
+		)
 
 		if (response.error) {
 			throw new Error(response.error || 'Error obteniendo nombre de usuario')

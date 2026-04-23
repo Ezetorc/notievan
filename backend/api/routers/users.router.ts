@@ -9,9 +9,9 @@ UsersRouter.get('/', authMiddleware('ADMIN'), UsersController.getAll)
 UsersRouter.get('/:id', authMiddleware(), UsersController.getById)
 
 UsersRouter.patch(
-  '/:id/role',
-  authMiddleware('ADMIN'),
-  UsersController.updateRole
+	'/:id/role',
+	authMiddleware('ADMIN'),
+	UsersController.updateRole
 )
 
 UsersRouter.get('/:id/name', UsersController.getNameById)

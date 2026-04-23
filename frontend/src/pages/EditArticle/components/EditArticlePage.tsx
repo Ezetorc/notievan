@@ -65,7 +65,10 @@ export default function EditArticlePage({ id }: { id: string }) {
 	if (isError || !article) return <NotFoundPage />
 
 	return (
-		<form className='flex flex-col pb-[5vw] mobile:mt-[20px] tablet:mt-[60px]'>
+		<form
+			onSubmit={onSubmit}
+			className='flex flex-col pb-[5vw] mobile:mt-[20px] tablet:mt-[60px]'
+		>
 			<ArticleInput
 				placeholder='Subtítulo de tu artículo...'
 				minLength={1}
@@ -101,8 +104,9 @@ export default function EditArticlePage({ id }: { id: string }) {
 						value={article.content}
 					/>
 
-					{error && <ErrorMessage>{error}</ErrorMessage>}
-					{schemaError && <ErrorMessage>{schemaError}</ErrorMessage>}
+					<ErrorMessage value={error} />
+
+					<ErrorMessage value={schemaError} />
 				</div>
 
 				<aside className='flex flex-col gap-y-5 order-1 tablet:order-2'>
@@ -116,7 +120,7 @@ export default function EditArticlePage({ id }: { id: string }) {
 					<ActionButton
 						className='w-full bg-brand-orange text-white font-bold text-xl tablet:text-3xl h-[50px] tablet:h-[70px]'
 						loading={isEditing}
-						onClick={onSubmit}
+						type='submit'
 					>
 						Editar artículo
 					</ActionButton>

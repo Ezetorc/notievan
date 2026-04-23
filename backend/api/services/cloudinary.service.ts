@@ -8,12 +8,24 @@ export class CloudinaryService {
 		folder = 'articles'
 	) {
 		return new Promise<any>((resolve, reject) => {
-			cloudinary.uploader
-				.upload_stream({ folder, public_id: filename }, (error, result) => {
-					if (error) reject(error)
-					else resolve(result)
-				})
-				.end(fileBuffer)
+			const stream = cloudinary.uploader.upload_stream(
+				{
+					folder,
+					public_id: `${Date.now()}-${filename}`,
+					resource_type: 'image',
+					transformation: [
+						{ width: 800, crop: 'limit' },
+						{ quality: 'auto' },
+						{ fetch_format: 'auto' }
+					]
+				},
+				(error, result) => {
+					if (error) return reject(error)
+					resolve(result)
+				}
+			)
+
+			stream.end(fileBuffer)
 		})
 	}
 

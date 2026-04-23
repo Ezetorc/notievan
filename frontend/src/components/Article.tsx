@@ -1,14 +1,14 @@
-import { useUserName } from '../hooks/use-user-name.hook';
-import type { Article as ArticleData } from '../../../backend/prisma/generated/prisma';
-import { isRecent } from '../pages/Home/utilities/is-recent.utility';
-import { useRandomImage } from '../hooks/use-random-image.hook';
+import { useUserName } from '../hooks/use-user-name.hook'
+import type { Article as ArticleData } from '../../../backend/prisma/generated/prisma'
+import { isRecent } from '../pages/Home/utilities/is-recent.utility'
+import { useRandomImage } from '../hooks/use-random-image.hook'
 
 export function Article({ article }: { article?: ArticleData }) {
-	const authorName = useUserName(article?.authorId);
+	const authorName = useUserName(article?.authorId)
 	const { image } = useRandomImage({
 		id: article?.id,
-		enabled: !article?.image,
-	});
+		enabled: !article?.image
+	})
 
 	if (!article) {
 		return (
@@ -20,7 +20,7 @@ export function Article({ article }: { article?: ArticleData }) {
 					<div className='h-4 w-1/2 bg-gray-300 rounded mt-2' />
 				</div>
 			</article>
-		);
+		)
 	}
 
 	return (
@@ -62,5 +62,5 @@ export function Article({ article }: { article?: ArticleData }) {
 				</div>
 			</div>
 		</a>
-	);
+	)
 }

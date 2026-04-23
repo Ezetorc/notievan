@@ -14,6 +14,7 @@ type Env = {
 	}
 	nodeEnv: string
 	port: string
+	databaseUrl: string
 }
 
 function getEnvVar(key: string, fallback?: string): string {
@@ -35,5 +36,6 @@ export const env: Env = {
 		apiSecret: getEnvVar('CLOUDINARY_API_SECRET')
 	},
 	nodeEnv: getEnvVar('NODE_ENV', 'development'),
+	databaseUrl: getEnvVar('DATABASE_URL'),
 	port: getEnvVar('PORT', '3000')
 }

@@ -15,45 +15,52 @@ import { ActionButton } from '../../../components/ActionButton'
 import { useState } from 'react'
 
 export default function CreateArticlePage() {
-	  const [, setLocation] = useLocation()
-  const queryClient = useQueryClient()
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string>('')
+	const [, setLocation] = useLocation()
+	const queryClient = useQueryClient()
+	const [isLoading, setIsLoading] = useState(false)
+	const [error, setError] = useState<string>('')
 
-  const onSuccess = async (data: CreateArticleFormData) => {
-    try {
-      setIsLoading(true)
-      const formData = getFormDataFrom(data)
-      const newArticle = await ArticlesService.create(formData)
+	const onSuccess = async (data: CreateArticleFormData) => {
+		try {
+			setIsLoading(true)
+			const formData = getFormDataFrom(data)
+			const newArticle = await ArticlesService.create(formData)
 
-      queryClient.invalidateQueries({ queryKey: ['article', newArticle.id] })
-      queryClient.invalidateQueries({
-        predicate: (q) =>
-          Array.isArray(q.queryKey) && q.queryKey[0] === 'articles'
-      })
+			queryClient.invalidateQueries({ queryKey: ['article', newArticle.id] })
+			queryClient.invalidateQueries({
+				predicate: (q) =>
+					Array.isArray(q.queryKey) && q.queryKey[0] === 'articles'
+			})
 
-      setLocation(`/articulos/${newArticle.id}`)
-    } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message)
-      } else {
-        setError('Error creando el artículo')
-      }
-    } finally {
-      setIsLoading(false)
-    }
-  }
+			setLocation(`/articulos/${newArticle.id}`)
+		} catch (error) {
+			if (error instanceof Error) {
+				setError(error.message)
+			} else {
+				setError('Error creando el artículo')
+			}
+		} finally {
+			setIsLoading(false)
+		}
+	}
 
-  const { error: schemaError, onSubmit, watch } = useForm(onSuccess, CreateArticleSchema, {
-    image: '',
-    content: '',
-    description: '',
-    title: '',
-    subtitle: ''
-  })
+	const {
+		error: schemaError,
+		onSubmit,
+		watch
+	} = useForm(onSuccess, CreateArticleSchema, {
+		image: '',
+		content: '',
+		description: '',
+		title: '',
+		subtitle: ''
+	})
 
 	return (
-		<form className='flex flex-col pb-[5vw] mobile:mt-[20px] tablet:mt-[60px]'>
+		<form
+			onSubmit={onSubmit}
+			className='flex flex-col pb-[5vw] mobile:mt-[20px] tablet:mt-[60px]'
+		>
 			<ArticleInput
 				placeholder='Subtítulo de tu artículo...'
 				minLength={1}
@@ -85,8 +92,9 @@ export default function CreateArticlePage() {
 						placeholder='Contenido de tu artículo...'
 					/>
 
-					 {error && <ErrorMessage>{error}</ErrorMessage>}
-          			 {schemaError && <ErrorMessage>{schemaError}</ErrorMessage>}
+					<ErrorMessage value={error} />
+
+					<ErrorMessage value={schemaError} />
 				</div>
 
 				<aside className='flex flex-col gap-y-5 order-1 md:order-2'>
@@ -97,7 +105,7 @@ export default function CreateArticlePage() {
 					<ActionButton
 						className='w-full bg-brand-orange text-white font-bold text-xl tablet:text-3xl h-[50px] tablet:h-[70px]'
 						loading={isLoading}
-						onClick={onSubmit}
+						type='submit'
 					>
 						Crear artículo
 					</ActionButton>

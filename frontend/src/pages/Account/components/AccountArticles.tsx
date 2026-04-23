@@ -1,13 +1,13 @@
-import { Article } from '../../../components/Article';
-import { LoadMoreButton } from '../../../components/LoadMoreButton';
-import { usePaginatedArticles } from '../../../hooks/use-paginated-articles.hook';
+import { Article } from '../../../components/Article'
+import { LoadMoreButton } from '../../../components/LoadMoreButton'
+import { usePaginatedArticles } from '../../../hooks/use-paginated-articles.hook'
 
 export function AccountArticles() {
 	const { articles, hasMore, loadMore, loading } = usePaginatedArticles({
-		type: 'own',
-	});
+		type: 'own'
+	})
 
-	if (articles.length === 0 && !loading) return null;
+	if (articles.length === 0 && !loading) return null
 
 	return (
 		<section className='my-9'>
@@ -15,10 +15,10 @@ export function AccountArticles() {
 				{loading && articles.length === 0
 					? Array.from({ length: 4 }).map((_, index) => (
 							<Article key={index} article={undefined} />
-					  ))
+						))
 					: articles.map((article) => (
 							<Article key={article.id} article={article} />
-					  ))}
+						))}
 			</main>
 
 			{hasMore && (
@@ -27,5 +27,5 @@ export function AccountArticles() {
 				</LoadMoreButton>
 			)}
 		</section>
-	);
+	)
 }

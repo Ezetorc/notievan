@@ -16,7 +16,7 @@ export class HttpClient {
 				headers: {
 					'Content-Type': 'application/json',
 					...config.headers,
-					...(token ? { Authorization: `Bearer ${token}` } : {}),
+					...(token ? { Authorization: `Bearer ${token}` } : {})
 				}
 			})
 

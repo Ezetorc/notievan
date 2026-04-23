@@ -59,7 +59,7 @@ export function EditableUserInfo({
 				<div className='mobile:text-[18px] tablet:text-2xl'>{value}</div>
 			)}
 
-			{error && <ErrorMessage>{error}</ErrorMessage>}
+			<ErrorMessage value={error} />
 		</div>
 	)
 }

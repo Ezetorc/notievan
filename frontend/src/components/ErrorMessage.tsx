@@ -1,5 +1,5 @@
-import type { ReactNode } from 'react'
+export function ErrorMessage({ value }: { value?: string }) {
+	if (!value) return null
 
-export function ErrorMessage({ children }: { children: ReactNode }) {
-	return <p className='text-red-500'>{children}</p>
+	return <p className='text-red-500'>{value}</p>
 }

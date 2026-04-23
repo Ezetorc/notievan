@@ -1,4 +1,5 @@
 import { useState, type ChangeEvent } from 'react'
+import imageCompression from 'browser-image-compression'
 
 export function ImageInput({
 	onImageSelected,
@@ -7,27 +8,47 @@ export function ImageInput({
 	onImageSelected: (image: string | File) => void
 	value?: string | File
 }) {
-	const [image, setImage] = useState<string | File>(value || '')
+	const [preview, setPreview] = useState<string>(
+		typeof value === 'string' ? value : ''
+	)
 	const [imageMode, setImageMode] = useState<'file' | 'url'>('file')
+	const [loading, setLoading] = useState(false)
 
-	const onFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-		const file = event.target.files?.[0]
-		if (!file) return
+	const onFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+		const selectedFile = event.target.files?.[0]
+		if (!selectedFile) return
 
-		setImage(file)
-		const reader = new FileReader()
-		reader.onload = () => {
-			const base64 = reader.result as string
-			setImage(base64)
+		setLoading(true)
+
+		try {
+			const options = {
+				maxSizeMB: 0.3,
+				maxWidthOrHeight: 1200,
+				useWebWorker: true,
+				fileType: 'image/webp'
+			}
+
+			const compressedFile = await imageCompression(selectedFile, options)
+
+			const previewUrl = URL.createObjectURL(compressedFile)
+			setPreview(previewUrl)
+
+			const file = new File([compressedFile], 'image.webp', {
+				type: 'image/webp'
+			})
+
 			onImageSelected(file)
+		} catch (err) {
+			console.error('Error al procesar imagen', err)
+		} finally {
+			setLoading(false)
 		}
-		reader.readAsDataURL(file)
 	}
 
 	const onUrlChange = (event: ChangeEvent<HTMLInputElement>) => {
 		const value = event.currentTarget.value
 
-		setImage(value)
+		setPreview(value)
 		onImageSelected(value)
 	}
 
@@ -41,11 +62,12 @@ export function ImageInput({
 					}`}
 					onClick={() => {
 						setImageMode('file')
-						setImage('')
+						setPreview('')
 					}}
 				>
 					Subir archivo
 				</button>
+
 				<button
 					type='button'
 					className={`flex-1 py-2 px-4 clickable rounded-md font-semibold ${
@@ -53,7 +75,7 @@ export function ImageInput({
 					}`}
 					onClick={() => {
 						setImageMode('url')
-						setImage('')
+						setPreview('')
 					}}
 				>
 					Usar URL
@@ -69,21 +91,26 @@ export function ImageInput({
 						className='hidden'
 						onChange={onFileChange}
 					/>
+
 					<label
 						htmlFor='image-input'
 						className='cursor-pointer flex flex-col gap-y-2'
 					>
 						<div className='max-h-[400px] max-w-[300px] aspect-video bg-gray-200'>
-							{image && typeof image === 'string' ? (
+							{loading ? (
+								<div className='w-full h-full flex items-center justify-center'>
+									<span className='text-gray-500'>Procesando...</span>
+								</div>
+							) : preview ? (
 								<img
-									src={image}
+									src={preview}
 									alt='Vista previa'
 									className='w-full h-full object-cover'
 								/>
 							) : (
 								<div className='w-full h-full flex items-center justify-center'>
 									<span className='text-gray-500 text-lg text-center p-4'>
-										Clickeá para elegir la portada del artículo
+										Clickeá para elegir la portada
 									</span>
 								</div>
 							)}
@@ -96,12 +123,13 @@ export function ImageInput({
 						type='url'
 						placeholder='Pegá la URL de la imagen'
 						className='border rounded-md p-2'
-						value={typeof image === 'string' ? image : ''}
+						value={preview}
 						onChange={onUrlChange}
 					/>
-					{typeof image === 'string' && image && (
+
+					{preview && (
 						<img
-							src={image}
+							src={preview}
 							alt='Vista previa'
 							className='w-full max-h-[400px] max-w-[300px] aspect-video rounded-md object-cover border border-gray-300'
 						/>
@@ -110,8 +138,7 @@ export function ImageInput({
 			)}
 
 			<footer className='text-sm text-gray-700 text-center'>
-				Se recomienda usar imágenes de 1200 pixeles de ancho y 675 pixeles de
-				alto <strong>(1200x675)</strong>
+				Se recomienda usar imágenes de 1200x675
 			</footer>
 		</div>
 	)

@@ -88,8 +88,8 @@ export function CreateCommentModal({
 					className='w-full bg-brand-blue-light rounded-2xl p-4 text-2xl h-[200px] resize-none'
 				/>
 
-				{error && <ErrorMessage>{error}</ErrorMessage>}
-				{schemaError && <ErrorMessage>{schemaError}</ErrorMessage>}
+				<ErrorMessage value={error} />
+				<ErrorMessage value={schemaError} />
 
 				<ActionButton
 					onClick={onSubmit}

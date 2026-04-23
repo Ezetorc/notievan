@@ -5,9 +5,13 @@ export class ArticlesService {
 	private static readonly API_BASE = '/articles'
 
 	static async create(data: FormData): Promise<Article> {
-		const response = await HttpClient.post<Article>(ArticlesService.API_BASE, data, {
-			headers: { 'Content-Type': 'multipart/form-data' }
-		})
+		const response = await HttpClient.post<Article>(
+			ArticlesService.API_BASE,
+			data,
+			{
+				headers: { 'Content-Type': 'multipart/form-data' }
+			}
+		)
 		if (response.error) {
 			const error = new Error(response.error) as Error & {
 				status?: number
@@ -38,7 +42,9 @@ export class ArticlesService {
 	}
 
 	static async getById(id: string): Promise<Article | undefined> {
-		const response = await HttpClient.get<Article>(`${ArticlesService.API_BASE}/${id}`)
+		const response = await HttpClient.get<Article>(
+			`${ArticlesService.API_BASE}/${id}`
+		)
 		return response.data
 	}
 
