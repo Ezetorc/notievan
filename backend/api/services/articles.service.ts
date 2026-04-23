@@ -13,7 +13,10 @@ export class ArticlesService {
 
 		if (!article) throw new NotFoundError('Artículo no encontrado')
 
-		return article
+		return {
+			...article,
+			image: CloudinaryService.optimizeUrl(article.image, 800)
+		}
 	}
 
 	static async exists(id: string) {
@@ -90,23 +93,34 @@ export class ArticlesService {
 	static async getAll(limit: number, skip: number) {
 		const articles = await ArticlesRepository.getAll(limit, skip)
 
-		return articles
+		return articles.map(article => ({
+			...article,
+			image: CloudinaryService.optimizeUrl(article.image, 600)
+		}))
 	}
 
 	static async getOwn(limit: number, skip: number, userId: string) {
 		const articles = await ArticlesRepository.getOwn(limit, skip, userId)
 
-		return articles
+		return articles.map(article => ({
+			...article,
+			image: CloudinaryService.optimizeUrl(article.image, 600)
+		}))
 	}
 
 	static async getRandom(limit: number, omitId: string) {
 		const allArticleIds = await ArticlesRepository.getRandomIds(limit, omitId)
+
 		const shuffledIds = allArticleIds
 			.map((a) => a.id)
 			.sort(() => 0.5 - Math.random())
 			.slice(0, limit)
+
 		const articles = await ArticlesRepository.getByIds(shuffledIds)
 
-		return articles
+		return articles.map(article => ({
+			...article,
+			image: CloudinaryService.optimizeUrl(article.image, 600)
+		}))
 	}
 }

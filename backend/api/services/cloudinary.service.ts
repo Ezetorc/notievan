@@ -75,4 +75,13 @@ export class CloudinaryService {
 			body.image = body.image
 		}
 	}
+
+	static optimizeUrl(url: string, width = 800) {
+		if (!url.includes("/upload/")) return url;
+
+		return url.replace(
+			"/upload/",
+			`/upload/f_auto,q_auto,w_${width}/`
+		);
+	}
 }
