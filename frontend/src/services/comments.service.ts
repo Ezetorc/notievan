@@ -24,11 +24,11 @@ export class CommentsService {
 			content
 		})
 
-		if (response.error) {
+		if (response.error || !response.data) {
 			throw new Error(response.error || 'Error al crear comentario')
 		}
 
-		return response.data!
+		return response.data
 	}
 
 	static async delete(id: string): Promise<boolean> {

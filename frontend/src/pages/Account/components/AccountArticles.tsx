@@ -2,6 +2,8 @@ import { Article } from '../../../components/Article'
 import { LoadMoreButton } from '../../../components/LoadMoreButton'
 import { usePaginatedArticles } from '../../../hooks/use-paginated-articles.hook'
 
+const SKELETON_KEYS = ['s1', 's2', 's3', 's4']
+
 export function AccountArticles() {
 	const { articles, hasMore, loadMore, loading } = usePaginatedArticles({
 		type: 'own'
@@ -13,7 +15,7 @@ export function AccountArticles() {
 		<section className='my-9'>
 			<main className='grid grid-cols-1 gap-8 desktop:grid-cols-4'>
 				{loading && articles.length === 0
-					? Array.from({ length: 4 }).map((_, index) => (
+					? SKELETON_KEYS.map((index) => (
 							<Article key={index} article={undefined} />
 						))
 					: articles.map((article) => (

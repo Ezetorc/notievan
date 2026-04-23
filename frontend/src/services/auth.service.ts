@@ -12,8 +12,8 @@ export class AuthService {
 			data
 		)
 
-		if (response.error) throw new Error(response.error)
-		return response.data!
+		if (response.error || !response.data) throw new Error(response.error)
+		return response.data
 	}
 
 	static async login(data: SignInFormData): Promise<AuthResponse> {
@@ -22,8 +22,8 @@ export class AuthService {
 			data
 		)
 
-		if (response.error)
+		if (response.error || !response.data)
 			throw new Error(response.error || 'Error al iniciar sesión')
-		return response.data!
+		return response.data
 	}
 }

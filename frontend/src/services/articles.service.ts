@@ -12,7 +12,8 @@ export class ArticlesService {
 				headers: { 'Content-Type': 'multipart/form-data' }
 			}
 		)
-		if (response.error) {
+
+		if (response.error || !response.data) {
 			const error = new Error(response.error) as Error & {
 				status?: number
 				payload?: unknown
@@ -21,7 +22,8 @@ export class ArticlesService {
 			error.payload = response.data
 			throw error
 		}
-		return response.data!
+
+		return response.data
 	}
 
 	static async update(data: FormData, id: string): Promise<boolean> {

@@ -67,7 +67,10 @@ export function CreateCommentModal({
 
 	return (
 		<Modal>
-			<div className='p-6 mobile:w-[90vw] space-y-5 tablet:w-[40vw] bg-brand-blue rounded-2xl'>
+			<form
+				onSubmit={onSubmit}
+				className='p-6 mobile:w-[90vw] space-y-5 tablet:w-[40vw] bg-brand-blue rounded-2xl'
+			>
 				<header className='w-full flex justify-between'>
 					<h2 className='text-white text-6xl font-title'>
 						Crear nuevo comentario
@@ -92,13 +95,13 @@ export function CreateCommentModal({
 				<ErrorMessage value={schemaError} />
 
 				<ActionButton
-					onClick={onSubmit}
+					type='submit'
 					loading={loading}
 					className='text-2xl bg-brand-orange text-white font-bold py-3 w-full'
 				>
 					Crear comentario
 				</ActionButton>
-			</div>
+			</form>
 		</Modal>
 	)
 }

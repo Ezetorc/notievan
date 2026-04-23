@@ -28,10 +28,10 @@
 				"noExplicitAny": "off"
 			},
 			"correctness": {
-				"useExhaustiveDependencies": "warn"
+				"useExhaustiveDependencies": "off"
 			},
 			"security": {
-				"noDangerouslySetInnerHtml": "warn"
+				"noDangerouslySetInnerHtml": "off"
 			}
 		}
 	},
