@@ -1,5 +1,4 @@
-import type { Role } from '../../prisma/generated/prisma/index.js'
-import type { User } from '../../prisma/generated/prisma/client.js'
+import type { Role, User } from '@prisma/client'
 
 export class SanitizedUser {
 	constructor(user: User) {

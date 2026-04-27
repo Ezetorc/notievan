@@ -1,4 +1,4 @@
-import type { Prisma } from '../../prisma/generated/prisma/index.js'
+import type { Prisma } from '@prisma/client'
 import { prisma } from '../configuration/prisma.configuration.js'
 
 export class CommentsRepository {

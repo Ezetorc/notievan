@@ -1,10 +1,9 @@
-import { withAccelerate } from '@prisma/extension-accelerate'
+import { PrismaPg } from '@prisma/adapter-pg'
+import { PrismaClient } from '@prisma/client'
 import { env } from './env.configuration.js'
-import { PrismaClient } from '../../prisma/generated/prisma/index.js'
 
-const prismaClient =
-	env.nodeEnv === 'production'
-		? new PrismaClient().$extends(withAccelerate())
-		: new PrismaClient()
+const adapter = new PrismaPg({
+	connectionString: env.databaseUrl
+})
 
-export const prisma = prismaClient
+export const prisma = new PrismaClient({ adapter })

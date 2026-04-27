@@ -1,5 +1,5 @@
+import type { Prisma } from '@prisma/client'
 import { prisma } from '../configuration/prisma.configuration.js'
-import type { Prisma } from '../../prisma/generated/prisma/index.js'
 
 export class ArticlesRepository {
 	static async findById(id: string) {

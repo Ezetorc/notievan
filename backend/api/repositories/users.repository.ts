@@ -1,5 +1,5 @@
+import type { Prisma, Role } from '@prisma/client'
 import { prisma } from '../configuration/prisma.configuration.js'
-import type { Prisma, Role } from '../../prisma/generated/prisma/index.js'
 
 export class UsersRepository {
 	static async create(data: Prisma.UserCreateInput) {

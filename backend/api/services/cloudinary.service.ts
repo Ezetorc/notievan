@@ -1,4 +1,4 @@
-import type { Article } from '../../prisma/generated/prisma/client.js'
+import type { Article } from '@prisma/client'
 import cloudinary from '../configuration/cloudinary.configuration.js'
 
 export class CloudinaryService {
@@ -71,8 +71,6 @@ export class CloudinaryService {
 				article.title
 			)
 			body.image = uploadResult.secure_url
-		} else if (body.image && typeof body.image === 'string') {
-			body.image = body.image
 		}
 	}
 
