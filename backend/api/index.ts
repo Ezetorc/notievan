@@ -8,13 +8,6 @@ import { CommentsRouter } from './routers/comments.router.js'
 
 const app = express()
 
-console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!START")
-
-app.use((req, _res, next) => {
-    console.log("LOLAZO: ", req.url)
-    next()
-})
-
 app.use(corsMiddleware())
 app.use(jsonMiddleware())
 app.use('/api/auth', AuthRouter)
