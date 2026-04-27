@@ -1,10 +1,10 @@
 {
   "version": 2,
   "installCommand": "cd backend && pnpm install",
-  "builds": [
+  "routes": [
     {
-      "src": "backend/api/index.ts",
-      "use": "@vercel/node"
+      "src": "/(.*)",
+      "dest": "/api/index.ts"
     }
   ]
 }
