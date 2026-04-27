@@ -3,7 +3,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch api/index.ts",
-    "build": "pnpm prisma generate && tsc",
+    "build": "NODE_ENV=production prisma generate && tsc",
     "lint": "npx @biomejs/biome lint --write",
     "format": "npx @biomejs/biome format --write",
     "start": "node dist/index.js"
