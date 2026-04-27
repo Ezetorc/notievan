@@ -5,10 +5,7 @@
 		"dev": "netlify dev",
 		"build": "tsc",
 		"lint": "npx @biomejs/biome lint --write",
-		"format": "npx @biomejs/biome format --write",
-		"db:generate": "drizzle-kit generate",
-		"db:push": "drizzle-kit push",
-		"db:studio": "drizzle-kit studio"
+		"format": "npx @biomejs/biome format --write"
 	},
 	"dependencies": {
 		"bcrypt": "^6.0.0",
@@ -33,7 +30,6 @@
 		"@types/multer": "^2.0.0",
 		"@types/node": "^20.11.17",
 		"@types/pg": "^8.20.0",
-		"drizzle-kit": "^0.31.10",
 		"netlify-cli": "^25.6.1",
 		"tsx": "^4.21.0",
 		"typescript": "^5.8.3"
