@@ -18,7 +18,10 @@ const {
 	skip,
 	Decimal,
 	Debug,
-	objectEnumValues,
+	DbNull,
+	JsonNull,
+	AnyNull,
+	NullTypes,
 	makeStrictEnum,
 	Extensions,
 	warnOnce,
@@ -26,7 +29,7 @@ const {
 	Public,
 	getRuntime,
 	createParam
-} = require('./runtime/edge.js')
+} = require('./runtime/wasm-compiler-edge.js')
 
 const Prisma = {}
 
@@ -34,12 +37,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.19.0
- * Query Engine version: 2ba551f319ab1df4bc874a89965d8b3641056773
+ * Prisma Client JS version: 7.8.0
+ * Query Engine version: 3c6e192761c0362d496ed980de936e2f3cebcd3a
  */
 Prisma.prismaVersion = {
-	client: '6.19.0',
-	engine: '2ba551f319ab1df4bc874a89965d8b3641056773'
+	client: '7.8.0',
+	engine: '3c6e192761c0362d496ed980de936e2f3cebcd3a'
 }
 
 Prisma.PrismaClientKnownRequestError = PrismaClientKnownRequestError
@@ -67,15 +70,11 @@ Prisma.defineExtension = Extensions.defineExtension
 /**
  * Shorthand utilities for JSON filtering
  */
-Prisma.DbNull = objectEnumValues.instances.DbNull
-Prisma.JsonNull = objectEnumValues.instances.JsonNull
-Prisma.AnyNull = objectEnumValues.instances.AnyNull
+Prisma.DbNull = DbNull
+Prisma.JsonNull = JsonNull
+Prisma.AnyNull = AnyNull
 
-Prisma.NullTypes = {
-	DbNull: objectEnumValues.classes.DbNull,
-	JsonNull: objectEnumValues.classes.JsonNull,
-	AnyNull: objectEnumValues.classes.AnyNull
-}
+Prisma.NullTypes = NullTypes
 
 /**
  * Enums
@@ -139,80 +138,34 @@ exports.Prisma.ModelName = {
  * Create the Client
  */
 const config = {
-	generator: {
-		name: 'client',
-		provider: {
-			fromEnvVar: null,
-			value: 'prisma-client-js'
-		},
-		output: {
-			value:
-				'C:\\Users\\Ezetorc\\Documents\\Programming\\notievan\\backend\\prisma\\generated\\prisma',
-			fromEnvVar: null
-		},
-		config: {
-			engineType: 'library'
-		},
-		binaryTargets: [
-			{
-				fromEnvVar: null,
-				value: 'windows',
-				native: true
-			},
-			{
-				fromEnvVar: null,
-				value: 'rhel-openssl-3.0.x'
-			}
-		],
-		previewFeatures: [],
-		sourceFilePath:
-			'C:\\Users\\Ezetorc\\Documents\\Programming\\notievan\\backend\\prisma\\schema.prisma',
-		isCustomOutput: true
-	},
-	relativeEnvPaths: {
-		rootEnvPath: null,
-		schemaEnvPath: '../../../.env'
-	},
-	relativePath: '../..',
-	clientVersion: '6.19.0',
-	engineVersion: '2ba551f319ab1df4bc874a89965d8b3641056773',
-	datasourceNames: ['db'],
+	previewFeatures: [],
+	clientVersion: '7.8.0',
+	engineVersion: '3c6e192761c0362d496ed980de936e2f3cebcd3a',
 	activeProvider: 'postgresql',
-	postinstall: false,
-	inlineDatasources: {
-		db: {
-			url: {
-				fromEnvVar: 'DATABASE_URL',
-				value: null
-			}
-		}
-	},
 	inlineSchema:
-		'generator client {\n  provider      = "prisma-client-js"\n  output        = "./generated/prisma"\n  binaryTargets = ["native", "rhel-openssl-3.0.x"]\n}\n\ndatasource db {\n  provider = "postgresql"\n  url      = env("DATABASE_URL")\n}\n\nmodel Article {\n  id          String   @id @default(cuid())\n  title       String\n  subtitle    String\n  description String\n  content     String\n  createdAt   DateTime @default(now())\n  authorId    String\n  image       String\n\n  comments Comment[] @relation("ArticleComments")\n  author   User      @relation("UserArticles", fields: [authorId], references: [id], onDelete: Cascade)\n}\n\nmodel User {\n  id        String   @id @default(cuid())\n  name      String   @unique\n  email     String   @unique\n  password  String\n  createdAt DateTime @default(now())\n  role      Role     @default(USER)\n\n  articles Article[] @relation("UserArticles")\n  comments Comment[] @relation("UserComments")\n}\n\nmodel Comment {\n  id        String   @id @default(cuid())\n  createdAt DateTime @default(now())\n  content   String\n  articleId String\n  authorId  String\n\n  article Article @relation("ArticleComments", fields: [articleId], references: [id], onDelete: Cascade)\n  author  User    @relation("UserComments", fields: [authorId], references: [id], onDelete: Cascade)\n}\n\nenum Role {\n  USER\n  AUTHOR\n  ADMIN\n}\n',
-	inlineSchemaHash:
-		'ed798dd08696775afd7f34b73717647c1a2f6f150f45b531d3809c4513d87858',
-	copyEngine: true
+		'generator client {\n  provider      = "prisma-client-js"\n  output        = "./generated/prisma"\n  binaryTargets = ["native", "rhel-openssl-3.0.x"]\n}\n\ndatasource db {\n  provider = "postgresql"\n}\n\nmodel Article {\n  id          String   @id @default(cuid())\n  title       String\n  subtitle    String\n  description String\n  content     String\n  createdAt   DateTime @default(now())\n  authorId    String\n  image       String\n\n  comments Comment[] @relation("ArticleComments")\n  author   User      @relation("UserArticles", fields: [authorId], references: [id], onDelete: Cascade)\n}\n\nmodel User {\n  id        String   @id @default(cuid())\n  name      String   @unique\n  email     String   @unique\n  password  String\n  createdAt DateTime @default(now())\n  role      Role     @default(USER)\n\n  articles Article[] @relation("UserArticles")\n  comments Comment[] @relation("UserComments")\n}\n\nmodel Comment {\n  id        String   @id @default(cuid())\n  createdAt DateTime @default(now())\n  content   String\n  articleId String\n  authorId  String\n\n  article Article @relation("ArticleComments", fields: [articleId], references: [id], onDelete: Cascade)\n  author  User    @relation("UserComments", fields: [authorId], references: [id], onDelete: Cascade)\n}\n\nenum Role {\n  USER\n  AUTHOR\n  ADMIN\n}\n'
 }
-config.dirname = '/'
 
 config.runtimeDataModel = JSON.parse(
-	'{"models":{"Article":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"String","nativeType":null,"default":{"name":"cuid","args":[1]},"isGenerated":false,"isUpdatedAt":false},{"name":"title","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"subtitle","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"description","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"content","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"authorId","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":true,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"image","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"comments","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Comment","nativeType":null,"relationName":"ArticleComments","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false},{"name":"author","kind":"object","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"User","nativeType":null,"relationName":"UserArticles","relationFromFields":["authorId"],"relationToFields":["id"],"relationOnDelete":"Cascade","isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false},"User":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"String","nativeType":null,"default":{"name":"cuid","args":[1]},"isGenerated":false,"isUpdatedAt":false},{"name":"name","kind":"scalar","isList":false,"isRequired":true,"isUnique":true,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"email","kind":"scalar","isList":false,"isRequired":true,"isUnique":true,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"password","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"role","kind":"enum","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"Role","nativeType":null,"default":"USER","isGenerated":false,"isUpdatedAt":false},{"name":"articles","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Article","nativeType":null,"relationName":"UserArticles","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false},{"name":"comments","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Comment","nativeType":null,"relationName":"UserComments","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false},"Comment":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"String","nativeType":null,"default":{"name":"cuid","args":[1]},"isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"content","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"articleId","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":true,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"authorId","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":true,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"article","kind":"object","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Article","nativeType":null,"relationName":"ArticleComments","relationFromFields":["articleId"],"relationToFields":["id"],"relationOnDelete":"Cascade","isGenerated":false,"isUpdatedAt":false},{"name":"author","kind":"object","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"User","nativeType":null,"relationName":"UserComments","relationFromFields":["authorId"],"relationToFields":["id"],"relationOnDelete":"Cascade","isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false}},"enums":{"Role":{"values":[{"name":"USER","dbName":null},{"name":"AUTHOR","dbName":null},{"name":"ADMIN","dbName":null}],"dbName":null}},"types":{}}'
+	'{"models":{"Article":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"title","kind":"scalar","type":"String"},{"name":"subtitle","kind":"scalar","type":"String"},{"name":"description","kind":"scalar","type":"String"},{"name":"content","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"authorId","kind":"scalar","type":"String"},{"name":"image","kind":"scalar","type":"String"},{"name":"comments","kind":"object","type":"Comment","relationName":"ArticleComments"},{"name":"author","kind":"object","type":"User","relationName":"UserArticles"}],"dbName":null},"User":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"name","kind":"scalar","type":"String"},{"name":"email","kind":"scalar","type":"String"},{"name":"password","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"role","kind":"enum","type":"Role"},{"name":"articles","kind":"object","type":"Article","relationName":"UserArticles"},{"name":"comments","kind":"object","type":"Comment","relationName":"UserComments"}],"dbName":null},"Comment":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"content","kind":"scalar","type":"String"},{"name":"articleId","kind":"scalar","type":"String"},{"name":"authorId","kind":"scalar","type":"String"},{"name":"article","kind":"object","type":"Article","relationName":"ArticleComments"},{"name":"author","kind":"object","type":"User","relationName":"UserComments"}],"dbName":null}},"enums":{},"types":{}}'
 )
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
-config.engineWasm = undefined
-config.compilerWasm = undefined
-
-config.injectableEdgeEnv = () => ({
-	parsed: {
-		DATABASE_URL:
-			(typeof globalThis !== 'undefined' && globalThis['DATABASE_URL']) ||
-			(typeof process !== 'undefined' &&
-				process.env &&
-				process.env.DATABASE_URL) ||
-			undefined
-	}
-})
-
+config.parameterizationSchema = {
+	strings: JSON.parse(
+		'["where","orderBy","cursor","article","articles","comments","_count","author","Article.findUnique","Article.findUniqueOrThrow","Article.findFirst","Article.findFirstOrThrow","Article.findMany","data","Article.createOne","Article.createMany","Article.createManyAndReturn","Article.updateOne","Article.updateMany","Article.updateManyAndReturn","create","update","Article.upsertOne","Article.deleteOne","Article.deleteMany","having","_min","_max","Article.groupBy","Article.aggregate","User.findUnique","User.findUniqueOrThrow","User.findFirst","User.findFirstOrThrow","User.findMany","User.createOne","User.createMany","User.createManyAndReturn","User.updateOne","User.updateMany","User.updateManyAndReturn","User.upsertOne","User.deleteOne","User.deleteMany","User.groupBy","User.aggregate","Comment.findUnique","Comment.findUniqueOrThrow","Comment.findFirst","Comment.findFirstOrThrow","Comment.findMany","Comment.createOne","Comment.createMany","Comment.createManyAndReturn","Comment.updateOne","Comment.updateMany","Comment.updateManyAndReturn","Comment.upsertOne","Comment.deleteOne","Comment.deleteMany","Comment.groupBy","Comment.aggregate","AND","OR","NOT","id","createdAt","content","articleId","authorId","equals","in","notIn","lt","lte","gt","gte","not","contains","startsWith","endsWith","name","email","password","Role","role","every","some","none","title","subtitle","description","image","is","isNot","connectOrCreate","upsert","createMany","set","disconnect","delete","connect","updateMany","deleteMany"]'
+	),
+	graph:
+		'twEbMA0FAABjACAHAABmACA-AABlADA_AAAHABBAAABlADBBAQAAAAFCQABgACFDAQBfACFFAQBfACFZAQBfACFaAQBfACFbAQBfACFcAQBfACEBAAAAAQAgCgMAAGgAIAcAAGYAID4AAGcAMD8AAAMAEEAAAGcAMEEBAF8AIUJAAGAAIUMBAF8AIUQBAF8AIUUBAF8AIQIDAAClAQAgBwAApAEAIAoDAABoACAHAABmACA-AABnADA_AAADABBAAABnADBBAQAAAAFCQABgACFDAQBfACFEAQBfACFFAQBfACEDAAAAAwAgAQAABAAwAgAABQAgDQUAAGMAIAcAAGYAID4AAGUAMD8AAAcAEEAAAGUAMEEBAF8AIUJAAGAAIUMBAF8AIUUBAF8AIVkBAF8AIVoBAF8AIVsBAF8AIVwBAF8AIQIFAACeAQAgBwAApAEAIAMAAAAHACABAAAIADACAAABACADAAAAAwAgAQAABAAwAgAABQAgAQAAAAcAIAEAAAADACABAAAAAwAgAQAAAAEAIAMAAAAHACABAAAIADACAAABACADAAAABwAgAQAACAAwAgAAAQAgAwAAAAcAIAEAAAgAMAIAAAEAIAoFAACaAQAgBwAAowEAIEEBAAAAAUJAAAAAAUMBAAAAAUUBAAAAAVkBAAAAAVoBAAAAAVsBAAAAAVwBAAAAAQENAAASACAIQQEAAAABQkAAAAABQwEAAAABRQEAAAABWQEAAAABWgEAAAABWwEAAAABXAEAAAABAQ0AABQAMAENAAAUADAKBQAAjwEAIAcAAKIBACBBAQBsACFCQABtACFDAQBsACFFAQBsACFZAQBsACFaAQBsACFbAQBsACFcAQBsACECAAAAAQAgDQAAFwAgCEEBAGwAIUJAAG0AIUMBAGwAIUUBAGwAIVkBAGwAIVoBAGwAIVsBAGwAIVwBAGwAIQIAAAAHACANAAAZACACAAAABwAgDQAAGQAgAwAAAAEAIBQAABIAIBUAABcAIAEAAAABACABAAAABwAgAwYAAJ8BACAaAAChAQAgGwAAoAEAIAs-AABkADA_AAAgABBAAABkADBBAQBTACFCQABUACFDAQBTACFFAQBTACFZAQBTACFaAQBTACFbAQBTACFcAQBTACEDAAAABwAgAQAAHwAwGQAAIAAgAwAAAAcAIAEAAAgAMAIAAAEAIAsEAABiACAFAABjACA-AABeADA_AAAmABBAAABeADBBAQAAAAFCQABgACFRAQAAAAFSAQAAAAFTAQBfACFVAABhVSIBAAAAIwAgAQAAACMAIAsEAABiACAFAABjACA-AABeADA_AAAmABBAAABeADBBAQBfACFCQABgACFRAQBfACFSAQBfACFTAQBfACFVAABhVSICBAAAnQEAIAUAAJ4BACADAAAAJgAgAQAAJwAwAgAAIwAgAwAAACYAIAEAACcAMAIAACMAIAMAAAAmACABAAAnADACAAAjACAIBAAAmwEAIAUAAJwBACBBAQAAAAFCQAAAAAFRAQAAAAFSAQAAAAFTAQAAAAFVAAAAVQIBDQAAKwAgBkEBAAAAAUJAAAAAAVEBAAAAAVIBAAAAAVMBAAAAAVUAAABVAgENAAAtADABDQAALQAwCAQAAHYAIAUAAHcAIEEBAGwAIUJAAG0AIVEBAGwAIVIBAGwAIVMBAGwAIVUAAHVVIgIAAAAjACANAAAwACAGQQEAbAAhQkAAbQAhUQEAbAAhUgEAbAAhUwEAbAAhVQAAdVUiAgAAACYAIA0AADIAIAIAAAAmACANAAAyACADAAAAIwAgFAAAKwAgFQAAMAAgAQAAACMAIAEAAAAmACADBgAAcgAgGgAAdAAgGwAAcwAgCT4AAFoAMD8AADkAEEAAAFoAMEEBAFMAIUJAAFQAIVEBAFMAIVIBAFMAIVMBAFMAIVUAAFtVIgMAAAAmACABAAA4ADAZAAA5ACADAAAAJgAgAQAAJwAwAgAAIwAgAQAAAAUAIAEAAAAFACADAAAAAwAgAQAABAAwAgAABQAgAwAAAAMAIAEAAAQAMAIAAAUAIAMAAAADACABAAAEADACAAAFACAHAwAAcAAgBwAAcQAgQQEAAAABQkAAAAABQwEAAAABRAEAAAABRQEAAAABAQ0AAEEAIAVBAQAAAAFCQAAAAAFDAQAAAAFEAQAAAAFFAQAAAAEBDQAAQwAwAQ0AAEMAMAcDAABuACAHAABvACBBAQBsACFCQABtACFDAQBsACFEAQBsACFFAQBsACECAAAABQAgDQAARgAgBUEBAGwAIUJAAG0AIUMBAGwAIUQBAGwAIUUBAGwAIQIAAAADACANAABIACACAAAAAwAgDQAASAAgAwAAAAUAIBQAAEEAIBUAAEYAIAEAAAAFACABAAAAAwAgAwYAAGkAIBoAAGsAIBsAAGoAIAg-AABSADA_AABPABBAAABSADBBAQBTACFCQABUACFDAQBTACFEAQBTACFFAQBTACEDAAAAAwAgAQAATgAwGQAATwAgAwAAAAMAIAEAAAQAMAIAAAUAIAg-AABSADA_AABPABBAAABSADBBAQBTACFCQABUACFDAQBTACFEAQBTACFFAQBTACEOBgAAVgAgGgAAWQAgGwAAWQAgRgEAAAABRwEAAAAESAEAAAAESQEAAAABSgEAAAABSwEAAAABTAEAAAABTQEAWAAhTgEAAAABTwEAAAABUAEAAAABCwYAAFYAIBoAAFcAIBsAAFcAIEZAAAAAAUdAAAAABEhAAAAABElAAAAAAUpAAAAAAUtAAAAAAUxAAAAAAU1AAFUAIQsGAABWACAaAABXACAbAABXACBGQAAAAAFHQAAAAARIQAAAAARJQAAAAAFKQAAAAAFLQAAAAAFMQAAAAAFNQABVACEIRgIAAAABRwIAAAAESAIAAAAESQIAAAABSgIAAAABSwIAAAABTAIAAAABTQIAVgAhCEZAAAAAAUdAAAAABEhAAAAABElAAAAAAUpAAAAAAUtAAAAAAUxAAAAAAU1AAFcAIQ4GAABWACAaAABZACAbAABZACBGAQAAAAFHAQAAAARIAQAAAARJAQAAAAFKAQAAAAFLAQAAAAFMAQAAAAFNAQBYACFOAQAAAAFPAQAAAAFQAQAAAAELRgEAAAABRwEAAAAESAEAAAAESQEAAAABSgEAAAABSwEAAAABTAEAAAABTQEAWQAhTgEAAAABTwEAAAABUAEAAAABCT4AAFoAMD8AADkAEEAAAFoAMEEBAFMAIUJAAFQAIVEBAFMAIVIBAFMAIVMBAFMAIVUAAFtVIgcGAABWACAaAABdACAbAABdACBGAAAAVQJHAAAAVQhIAAAAVQhNAABcVSIHBgAAVgAgGgAAXQAgGwAAXQAgRgAAAFUCRwAAAFUISAAAAFUITQAAXFUiBEYAAABVAkcAAABVCEgAAABVCE0AAF1VIgsEAABiACAFAABjACA-AABeADA_AAAmABBAAABeADBBAQBfACFCQABgACFRAQBfACFSAQBfACFTAQBfACFVAABhVSILRgEAAAABRwEAAAAESAEAAAAESQEAAAABSgEAAAABSwEAAAABTAEAAAABTQEAWQAhTgEAAAABTwEAAAABUAEAAAABCEZAAAAAAUdAAAAABEhAAAAABElAAAAAAUpAAAAAAUtAAAAAAUxAAAAAAU1AAFcAIQRGAAAAVQJHAAAAVQhIAAAAVQhNAABdVSIDVgAABwAgVwAABwAgWAAABwAgA1YAAAMAIFcAAAMAIFgAAAMAIAs-AABkADA_AAAgABBAAABkADBBAQBTACFCQABUACFDAQBTACFFAQBTACFZAQBTACFaAQBTACFbAQBTACFcAQBTACENBQAAYwAgBwAAZgAgPgAAZQAwPwAABwAQQAAAZQAwQQEAXwAhQkAAYAAhQwEAXwAhRQEAXwAhWQEAXwAhWgEAXwAhWwEAXwAhXAEAXwAhDQQAAGIAIAUAAGMAID4AAF4AMD8AACYAEEAAAF4AMEEBAF8AIUJAAGAAIVEBAF8AIVIBAF8AIVMBAF8AIVUAAGFVIl0AACYAIF4AACYAIAoDAABoACAHAABmACA-AABnADA_AAADABBAAABnADBBAQBfACFCQABgACFDAQBfACFEAQBfACFFAQBfACEPBQAAYwAgBwAAZgAgPgAAZQAwPwAABwAQQAAAZQAwQQEAXwAhQkAAYAAhQwEAXwAhRQEAXwAhWQEAXwAhWgEAXwAhWwEAXwAhXAEAXwAhXQAABwAgXgAABwAgAAAAAWIBAAAAAQFiQAAAAAEFFAAAsAEAIBUAALYBACBfAACxAQAgYAAAtQEAIGUAAAEAIAUUAACuAQAgFQAAswEAIF8AAK8BACBgAACyAQAgZQAAIwAgAxQAALABACBfAACxAQAgZQAAAQAgAxQAAK4BACBfAACvAQAgZQAAIwAgAAAAAWIAAABVAgsUAACEAQAwFQAAiQEAMF8AAIUBADBgAACGAQAwYQAAhwEAIGIAAIgBADBjAACIAQAwZAAAiAEAMGUAAIgBADBmAACKAQAwZwAAiwEAMAsUAAB4ADAVAAB9ADBfAAB5ADBgAAB6ADBhAAB7ACBiAAB8ADBjAAB8ADBkAAB8ADBlAAB8ADBmAAB-ADBnAAB_ADAFAwAAcAAgQQEAAAABQkAAAAABQwEAAAABRAEAAAABAgAAAAUAIBQAAIMBACADAAAABQAgFAAAgwEAIBUAAIIBACABDQAArQEAMAoDAABoACAHAABmACA-AABnADA_AAADABBAAABnADBBAQAAAAFCQABgACFDAQBfACFEAQBfACFFAQBfACECAAAABQAgDQAAggEAIAIAAACAAQAgDQAAgQEAIAg-AAB_ADA_AACAAQAQQAAAfwAwQQEAXwAhQkAAYAAhQwEAXwAhRAEAXwAhRQEAXwAhCD4AAH8AMD8AAIABABBAAAB_ADBBAQBfACFCQABgACFDAQBfACFEAQBfACFFAQBfACEEQQEAbAAhQkAAbQAhQwEAbAAhRAEAbAAhBQMAAG4AIEEBAGwAIUJAAG0AIUMBAGwAIUQBAGwAIQUDAABwACBBAQAAAAFCQAAAAAFDAQAAAAFEAQAAAAEIBQAAmgEAIEEBAAAAAUJAAAAAAUMBAAAAAVkBAAAAAVoBAAAAAVsBAAAAAVwBAAAAAQIAAAABACAUAACZAQAgAwAAAAEAIBQAAJkBACAVAACOAQAgAQ0AAKwBADANBQAAYwAgBwAAZgAgPgAAZQAwPwAABwAQQAAAZQAwQQEAAAABQkAAYAAhQwEAXwAhRQEAXwAhWQEAXwAhWgEAXwAhWwEAXwAhXAEAXwAhAgAAAAEAIA0AAI4BACACAAAAjAEAIA0AAI0BACALPgAAiwEAMD8AAIwBABBAAACLAQAwQQEAXwAhQkAAYAAhQwEAXwAhRQEAXwAhWQEAXwAhWgEAXwAhWwEAXwAhXAEAXwAhCz4AAIsBADA_AACMAQAQQAAAiwEAMEEBAF8AIUJAAGAAIUMBAF8AIUUBAF8AIVkBAF8AIVoBAF8AIVsBAF8AIVwBAF8AIQdBAQBsACFCQABtACFDAQBsACFZAQBsACFaAQBsACFbAQBsACFcAQBsACEIBQAAjwEAIEEBAGwAIUJAAG0AIUMBAGwAIVkBAGwAIVoBAGwAIVsBAGwAIVwBAGwAIQsUAACQAQAwFQAAlAEAMF8AAJEBADBgAACSAQAwYQAAkwEAIGIAAHwAMGMAAHwAMGQAAHwAMGUAAHwAMGYAAJUBADBnAAB_ADAFBwAAcQAgQQEAAAABQkAAAAABQwEAAAABRQEAAAABAgAAAAUAIBQAAJgBACADAAAABQAgFAAAmAEAIBUAAJcBACABDQAAqwEAMAIAAAAFACANAACXAQAgAgAAAIABACANAACWAQAgBEEBAGwAIUJAAG0AIUMBAGwAIUUBAGwAIQUHAABvACBBAQBsACFCQABtACFDAQBsACFFAQBsACEFBwAAcQAgQQEAAAABQkAAAAABQwEAAAABRQEAAAABCAUAAJoBACBBAQAAAAFCQAAAAAFDAQAAAAFZAQAAAAFaAQAAAAFbAQAAAAFcAQAAAAEEFAAAkAEAMF8AAJEBADBhAACTAQAgZQAAfAAwBBQAAIQBADBfAACFAQAwYQAAhwEAIGUAAIgBADAEFAAAeAAwXwAAeQAwYQAAewAgZQAAfAAwAAAAAAAFFAAApgEAIBUAAKkBACBfAACnAQAgYAAAqAEAIGUAACMAIAMUAACmAQAgXwAApwEAIGUAACMAIAIEAACdAQAgBQAAngEAIAIFAACeAQAgBwAApAEAIAcFAACcAQAgQQEAAAABQkAAAAABUQEAAAABUgEAAAABUwEAAAABVQAAAFUCAgAAACMAIBQAAKYBACADAAAAJgAgFAAApgEAIBUAAKoBACAJAAAAJgAgBQAAdwAgDQAAqgEAIEEBAGwAIUJAAG0AIVEBAGwAIVIBAGwAIVMBAGwAIVUAAHVVIgcFAAB3ACBBAQBsACFCQABtACFRAQBsACFSAQBsACFTAQBsACFVAAB1VSIEQQEAAAABQkAAAAABQwEAAAABRQEAAAABB0EBAAAAAUJAAAAAAUMBAAAAAVkBAAAAAVoBAAAAAVsBAAAAAVwBAAAAAQRBAQAAAAFCQAAAAAFDAQAAAAFEAQAAAAEHBAAAmwEAIEEBAAAAAUJAAAAAAVEBAAAAAVIBAAAAAVMBAAAAAVUAAABVAgIAAAAjACAUAACuAQAgCQcAAKMBACBBAQAAAAFCQAAAAAFDAQAAAAFFAQAAAAFZAQAAAAFaAQAAAAFbAQAAAAFcAQAAAAECAAAAAQAgFAAAsAEAIAMAAAAmACAUAACuAQAgFQAAtAEAIAkAAAAmACAEAAB2ACANAAC0AQAgQQEAbAAhQkAAbQAhUQEAbAAhUgEAbAAhUwEAbAAhVQAAdVUiBwQAAHYAIEEBAGwAIUJAAG0AIVEBAGwAIVIBAGwAIVMBAGwAIVUAAHVVIgMAAAAHACAUAACwAQAgFQAAtwEAIAsAAAAHACAHAACiAQAgDQAAtwEAIEEBAGwAIUJAAG0AIUMBAGwAIUUBAGwAIVkBAGwAIVoBAGwAIVsBAGwAIVwBAGwAIQkHAACiAQAgQQEAbAAhQkAAbQAhQwEAbAAhRQEAbAAhWQEAbAAhWgEAbAAhWwEAbAAhXAEAbAAhAwUGAgYABQcAAwIDAAEHAAMDBAkBBQoCBgAEAgQLAAUMAAEFDQAAAQcAAwEHAAMDBgAKGgALGwAMAAAAAwYAChoACxsADAAAAwYAERoAEhsAEwAAAAMGABEaABIbABMCAwABBwADAgMAAQcAAwMGABgaABkbABoAAAADBgAYGgAZGwAaCAIBCQ4BCg8BCxABDBEBDhMBDxUGEBYHERgBEhoGExsIFhwBFx0BGB4GHCEJHSINHiQDHyUDICgDISkDIioDIywDJC4GJS8OJjEDJzMGKDQPKTUDKjYDKzcGLDoQLTsULjwCLz0CMD4CMT8CMkACM0ICNEQGNUUVNkcCN0kGOEoWOUsCOkwCO00GPFAXPVEb'
+}
+config.compilerWasm = {
+	getRuntime: async () => require('./query_compiler_fast_bg.js'),
+	getQueryCompilerWasmModule: async () => {
+		const loader = (await import('#wasm-compiler-loader')).default
+		const compiler = (await loader).default
+		return compiler
+	},
+	importName: './query_compiler_fast_bg.js'
+}
 if (
 	(typeof globalThis !== 'undefined' && globalThis['DEBUG']) ||
 	(typeof process !== 'undefined' && process.env && process.env.DEBUG) ||

@@ -93,7 +93,7 @@ export class ArticlesService {
 	static async getAll(limit: number, skip: number) {
 		const articles = await ArticlesRepository.getAll(limit, skip)
 
-		return articles.map(article => ({
+		return articles.map((article) => ({
 			...article,
 			image: CloudinaryService.optimizeUrl(article.image, 600)
 		}))
@@ -102,7 +102,7 @@ export class ArticlesService {
 	static async getOwn(limit: number, skip: number, userId: string) {
 		const articles = await ArticlesRepository.getOwn(limit, skip, userId)
 
-		return articles.map(article => ({
+		return articles.map((article) => ({
 			...article,
 			image: CloudinaryService.optimizeUrl(article.image, 600)
 		}))
@@ -118,7 +118,7 @@ export class ArticlesService {
 
 		const articles = await ArticlesRepository.getByIds(shuffledIds)
 
-		return articles.map(article => ({
+		return articles.map((article) => ({
 			...article,
 			image: CloudinaryService.optimizeUrl(article.image, 600)
 		}))

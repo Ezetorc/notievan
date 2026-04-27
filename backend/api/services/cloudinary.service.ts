@@ -43,7 +43,7 @@ export class CloudinaryService {
 			/https:\/\/res\.cloudinary\.com\/[^/]+\/image\/upload\/(?:v\d+\/)?(.+)\.(jpg|jpeg|png|gif|webp)$/
 		const match = url.match(cloudinaryRegex)
 
-		if (match && match[1]) {
+		if (match?.[1]) {
 			return decodeURIComponent(match[1])
 		}
 		return null
@@ -77,11 +77,8 @@ export class CloudinaryService {
 	}
 
 	static optimizeUrl(url: string, width = 800) {
-		if (!url.includes("/upload/")) return url;
+		if (!url.includes('/upload/')) return url
 
-		return url.replace(
-			"/upload/",
-			`/upload/f_auto,q_auto,w_${width}/`
-		);
+		return url.replace('/upload/', `/upload/f_auto,q_auto,w_${width}/`)
 	}
 }
