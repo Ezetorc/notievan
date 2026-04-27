@@ -8,12 +8,19 @@ import { CommentsRouter } from './routers/comments.router.js'
 
 const app = express()
 
+console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!START")
+
+app.use((req, _res, next) => {
+    console.log("LOLAZO: ", req.url)
+    next()
+})
+
 app.use(corsMiddleware())
 app.use(jsonMiddleware())
-app.use('/auth', AuthRouter)
-app.use('/users', UsersRouter)
-app.use('/articles', ArticlesRouter)
-app.use('/comments', CommentsRouter)
+app.use('/api/auth', AuthRouter)
+app.use('/api/users', UsersRouter)
+app.use('/api/articles', ArticlesRouter)
+app.use('/api/comments', CommentsRouter)
 app.use(errorHandlerMiddleware())
 
 export default app
