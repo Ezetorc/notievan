@@ -1,10 +1,10 @@
 {
-  "version": 2,
   "installCommand": "pnpm install",
-  "routes": [
+  "version": 2,
+  "builds": [
     {
-      "src": "/(.*)",
-      "dest": "/api/index.ts"
+      "src": "api/index.ts",
+      "use": "@vercel/node"
     }
   ]
 }
