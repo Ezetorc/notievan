@@ -2,11 +2,12 @@
 	"compilerOptions": {
 		"target": "ESNext",
 		"module": "NodeNext",
-		"strict": true,
+		"strict": false,
 		"verbatimModuleSyntax": true,
 		"skipLibCheck": true,
 		"types": ["node"],
-		"outDir": "./dist"
+		"outDir": "./dist",
+		"moduleResolution": "nodenext"
 	},
 	"exclude": ["node_modules"]
 }
