@@ -6,9 +6,9 @@
     "build": "cd .. && prisma generate --schema=backend/prisma/schema.prisma && cd backend && tsc",
     "lint": "npx @biomejs/biome lint --write",
     "format": "npx @biomejs/biome format --write",
-    "start": "node dist/index.js"
+    "start": "node dist/api/index.js"
   },
-  "main": "api/index.ts",
+  "main": "dist/api/index.js",
   "prisma": {
     "schema": "prisma/schema.prisma"
   },
@@ -23,7 +23,6 @@
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.0.2",
     "pg": "^8.20.0",
-    "serverless-http": "^4.0.0",
     "sharp": "^0.34.5",
     "zod": "^4.1.12"
   },
