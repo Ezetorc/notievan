@@ -5,7 +5,6 @@ import { ArticlesRouter } from './routers/articles.router.js'
 import corsMiddleware from 'cors'
 import { errorHandlerMiddleware } from './middlewares/error-handler.middleware.js'
 import { CommentsRouter } from './routers/comments.router.js'
-import serverless from "serverless-http";
 
 const app = express()
 
@@ -17,4 +16,4 @@ app.use('/articles', ArticlesRouter)
 app.use('/comments', CommentsRouter)
 app.use(errorHandlerMiddleware())
 
-export const handler = serverless(app);
+export default app
