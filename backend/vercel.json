@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "installCommand": "cd backend && pnpm install",
+  "installCommand": "pnpm install",
   "routes": [
     {
       "src": "/(.*)",
