@@ -1,6 +1,12 @@
 [functions]
-  external_node_modules = ["express", "cors", "serverless-http", "@prisma/client"]
   node_bundler = "esbuild"
+  external_node_modules = [
+    "express",
+    "cors",
+    "serverless-http",
+    "@prisma/client",
+    "prisma"
+  ]
 [[redirects]]
   force = true
   from = "/api/*"

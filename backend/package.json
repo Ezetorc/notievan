@@ -3,10 +3,9 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch api/index.ts",
-    "build": "cd .. && prisma generate --schema=backend/prisma/schema.prisma && cd backend && tsc",
+    "build": "prisma generate",
     "lint": "npx @biomejs/biome lint --write",
-    "format": "npx @biomejs/biome format --write",
-    "start": "node dist/api/index.js"
+    "format": "npx @biomejs/biome format --write"
   },
   "main": "dist/api/index.js",
   "prisma": {
