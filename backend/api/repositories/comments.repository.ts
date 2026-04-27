@@ -1,27 +1,44 @@
-import type { Prisma } from '@prisma/client'
-import { prisma } from '../configuration/prisma.configuration.js'
+import { database } from '../configuration/database.configuration.js'
+import { comments } from '../database/schema.js'
+import { eq, desc } from 'drizzle-orm'
 
 export class CommentsRepository {
-	static async create(data: Prisma.CommentUncheckedCreateInput) {
-		return await prisma.comment.create({ data })
+	static async create(data: {
+		id: string
+		content: string
+		articleId: string
+		authorId: string
+	}) {
+		const result = await database.insert(comments).values(data).returning()
+		return result[0]
 	}
 
 	static async getAllOfArticle(articleId: string, limit: number, skip: number) {
-		return await prisma.comment.findMany({
-			where: { articleId },
-			orderBy: { createdAt: 'desc' },
-			take: limit,
-			skip
-		})
+		return await database
+			.select()
+			.from(comments)
+			.where(eq(comments.articleId, articleId))
+			.orderBy(desc(comments.createdAt))
+			.limit(limit)
+			.offset(skip)
 	}
 
 	static async findById(id: string) {
-		return await prisma.comment.findUnique({ where: { id } })
+		const result = await database
+			.select()
+			.from(comments)
+			.where(eq(comments.id, id))
+			.limit(1)
+
+		return result[0] ?? null
 	}
 
 	static async delete(id: string) {
-		const comment = await prisma.comment.delete({ where: { id } })
+		const result = await database
+			.delete(comments)
+			.where(eq(comments.id, id))
+			.returning()
 
-		return Boolean(comment)
+		return result.length > 0
 	}
 }

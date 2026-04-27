@@ -1,8 +1,8 @@
 import jwt, { type JwtPayload } from 'jsonwebtoken'
 import { env } from '../configuration/env.configuration.js'
-import { prisma } from '../configuration/prisma.configuration.js'
 import type { Request, Response, NextFunction } from 'express'
-import type { Role } from '@prisma/client'
+import { UsersRepository } from '../repositories/users.repository.js'
+import type { Role } from '../database/types.js'
 
 export function authMiddleware(...requiredRoles: Role[]) {
 	return async (request: Request, response: Response, next: NextFunction) => {
@@ -42,10 +42,7 @@ export function authMiddleware(...requiredRoles: Role[]) {
 				.json({ error: 'Token inválido: sub claim faltante' })
 		}
 
-		const user = await prisma.user.findUnique({
-			where: { id: payload.sub },
-			select: { id: true, role: true }
-		})
+		const user = await UsersRepository.findAuthUserById(payload.sub)
 
 		if (!user) {
 			return response.status(404).json({ error: 'Usuario no encontrado' })

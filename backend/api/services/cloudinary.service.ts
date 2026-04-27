@@ -1,5 +1,5 @@
-import type { Article } from '@prisma/client'
 import cloudinary from '../configuration/cloudinary.configuration.js'
+import type { Article } from '../database/types.js'
 
 export class CloudinaryService {
 	static async upload(
@@ -55,7 +55,7 @@ export class CloudinaryService {
 		body
 	}: {
 		article: Article
-		file?: any,
+		file?: any
 		body: any
 	}) {
 		if (file) {

@@ -1,51 +1,108 @@
-import type { Prisma, Role } from '@prisma/client'
-import { prisma } from '../configuration/prisma.configuration.js'
+import { database } from '../configuration/database.configuration.js'
+import { users } from '../database/schema.js'
+import { eq, desc } from 'drizzle-orm'
+import type { Role } from '../database/types.js'
 
 export class UsersRepository {
-	static async create(data: Prisma.UserCreateInput) {
-		return await prisma.user.create({ data })
+	static async create(data: {
+		id: string
+		name: string
+		email: string
+		password: string
+		role?: Role
+	}) {
+		const result = await database.insert(users).values(data).returning()
+
+		return result[0]
+	}
+
+	static async findAuthUserById(id: string) {
+		const result = await database
+			.select({
+				id: users.id,
+				role: users.role
+			})
+			.from(users)
+			.where(eq(users.id, id))
+			.limit(1)
+
+		return result[0] ?? null
 	}
 
 	static async findByName(name: string) {
-		return await prisma.user.findUnique({ where: { name } })
+		const result = await database
+			.select()
+			.from(users)
+			.where(eq(users.name, name))
+			.limit(1)
+
+		return result[0] ?? null
 	}
 
 	static async findById(id: string) {
-		return await prisma.user.findUnique({ where: { id } })
+		const result = await database
+			.select()
+			.from(users)
+			.where(eq(users.id, id))
+			.limit(1)
+
+		return result[0] ?? null
 	}
 
 	static async findByEmail(email: string) {
-		return await prisma.user.findUnique({ where: { email } })
+		const result = await database
+			.select()
+			.from(users)
+			.where(eq(users.email, email))
+			.limit(1)
+
+		return result[0] ?? null
 	}
 
 	static async findAll(limit: number, skip: number) {
-		return await prisma.user.findMany({
-			orderBy: { createdAt: 'desc' },
-			take: limit,
-			skip
-		})
+		return await database
+			.select()
+			.from(users)
+			.orderBy(desc(users.createdAt))
+			.limit(limit)
+			.offset(skip)
 	}
 
 	static async updateRole(id: string, role: Role) {
-		return await prisma.user.update({
-			where: { id },
-			data: { role }
-		})
+		const result = await database
+			.update(users)
+			.set({ role })
+			.where(eq(users.id, id))
+			.returning()
+
+		return result[0] ?? null
 	}
 
-	static async update(id: string, data: Prisma.UserUpdateInput) {
-		return await prisma.user.update({
-			where: { id },
-			data
-		})
+	static async update(
+		id: string,
+		data: Partial<{
+			name: string
+			email: string
+			password: string
+			role: Role
+		}>
+	) {
+		const result = await database
+			.update(users)
+			.set(data)
+			.where(eq(users.id, id))
+			.returning()
+
+		return result[0] ?? null
 	}
 
 	static async findNameById(id: string) {
-		const user = await prisma.user.findUnique({
-			where: { id },
-			select: { name: true }
-		})
+		const result = await database
+			.select({ name: users.name })
+			.from(users)
+			.where(eq(users.id, id))
+			.limit(1)
 
-		return user?.name
+		return result[0]?.name ?? null
 	}
 }

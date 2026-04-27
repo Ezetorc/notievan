@@ -1,4 +1,4 @@
-import type { Role } from '@prisma/client'
+import type { Role } from '../database/types.js'
 import type { UpdateUserDtoType } from '../models/dtos/update-user.dto.js'
 import { ConflictError } from '../models/errors/conflict.error.js'
 import { NotFoundError } from '../models/errors/not-found.error.js'

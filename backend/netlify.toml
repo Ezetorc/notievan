@@ -1,7 +1,5 @@
 [functions]
   node_bundler = "esbuild"
-  external_node_modules = ["@prisma/client"]
-  included_files = ["node_modules/.prisma/client/**"]
 [[redirects]]
   force = true
   from = "/api/*"
