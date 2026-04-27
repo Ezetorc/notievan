@@ -1,9 +1,9 @@
 import { useUserName } from '../hooks/use-user-name.hook'
-import type { Article as ArticleData } from '../../../backend/prisma/generated/prisma'
 import { isRecent } from '../pages/Home/utilities/is-recent.utility'
 import { useRandomImage } from '../hooks/use-random-image.hook'
+import type { ArticlePreview } from '../models/article-preview.model'
 
-export function Article({ article }: { article?: ArticleData }) {
+export function Article({ article }: { article?: ArticlePreview }) {
 	const authorName = useUserName(article?.authorId)
 	const { image } = useRandomImage({
 		id: article?.id,

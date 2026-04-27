@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
-import type { Article } from '../../../backend/prisma/generated/prisma'
 import { ArticlesService } from '../services/articles.service'
+import type { Article } from '../models/article.model'
 
 type usePaginatedArticlesOptions = {
 	type?: 'all' | 'own' | 'random'

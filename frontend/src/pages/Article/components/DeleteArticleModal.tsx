@@ -1,10 +1,10 @@
 import { useState, type Dispatch, type SetStateAction } from 'react'
 import { useLocation } from 'wouter'
 import { ArticlesService } from '../../../services/articles.service'
-import type { Article } from '../../../../../backend/prisma/generated/prisma'
 import { useQueryClient } from '@tanstack/react-query'
 import { ActionButton } from '../../../components/ActionButton'
 import { Modal } from '../../../components/Modal'
+import type { Article } from '../../../models/article.model'
 
 export function DeleteArticleModal({
 	setIsModalOpen,

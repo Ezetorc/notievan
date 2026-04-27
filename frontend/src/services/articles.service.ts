@@ -1,4 +1,4 @@
-import type { Article } from '../../../backend/prisma/generated/prisma'
+import type { Article } from '../models/article.model'
 import { HttpClient } from '../models/http-client.model'
 
 export class ArticlesService {

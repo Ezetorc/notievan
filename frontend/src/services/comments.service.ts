@@ -1,4 +1,4 @@
-import type { Comment } from '../../../backend/prisma/generated/prisma'
+import type { Comment } from '../models/comment.model'
 import { HttpClient } from '../models/http-client.model'
 
 type CreateCommentData = {

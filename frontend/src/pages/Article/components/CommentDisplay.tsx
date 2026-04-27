@@ -1,9 +1,9 @@
-import type { Comment } from '../../../../../backend/prisma/generated/prisma'
 import { useUserName } from '../../../hooks/use-user-name.hook'
 import { getParsedDate } from '../../../utilities/get-parsed-date.utility'
 import { useState } from 'react'
 import { DeleteCommentModal } from './DeleteCommentModal'
 import { useSession } from '../../../hooks/use-session.hook'
+import type { Comment } from '../../../models/comment.model'
 
 export function CommentDisplay({ comment }: { comment: Comment }) {
 	const { user } = useSession()

@@ -5,4 +5,5 @@ export type ArticlePreview = {
 	description: string
 	authorId: string
 	image: string
+	createdAt: Date
 }
