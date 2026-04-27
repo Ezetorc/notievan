@@ -5,7 +5,6 @@ import type { Role } from '../database/types.js'
 
 export class UsersRepository {
 	static async create(data: {
-		id: string
 		name: string
 		email: string
 		password: string

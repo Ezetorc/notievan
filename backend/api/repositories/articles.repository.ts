@@ -23,7 +23,6 @@ export class ArticlesRepository {
 	}
 
 	static async create(data: {
-		id: string
 		title: string
 		subtitle: string
 		description: string

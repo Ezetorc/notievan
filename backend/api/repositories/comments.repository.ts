@@ -4,7 +4,6 @@ import { eq, desc } from 'drizzle-orm'
 
 export class CommentsRepository {
 	static async create(data: {
-		id: string
 		content: string
 		articleId: string
 		authorId: string

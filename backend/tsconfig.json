@@ -9,5 +9,5 @@
 		"outDir": "./dist",
 		"moduleResolution": "nodenext"
 	},
-	"exclude": ["node_modules"]
+	"exclude": ["node_modules", "drizzle.config.ts"]
 }

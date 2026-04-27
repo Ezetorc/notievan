@@ -5,7 +5,10 @@
 		"dev": "netlify dev",
 		"build": "tsc",
 		"lint": "npx @biomejs/biome lint --write",
-		"format": "npx @biomejs/biome format --write"
+		"format": "npx @biomejs/biome format --write",
+		"db:generate": "drizzle-kit generate",
+		"db:push": "drizzle-kit push",
+		"db:studio": "drizzle-kit studio"
 	},
 	"dependencies": {
 		"bcrypt": "^6.0.0",
