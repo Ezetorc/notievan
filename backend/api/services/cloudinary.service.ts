@@ -55,7 +55,7 @@ export class CloudinaryService {
 		body
 	}: {
 		article: Article
-		file?: Express.Multer.File
+		file?: any,
 		body: any
 	}) {
 		if (file) {
