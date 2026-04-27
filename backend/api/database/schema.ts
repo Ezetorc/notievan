@@ -2,7 +2,7 @@ import { text, timestamp, pgTable, pgEnum, uuid } from 'drizzle-orm/pg-core'
 
 export const roleEnum = pgEnum('Role', ['USER', 'AUTHOR', 'ADMIN'])
 
-export const users = pgTable('User', {
+export const users = pgTable('user', {
 	id: uuid('id').primaryKey().defaultRandom(),
 	name: text('name').notNull().unique(),
 	email: text('email').notNull().unique(),
@@ -11,7 +11,7 @@ export const users = pgTable('User', {
 	role: roleEnum('role').default('USER').notNull()
 })
 
-export const articles = pgTable('Article', {
+export const articles = pgTable('article', {
 	id: uuid('id').primaryKey().defaultRandom(),
 	title: text('title').notNull(),
 	subtitle: text('subtitle').notNull(),
@@ -22,7 +22,7 @@ export const articles = pgTable('Article', {
 	image: text('image').notNull()
 })
 
-export const comments = pgTable('Comment', {
+export const comments = pgTable('comment', {
 	id: uuid('id').primaryKey().defaultRandom(),
 	createdAt: timestamp('createdAt').defaultNow().notNull(),
 	content: text('content').notNull(),
