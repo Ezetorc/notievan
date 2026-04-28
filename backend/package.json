@@ -8,6 +8,7 @@
 		"format": "npx @biomejs/biome format --write"
 	},
 	"dependencies": {
+		"@paralleldrive/cuid2": "^3.3.0",
 		"bcrypt": "^6.0.0",
 		"cloudinary": "^2.8.0",
 		"cors": "^2.8.5",

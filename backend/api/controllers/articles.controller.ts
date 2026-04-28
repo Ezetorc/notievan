@@ -1,4 +1,4 @@
-import { UUIDParamDto } from '../models/dtos/user-id-param.dto.js'
+import { CUIDParamDto } from '../models/dtos/cuuid-param.dto.js'
 import type { Request, Response } from 'express'
 import { UpdateArticleDto } from '../models/dtos/update-article.dto.js'
 import { CreateArticleDto } from '../models/dtos/create-article.dto.js'
@@ -8,21 +8,21 @@ import { ArticlesService } from '../services/articles.service.js'
 
 export class ArticlesController {
 	static async findById(request: Request, response: Response) {
-		const { id } = UUIDParamDto.parse(request.params)
+		const { id } = CUIDParamDto.parse(request.params)
 		const article = await ArticlesService.getById(id)
 
 		return response.json(article)
 	}
 
 	static async delete(request: Request, response: Response) {
-		const { id } = UUIDParamDto.parse(request.params)
+		const { id } = CUIDParamDto.parse(request.params)
 		const success = await ArticlesService.delete(id)
 
 		return response.json(success)
 	}
 
 	static async update(request: Request, response: Response) {
-		const { id } = UUIDParamDto.parse(request.params)
+		const { id } = CUIDParamDto.parse(request.params)
 		const data = UpdateArticleDto.parse(request.body)
 		const success = await ArticlesService.update(id, data, request)
 
