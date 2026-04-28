@@ -1,5 +1,5 @@
 import * as z from 'zod'
 
-export const CUIDParamDto = z.object({
-	id: z.cuid()
+export const UUIDParamDto = z.object({
+	id: z.uuid()
 })

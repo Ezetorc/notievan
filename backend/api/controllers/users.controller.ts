@@ -1,4 +1,4 @@
-import { CUIDParamDto } from '../models/dtos/user-id-param.dto.js'
+import { UUIDParamDto } from '../models/dtos/user-id-param.dto.js'
 import type { Request, Response } from 'express'
 import { PaginationParamsDto } from '../models/dtos/pagination-params.dto.js'
 import { SanitizedUser } from '../models/sanitized-user.model.js'
@@ -9,14 +9,14 @@ import { UnauthorizedError } from '../models/errors/unauthorized.error.js'
 
 export class UsersController {
 	static async getNameById(request: Request, response: Response) {
-		const { id } = CUIDParamDto.parse(request.params)
+		const { id } = UUIDParamDto.parse(request.params)
 		const name = await UsersService.getNameById(id)
 
 		return response.json(name)
 	}
 
 	static async getById(request: Request, response: Response) {
-		const { id } = CUIDParamDto.parse(request.params)
+		const { id } = UUIDParamDto.parse(request.params)
 
 		if (request.user.id !== id) {
 			throw new UnauthorizedError('No tienes permiso para obtener este usuario')
@@ -29,7 +29,7 @@ export class UsersController {
 	}
 
 	static async updateRole(request: Request, response: Response) {
-		const { id } = CUIDParamDto.parse(request.params)
+		const { id } = UUIDParamDto.parse(request.params)
 		const { role } = RoleParamDto.parse(request.body)
 		const user = await UsersService.updateRole(id, role)
 
@@ -46,7 +46,7 @@ export class UsersController {
 	}
 
 	static async update(request: Request, response: Response) {
-		const { id } = CUIDParamDto.parse(request.params)
+		const { id } = UUIDParamDto.parse(request.params)
 
 		if (request.user.id !== id) {
 			throw new UnauthorizedError(
