@@ -21,7 +21,7 @@ export const CreateArticleDto = z.object({
 		.trim()
 		.min(1)
 		.max(1000),
-	image: z.union([z.string(), z.any()])
+	image: z.union([z.string(), z.file()])
 })
 
 export type CreateArticleDtoType = z.infer<typeof CreateArticleDto>
