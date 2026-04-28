@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { UsersService } from '../services/users.service'
-import type { User } from '../../../shared/dtos/out//user.model'
+import type { UserOut } from '../../../shared/src/dtos/out/user-out.dto'
 
 type usePaginatedUsersOptions = {
 	initialPage?: number
@@ -13,7 +13,7 @@ export function usePaginatedUsers({
 }: usePaginatedUsersOptions = {}) {
 	const query = useInfiniteQuery({
 		queryKey: ['users'],
-		queryFn: async ({ pageParam = initialPage }): Promise<User[]> =>
+		queryFn: async ({ pageParam = initialPage }): Promise<UserOut[]> =>
 			UsersService.getAll({ page: pageParam, limit }),
 		getNextPageParam: (lastPage, allPages) => {
 			if (lastPage.length < limit) return undefined

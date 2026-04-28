@@ -1,0 +1,9 @@
+{
+  "name": "notievan",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend",
+    "shared"
+  ]
+}

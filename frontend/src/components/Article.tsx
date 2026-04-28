@@ -1,7 +1,7 @@
 import { useUserName } from '../hooks/use-user-name.hook'
 import { isRecent } from '../pages/Home/utilities/is-recent.utility'
 import { useRandomImage } from '../hooks/use-random-image.hook'
-import type { ArticlePreview } from '../../../shared/models/article-preview.model'
+import type { ArticlePreview } from '../../../shared/src/models/article-preview.model'
 
 export function Article({ article }: { article?: ArticlePreview }) {
 	const authorName = useUserName(article?.authorId)

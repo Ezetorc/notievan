@@ -1,5 +1,5 @@
 {
-	"name": "backend",
+	"name": "@app/backend",
 	"type": "module",
 	"scripts": {
 		"dev": "netlify dev",
