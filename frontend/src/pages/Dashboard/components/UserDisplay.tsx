@@ -1,11 +1,11 @@
 import type { ChangeEvent } from 'react'
 import { useState } from 'react'
 import { UsersService } from '../../../services/users.service'
-import type { UserRole } from '../../../../../shared/models/user-role.model.js'
-import type { SanitizedUser } from '../../../../../backend/api/models/sanitized-user.model.js'
 import { useQueryClient } from '@tanstack/react-query'
+import type { UserOut } from '../../../../../shared/src/dtos/out/user-out.dto'
+import type { UserRole } from '../../../../../shared/src/models/user-role.model'
 
-export function UserDisplay({ user }: { user: SanitizedUser }) {
+export function UserDisplay({ user }: { user: UserOut }) {
 	const [newRole, setNewRole] = useState<UserRole>(user.role)
 	const queryClient = useQueryClient()
 
@@ -30,7 +30,6 @@ export function UserDisplay({ user }: { user: SanitizedUser }) {
 	return (
 		<tr key={user.id} className='odd:bg-white even:bg-gray-50'>
 			<td className='p-3 border'>{user.name}</td>
-			<td className='p-3 border'>{user.email}</td>
 			<td className='p-3 border font-mono text-xs'>{user.id}</td>
 			<td className='p-3 border'>{user.role}</td>
 			<td className='p-3 border'>

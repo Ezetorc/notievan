@@ -1,11 +1,11 @@
-import { CUIDParamDto } from '../models/dtos/cuuid-param.dto.js'
 import type { Request, Response } from 'express'
-import { PaginationParamsDto } from '../models/dtos/pagination-params.dto.js'
-import { SanitizedUser } from '../../../backend/api/models/sanitized-user.model.js'
-import { RoleParamDto } from '../models/dtos/role-param.dto.js'
 import { UsersService } from '../services/users.service.js'
-import { UpdateUserDto } from '../models/dtos/update-user.dto.js'
 import { UnauthorizedError } from '../models/errors/unauthorized.error.js'
+import { UserOut } from '../../../shared/src/dtos/out/user-out.dto.js'
+import { CUIDParamDto } from '../../../shared/src/dtos/in/cuuid-param.dto.js'
+import { PaginationParamsDto } from '../../../shared/src/dtos/in/pagination-params.dto.js'
+import { RoleParamDto } from '../../../shared/src/dtos/in/role-param.dto.js'
+import { UpdateUserDto } from '../../../shared/src/dtos/in/update-user.dto.js'
 
 export class UsersController {
 	static async getNameById(request: Request, response: Response) {
@@ -23,7 +23,7 @@ export class UsersController {
 		}
 
 		const user = await UsersService.getById(id)
-		const sanitizedUser = new SanitizedUser(user)
+		const sanitizedUser = new UserOut(user)
 
 		return response.json(sanitizedUser)
 	}
@@ -40,7 +40,7 @@ export class UsersController {
 		const { limit, page } = PaginationParamsDto.parse(request.query)
 		const skip = (page - 1) * limit
 		const users = await UsersService.getAll(limit, skip)
-		const sanitizedUsers = users.map((user) => new SanitizedUser(user))
+		const sanitizedUsers = users.map((user) => new UserOut(user))
 
 		return response.json(sanitizedUsers)
 	}

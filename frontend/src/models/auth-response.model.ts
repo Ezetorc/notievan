@@ -1,3 +1,3 @@
-import type { SanitizedUser } from '../../../backend/api/models/sanitized-user.model.js'
+import type { UserOut } from '../../../shared/dtos/out/user-out.dto'
 
-export type AuthResponse = { user: SanitizedUser; token: string }
+export type AuthResponse = { user: UserOut; token: string }

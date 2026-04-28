@@ -1,6 +1,6 @@
 import { isTokenValid } from '../utilities/is-token-valid.utility'
 import type { Session } from '../models/session.model'
-import type { SanitizedUser } from '../../../backend/api/models/sanitized-user.model.js'
+import type { UserOut } from '../../../shared/src/dtos/out/user-out.dto'
 
 export class SessionService {
 	private static name = 'session'
@@ -35,11 +35,11 @@ export class SessionService {
 		return SessionService.value?.token
 	}
 
-	static get user(): SanitizedUser | undefined {
+	static get user(): UserOut | undefined {
 		return SessionService.value?.user
 	}
 
-	static set user(newValue: SanitizedUser) {
+	static set user(newValue: UserOut) {
 		if (SessionService.value) {
 			SessionService.value = { ...SessionService.value, user: newValue }
 		}

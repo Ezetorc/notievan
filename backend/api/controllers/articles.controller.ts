@@ -1,10 +1,10 @@
-import { CUIDParamDto } from '../models/dtos/cuuid-param.dto.js'
 import type { Request, Response } from 'express'
-import { UpdateArticleDto } from '../models/dtos/update-article.dto.js'
-import { CreateArticleDto } from '../models/dtos/create-article.dto.js'
-import { PaginationParamsDto } from '../models/dtos/pagination-params.dto.js'
-import { OmitIdParamDto } from '../models/dtos/omit-id-param.dto.js'
 import { ArticlesService } from '../services/articles.service.js'
+import { CUIDParamDto } from '../../../shared/src/dtos/in/cuuid-param.dto.js'
+import { CreateArticleDto } from '../../../shared/src/dtos/in/create-article.dto.js'
+import { OmitIdParamDto } from '../../../shared/src/dtos/in/omit-id-param.dto.js'
+import { PaginationParamsDto } from '../../../shared/src/dtos/in/pagination-params.dto.js'
+import { UpdateArticleDto } from '../../../shared/src/dtos/in/update-article.dto.js'
 
 export class ArticlesController {
 	static async findById(request: Request, response: Response) {

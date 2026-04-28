@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt'
 import { UsersRepository } from '../repositories/users.repository.js'
 import { UnauthorizedError } from '../models/errors/unauthorized.error.js'
 import { ConflictError } from '../models/errors/conflict.error.js'
-import type { User } from '../../../shared/models/user.model.js'
+import type { User } from '../../../shared/src/models/user.model.js'
 
 export class AuthService {
 	static async getAuthorizationToken(user: User) {

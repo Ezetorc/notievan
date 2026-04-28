@@ -1,11 +1,11 @@
 import type { Request } from 'express'
-import type { UpdateArticleType } from '../models/dtos/update-article.dto.js'
 import { NotFoundError } from '../models/errors/not-found.error.js'
 import { UnauthorizedError } from '../models/errors/unauthorized.error.js'
 import { ArticlesRepository } from '../repositories/articles.repository.js'
 import { CloudinaryService } from './cloudinary.service.js'
-import type { CreateArticleType } from '../models/dtos/create-article.dto.js'
 import sharp from 'sharp'
+import type { UpdateArticleType } from '../../../shared/src/dtos/in/update-article.dto.js'
+import type { CreateArticleType } from '../../../shared/src/dtos/in/create-article.dto.js'
 
 export class ArticlesService {
 	static async getById(id: string) {

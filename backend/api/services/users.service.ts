@@ -1,5 +1,5 @@
-import type { UserRole } from '../../../shared/models/user-role.model.js'
-import type { UpdateUserDtoType } from '../models/dtos/update-user.dto.js'
+import type { UpdateUserDtoType } from '../../../shared/src/dtos/in/update-user.dto.js'
+import type { UserRole } from '../../../shared/src/models/user-role.model.js'
 import { ConflictError } from '../models/errors/conflict.error.js'
 import { NotFoundError } from '../models/errors/not-found.error.js'
 import { UsersRepository } from '../repositories/users.repository.js'

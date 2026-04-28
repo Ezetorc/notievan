@@ -1,4 +1,4 @@
-import type { Article } from '../../../shared/models/article.model'
+import type { Article } from '../../../shared/src/models/article.model'
 import { HttpClient } from '../models/http-client.model'
 
 export class ArticlesService {

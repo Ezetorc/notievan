@@ -1,6 +1,6 @@
-import type { SanitizedUser } from '../../../backend/api/models/sanitized-user.model.js'
+import type { UserOut } from '../../../shared/dtos/out/user-out.dto'
 
 export type SessionStore = {
-	user?: SanitizedUser
-	setUser: (value: SanitizedUser | undefined) => void
+	user?: UserOut
+	setUser: (value: UserOut | undefined) => void
 }

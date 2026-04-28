@@ -1,8 +1,8 @@
 import type { Request, Response } from 'express'
-import { CreateCommentDto } from '../models/dtos/create-comment.dto.js'
 import { CommentsService } from '../services/comments.service.js'
-import { PaginationParamsDto } from '../models/dtos/pagination-params.dto.js'
-import { CUIDParamDto } from '../models/dtos/cuuid-param.dto.js'
+import { CreateCommentDto } from '../../../shared/src/dtos/in/create-comment.dto.js'
+import { CUIDParamDto } from '../../../shared/src/dtos/in/cuuid-param.dto.js'
+import { PaginationParamsDto } from '../../../shared/src/dtos/in/pagination-params.dto.js'
 
 export class CommentsController {
 	static async create(request: Request, response: Response) {

@@ -1,4 +1,4 @@
-import type { Comment } from '../../../shared/models/comment.model'
+import type { Comment } from '../../../shared/src/models/comment.model'
 import { HttpClient } from '../models/http-client.model'
 
 type CreateCommentData = {

@@ -2,7 +2,7 @@ import jwt, { type JwtPayload } from 'jsonwebtoken'
 import { env } from '../configuration/env.configuration.js'
 import type { Request, Response, NextFunction } from 'express'
 import { UsersRepository } from '../repositories/users.repository.js'
-import type { UserRole } from '../../../shared/models/user-role.model.js'
+import type { UserRole } from '../../../shared/src/models/user-role.model.js'
 
 export function authMiddleware(...requiredRoles: UserRole[]) {
 	return async (request: Request, response: Response, next: NextFunction) => {

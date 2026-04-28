@@ -1,6 +1,6 @@
 import { HttpClient } from '../models/http-client.model'
-import type { UserRole } from '../../../shared/models/user-role.model.js'
-import type { SanitizedUser } from '../../../backend/api/models/sanitized-user.model.js'
+import type { UserRole } from '../../../shared/src/models/user-role.model.js'
+import type { UserOut } from '../../../shared/src/dtos/out/user-out.dto.js'
 
 type GetAllUsersParams = {
 	page?: number
@@ -28,8 +28,8 @@ export class UsersService {
 		return response.data || ''
 	}
 
-	static async getById(id: string): Promise<SanitizedUser> {
-		const response = await HttpClient.get<SanitizedUser>(
+	static async getById(id: string): Promise<UserOut> {
+		const response = await HttpClient.get<UserOut>(
 			`${UsersService.API_BASE}/${id}`
 		)
 
@@ -69,8 +69,8 @@ export class UsersService {
 	static async getAll({
 		page = 1,
 		limit = 4
-	}: GetAllUsersParams = {}): Promise<SanitizedUser[]> {
-		const response = await HttpClient.get<SanitizedUser[]>(
+	}: GetAllUsersParams = {}): Promise<UserOut[]> {
+		const response = await HttpClient.get<UserOut[]>(
 			`${UsersService.API_BASE}?page=${page}&limit=${limit}`
 		)
 
