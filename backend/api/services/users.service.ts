@@ -1,4 +1,4 @@
-import type { Role } from '../database/types.js'
+import type { UserRole } from '../database/types.js'
 import type { UpdateUserDtoType } from '../models/dtos/update-user.dto.js'
 import { ConflictError } from '../models/errors/conflict.error.js'
 import { NotFoundError } from '../models/errors/not-found.error.js'
@@ -21,7 +21,7 @@ export class UsersService {
 		return name
 	}
 
-	static async updateRole(id: string, role: Role) {
+	static async updateRole(id: string, role: UserRole) {
 		const user = await UsersRepository.updateRole(id, role)
 
 		if (!user) throw new NotFoundError('Usuario no encontrado')

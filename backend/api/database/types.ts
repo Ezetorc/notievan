@@ -1,12 +1,12 @@
 import type { InferSelectModel, InferInsertModel, InferEnum } from 'drizzle-orm'
-import type { users, articles, comments, roleEnum } from './schema.js'
+import type { users, articles, comments, userRole } from './schema.js'
 
 export type UpdateUser = Partial<NewUser>
 export type AuthUser = Pick<User, 'id' | 'role'>
 export type UpdateArticle = Partial<NewArticle>
 export type ArticlePreview = Omit<Article, 'content'>
 export type UpdateComment = Partial<NewComment>
-export type Role = InferEnum<typeof roleEnum>
+export type UserRole = InferEnum<typeof userRole>
 export type EntityId = string
 export type User = InferSelectModel<typeof users>
 export type NewUser = InferInsertModel<typeof users>

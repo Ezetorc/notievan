@@ -1,4 +1,4 @@
-import type { Role, User } from '../database/types.js'
+import type { UserRole, User } from '../database/types.js'
 
 export class SanitizedUser {
 	constructor(user: User) {
@@ -12,6 +12,6 @@ export class SanitizedUser {
 	id: string
 	email: string
 	name: string
-	role: Role
+	role: UserRole
 	createdAt: string
 }
