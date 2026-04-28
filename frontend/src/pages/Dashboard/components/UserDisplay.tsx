@@ -1,16 +1,16 @@
 import type { ChangeEvent } from 'react'
 import { useState } from 'react'
 import { UsersService } from '../../../services/users.service'
-import type { Role } from '../../../models/role.model'
-import type { SanitizedUser } from '../../../models/sanitized-user.model'
+import type { UserRole } from '../../../../../backend/api/database/types'
+import type { SanitizedUser } from '../../../../../backend/api/models/sanitized-user.model.js'
 import { useQueryClient } from '@tanstack/react-query'
 
 export function UserDisplay({ user }: { user: SanitizedUser }) {
-	const [newRole, setNewRole] = useState<Role>(user.role)
+	const [newRole, setNewRole] = useState<UserRole>(user.role)
 	const queryClient = useQueryClient()
 
 	const onSelectNewRole = (event: ChangeEvent<HTMLSelectElement>) => {
-		const newRole = event.target.value as Role
+		const newRole = event.target.value as UserRole
 		setNewRole(newRole)
 	}
 

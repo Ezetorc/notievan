@@ -4,7 +4,9 @@ import { text, timestamp, pgTable, pgEnum } from 'drizzle-orm/pg-core'
 export const userRole = pgEnum('Role', ['USER', 'AUTHOR', 'ADMIN'])
 
 export const users = pgTable('user', {
-	id: text('id').primaryKey().$defaultFn(() => createId()),
+	id: text('id')
+		.primaryKey()
+		.$defaultFn(() => createId()),
 	name: text('name').notNull().unique(),
 	email: text('email').notNull().unique(),
 	password: text('password').notNull(),
@@ -13,7 +15,9 @@ export const users = pgTable('user', {
 })
 
 export const articles = pgTable('article', {
-	id: text('id').primaryKey().$defaultFn(() => createId()),
+	id: text('id')
+		.primaryKey()
+		.$defaultFn(() => createId()),
 	authorId: text('authorId').notNull(),
 	title: text('title').notNull(),
 	subtitle: text('subtitle').notNull(),
@@ -24,9 +28,11 @@ export const articles = pgTable('article', {
 })
 
 export const comments = pgTable('comment', {
-	id: text('id').primaryKey().$defaultFn(() => createId()),
+	id: text('id')
+		.primaryKey()
+		.$defaultFn(() => createId()),
 	articleId: text('articleId').notNull(),
 	authorId: text('authorId').notNull(),
 	createdAt: timestamp('createdAt').defaultNow().notNull(),
-	content: text('content').notNull(),
+	content: text('content').notNull()
 })

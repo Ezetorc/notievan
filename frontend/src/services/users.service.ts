@@ -1,6 +1,6 @@
 import { HttpClient } from '../models/http-client.model'
-import type { Role } from '../models/role.model'
-import type { SanitizedUser } from '../models/sanitized-user.model'
+import type { UserRole } from '../../../backend/api/database/types'
+import type { SanitizedUser } from '../../../backend/api/models/sanitized-user.model.js'
 
 type GetAllUsersParams = {
 	page?: number
@@ -44,7 +44,7 @@ export class UsersService {
 		return response.data
 	}
 
-	static async updateRole(id: string, role: Role): Promise<void> {
+	static async updateRole(id: string, role: UserRole): Promise<void> {
 		const response = await HttpClient.patch<{ success: boolean }>(
 			`${UsersService.API_BASE}/${id}/role`,
 			{ role }

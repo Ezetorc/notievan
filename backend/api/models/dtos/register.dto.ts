@@ -18,9 +18,7 @@ export const RegisterDto = z.object({
 		.trim()
 		.min(3, 'El nombre debe tener al menos 3 caracteres')
 		.max(50, 'El nombre debe tener menos de 50 caracteres')
-		.transform((name) =>
-			name.replace(/\b\w/g, (char) => char.toUpperCase())
-		),
+		.transform((name) => name.replace(/\b\w/g, (char) => char.toUpperCase()))
 })
 
 export type RegisterDtoType = z.infer<typeof RegisterDto>

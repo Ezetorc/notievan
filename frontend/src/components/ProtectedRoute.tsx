@@ -1,14 +1,14 @@
 import { useEffect } from 'react'
 import { Route, type RouteProps, type Params, useLocation } from 'wouter'
 import { SessionService } from '../services/session.service'
-import type { Role } from '../models/role.model'
+import type { UserRole } from '../../../backend/api/database/types'
 
 export function ProtectedRoute<P extends Params>({
 	component: Component,
 	fallback,
 	userRole,
 	...rest
-}: RouteProps<P> & { fallback?: string; userRole?: Role }) {
+}: RouteProps<P> & { fallback?: string; userRole?: UserRole }) {
 	const [, setLocation] = useLocation()
 
 	useEffect(() => {

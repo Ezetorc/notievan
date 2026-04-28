@@ -1,4 +1,4 @@
-import type { SanitizedUser } from '../models/sanitized-user.model'
+import type { SanitizedUser } from '../../../backend/api/models/sanitized-user.model.js'
 
 export type SessionStore = {
 	user?: SanitizedUser

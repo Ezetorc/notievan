@@ -1,4 +1,4 @@
-import type { Comment } from '../models/comment.model'
+import type { Comment } from '../../../backend/api/database/types'
 import { HttpClient } from '../models/http-client.model'
 
 type CreateCommentData = {

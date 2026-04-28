@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { UsersService } from '../services/users.service'
-import type { SanitizedUser } from '../models/sanitized-user.model'
+import type { SanitizedUser } from '../../../backend/api/models/sanitized-user.model.js'
 
 type usePaginatedUsersOptions = {
 	initialPage?: number

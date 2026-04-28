@@ -1,6 +1,6 @@
 import { isTokenValid } from '../utilities/is-token-valid.utility'
 import type { Session } from '../models/session.model'
-import type { SanitizedUser } from '../models/sanitized-user.model'
+import type { SanitizedUser } from '../../../backend/api/models/sanitized-user.model.js'
 
 export class SessionService {
 	private static name = 'session'

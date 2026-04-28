@@ -1,6 +1,6 @@
 import { RegisterDto } from '../models/dtos/register.dto.js'
 import { AuthService } from '../services/auth.service.js'
-import { SanitizedUser } from '../models/sanitized-user.model.js'
+import { SanitizedUser } from '../../../backend/api/models/sanitized-user.model.js'
 import { LoginDto } from '../models/dtos/login.dto.js'
 import type { Request, Response } from 'express'
 import { UsersService } from '../services/users.service.js'

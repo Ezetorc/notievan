@@ -3,7 +3,7 @@ import { getParsedDate } from '../../../utilities/get-parsed-date.utility'
 import { useState } from 'react'
 import { DeleteCommentModal } from './DeleteCommentModal'
 import { useSession } from '../../../hooks/use-session.hook'
-import type { Comment } from '../../../models/comment.model'
+import type { Comment } from '../../../../../backend/api/database/types'
 
 export function CommentDisplay({ comment }: { comment: Comment }) {
 	const { user } = useSession()

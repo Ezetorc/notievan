@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { CommentsService } from '../../../services/comments.service'
-import type { Comment } from '../../../models/comment.model'
+import type { Comment } from '../../../../../backend/api/database/types'
 
 type UsePaginatedCommentsOptions = {
 	initialPage?: number

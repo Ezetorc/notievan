@@ -1,7 +1,7 @@
 import { CUIDParamDto } from '../models/dtos/cuuid-param.dto.js'
 import type { Request, Response } from 'express'
 import { PaginationParamsDto } from '../models/dtos/pagination-params.dto.js'
-import { SanitizedUser } from '../models/sanitized-user.model.js'
+import { SanitizedUser } from '../../../backend/api/models/sanitized-user.model.js'
 import { RoleParamDto } from '../models/dtos/role-param.dto.js'
 import { UsersService } from '../services/users.service.js'
 import { UpdateUserDto } from '../models/dtos/update-user.dto.js'
