@@ -46,12 +46,10 @@ export default function AccountPage() {
 						minLength={3}
 						maxLength={50}
 					/>
-					<UserInfo name='Email' value={user.email} />
 					<UserInfo
 						name='Fecha de creación'
 						value={getDisplayableDate(user.createdAt)}
 					/>
-					<UserInfo name='Identificador de usuario' value={user.id} />
 				</div>
 
 				<button

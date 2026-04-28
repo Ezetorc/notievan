@@ -1,4 +1,4 @@
-import type { UserRole } from "./user-role.model"
+import type { UserRole } from "./user-role.model.js";
 
 export type User = {
     id: string;
