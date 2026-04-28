@@ -1,4 +1,5 @@
-import type { UserRole, User } from '../database/types.js'
+import type { UserRole } from '../../../shared/models/user-role.model.js'
+import type { User } from '../../../shared/models/user.model.js'
 
 export class SanitizedUser {
 	constructor(user: User) {

@@ -4,7 +4,7 @@ import { ArticlesService } from '../../../services/articles.service'
 import { useQueryClient } from '@tanstack/react-query'
 import { ActionButton } from '../../../components/ActionButton'
 import { Modal } from '../../../components/Modal'
-import type { Article } from '../../../../../backend/api/database/types'
+import type { Article } from '../../../../../shared/models/article.model'
 
 export function DeleteArticleModal({
 	setIsModalOpen,

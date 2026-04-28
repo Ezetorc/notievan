@@ -1,13 +1,23 @@
 {
-	"compilerOptions": {
-		"target": "ESNext",
-		"module": "NodeNext",
-		"strict": false,
-		"verbatimModuleSyntax": true,
-		"skipLibCheck": true,
-		"types": ["node"],
-		"outDir": "./dist",
-		"moduleResolution": "nodenext"
-	},
-	"exclude": ["node_modules"]
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+
+    "strict": false,
+    "verbatimModuleSyntax": true,
+    "skipLibCheck": true,
+
+    "types": ["node"],
+
+    "outDir": "./dist",
+    "rootDir": ".."
+  },
+
+  "include": [
+    "api",
+    "../shared"
+  ],
+
+  "exclude": ["node_modules", "dist"]
 }

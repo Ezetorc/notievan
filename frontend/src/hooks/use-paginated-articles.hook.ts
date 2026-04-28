@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { ArticlesService } from '../services/articles.service'
-import type { Article } from '../../../backend/api/database/types'
+import type { Article } from '../../../shared/models/article.model'
 
 type usePaginatedArticlesOptions = {
 	type?: 'all' | 'own' | 'random'

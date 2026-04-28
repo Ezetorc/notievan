@@ -1,5 +1,5 @@
 import cloudinary from '../configuration/cloudinary.configuration.js'
-import type { Article } from '../database/types.js'
+import type { Article } from '../../../shared/models/article.model.js'
 
 export class CloudinaryService {
 	static async upload(

@@ -1,5 +1,5 @@
 import { HttpClient } from '../models/http-client.model'
-import type { UserRole } from '../../../backend/api/database/types'
+import type { UserRole } from '../../../shared/models/user-role.model.js'
 import type { SanitizedUser } from '../../../backend/api/models/sanitized-user.model.js'
 
 type GetAllUsersParams = {

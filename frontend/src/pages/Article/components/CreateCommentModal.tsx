@@ -6,7 +6,7 @@ import { Modal } from '../../../components/Modal'
 import { ErrorMessage } from '../../../components/ErrorMessage'
 import { useForm } from '../../../hooks/use-form.hook'
 import { z } from 'zod'
-import type { Comment } from '../../../../../backend/api/database/types'
+import type { Comment } from '../../../../../shared/models/comment.model'
 
 const CreateCommentSchema = z.object({
 	content: z

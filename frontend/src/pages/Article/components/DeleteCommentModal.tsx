@@ -3,7 +3,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { ActionButton } from '../../../components/ActionButton'
 import { Modal } from '../../../components/Modal'
 import { CommentsService } from '../../../services/comments.service'
-import type { Comment } from '../../../../../backend/api/database/types'
+import type { Comment } from '../../../../../shared/models/comment.model'
 
 export function DeleteCommentModal({
 	setIsModalOpen,

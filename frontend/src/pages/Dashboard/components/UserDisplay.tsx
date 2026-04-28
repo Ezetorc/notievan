@@ -1,7 +1,7 @@
 import type { ChangeEvent } from 'react'
 import { useState } from 'react'
 import { UsersService } from '../../../services/users.service'
-import type { UserRole } from '../../../../../backend/api/database/types'
+import type { UserRole } from '../../../../../shared/models/user-role.model.js'
 import type { SanitizedUser } from '../../../../../backend/api/models/sanitized-user.model.js'
 import { useQueryClient } from '@tanstack/react-query'
 

@@ -1,7 +1,7 @@
 import { database } from '../configuration/database.configuration.js'
 import { users } from '../database/schema.js'
 import { eq, desc } from 'drizzle-orm'
-import type { UserRole } from '../database/types.js'
+import type { UserRole } from '../../../shared/models/user-role.model.js'
 
 export class UsersRepository {
 	static async create(data: {

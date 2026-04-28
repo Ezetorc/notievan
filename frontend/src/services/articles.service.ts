@@ -1,4 +1,4 @@
-import type { Article } from '../../../backend/api/database/types'
+import type { Article } from '../../../shared/models/article.model'
 import { HttpClient } from '../models/http-client.model'
 
 export class ArticlesService {
