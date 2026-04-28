@@ -24,4 +24,4 @@ export const CreateArticleDto = z.object({
 	image: z.union([z.string(), z.any()])
 })
 
-export type CreateArticleType = z.infer<typeof CreateArticleDto>
+export type CreateArticleDtoType = z.infer<typeof CreateArticleDto>

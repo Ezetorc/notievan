@@ -1,6 +1,6 @@
 import * as z from 'zod'
 
-export const RegisterDto = z.object({
+export const SignUpDto = z.object({
 	email: z
 		.email()
 		.trim()
@@ -21,4 +21,4 @@ export const RegisterDto = z.object({
 		.transform((name) => name.replace(/\b\w/g, (char) => char.toUpperCase()))
 })
 
-export type RegisterDtoType = z.infer<typeof RegisterDto>
+export type SignUpDtoType = z.infer<typeof SignUpDto>

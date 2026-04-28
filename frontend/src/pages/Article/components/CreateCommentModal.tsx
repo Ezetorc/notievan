@@ -5,18 +5,8 @@ import { CommentsService } from '../../../services/comments.service'
 import { Modal } from '../../../components/Modal'
 import { ErrorMessage } from '../../../components/ErrorMessage'
 import { useForm } from '../../../hooks/use-form.hook'
-import { z } from 'zod'
 import type { Comment } from '../../../../../shared/src/models/comment.model'
-
-const CreateCommentSchema = z.object({
-	content: z
-		.string()
-		.min(1, 'El comentario debe tener al menos 1 caracter')
-		.max(255, 'El comentario debe tener menos de 255 caracteres'),
-	articleId: z.string()
-})
-
-type CreateCommentFormData = z.infer<typeof CreateCommentSchema>
+import { CreateCommentDto, type CreateCommentDtoType } from "../../../../../shared/src/dtos/in/create-comment.dto"
 
 export function CreateCommentModal({
 	setIsModalOpen,
@@ -29,7 +19,7 @@ export function CreateCommentModal({
 	const [loading, setLoading] = useState<boolean>(false)
 	const [error, setError] = useState<string>('')
 
-	const onSuccess = async (data: CreateCommentFormData) => {
+	const onSuccess = async (data: CreateCommentDtoType) => {
 		try {
 			setLoading(true)
 			const comment = await CommentsService.create(data)
@@ -60,7 +50,7 @@ export function CreateCommentModal({
 		error: schemaError,
 		onSubmit,
 		watch
-	} = useForm(onSuccess, CreateCommentSchema, {
+	} = useForm(onSuccess, CreateCommentDto, {
 		content: '',
 		articleId
 	})

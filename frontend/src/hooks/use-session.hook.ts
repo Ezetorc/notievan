@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
-import type { SignInFormData } from '../pages/SignIn/models/sign-in-form-data.model'
-import type { SignUpFormData } from '../pages/SignUp/models/sign-up-form-data.model'
+import type { SignInDtoType } from "../../../shared/src/dtos/in/sign-in.dto"
+import type { SignUpDtoType } from "../../../shared/src/dtos/in/sign-up.dto"
 import { AuthService } from '../services/auth.service'
 import { SessionService } from '../services/session.service'
 import { useSessionStore } from '../stores/session.store'
@@ -39,7 +39,7 @@ export function useSession() {
 		setUser(undefined)
 		setLocation('/sesion')
 	}
-	const login = async (data: SignInFormData) => {
+	const login = async (data: SignInDtoType) => {
 		const result = await AuthService.login(data)
 
 		SessionService.value = result
@@ -47,7 +47,7 @@ export function useSession() {
 		queryClient.invalidateQueries({ queryKey: ['self-user'] })
 	}
 
-	const register = async (data: SignUpFormData) => {
+	const register = async (data: SignUpDtoType) => {
 		const result = await AuthService.register(data)
 
 		SessionService.value = result

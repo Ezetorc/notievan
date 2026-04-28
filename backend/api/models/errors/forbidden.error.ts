@@ -1,7 +1,8 @@
+import type { ErrorCode } from '../../../../shared/src/models/error-code.model.js'
 import { CustomError } from './custom.error.js'
 
 export class ForbiddenError extends CustomError {
-	constructor(value?: any) {
-		super(value || 'Forbidden', 403)
+	constructor(code: ErrorCode) {
+		super(code, 403)
 	}
 }

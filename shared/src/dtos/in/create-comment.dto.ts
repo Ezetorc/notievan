@@ -9,4 +9,4 @@ export const CreateCommentDto = z.object({
 	articleId: z.string().trim()
 })
 
-export type CreateCommentType = z.infer<typeof CreateCommentDto>
+export type CreateCommentDtoType = z.infer<typeof CreateCommentDto>

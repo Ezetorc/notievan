@@ -5,13 +5,15 @@ import { ArticlesRepository } from '../repositories/articles.repository.js'
 import { CloudinaryService } from './cloudinary.service.js'
 import sharp from 'sharp'
 import type { UpdateArticleType } from '../../../shared/src/dtos/in/update-article.dto.js'
-import type { CreateArticleType } from '../../../shared/src/dtos/in/create-article.dto.js'
+import type { CreateArticleDtoType } from '../../../shared/src/dtos/in/create-article.dto.js'
+import { ErrorCode } from '../../../shared/src/models/error-code.model.js'
+
 
 export class ArticlesService {
 	static async getById(id: string) {
 		const article = await ArticlesRepository.findById(id)
 
-		if (!article) throw new NotFoundError('Article not found')
+		if (!article) throw new NotFoundError(ErrorCode.ARTICLE_NOT_FOUND)
 
 		return {
 			...article,
@@ -42,12 +44,10 @@ export class ArticlesService {
 	}
 
 	static async update(id: string, data: UpdateArticleType, request: Request) {
-		const article = await ArticlesRepository.findById(id)
-
-		if (!article) throw new NotFoundError('Article not found')
+		const article = await ArticlesService.getById(id)
 
 		if (request.user?.id !== article.authorId)
-			throw new UnauthorizedError("You do not have permission to update other's articles")
+			throw new UnauthorizedError(ErrorCode.FORBIDDEN)
 
 		const { body, file } = request
 
@@ -58,7 +58,7 @@ export class ArticlesService {
 		return Boolean(updatedArticle)
 	}
 
-	static async create(data: CreateArticleType, request: Request) {
+	static async create(data: CreateArticleDtoType, request: Request) {
 		const { file } = request
 
 		let image: string = ''

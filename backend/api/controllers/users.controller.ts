@@ -6,6 +6,7 @@ import { CUIDParamDto } from '../../../shared/src/dtos/in/cuuid-param.dto.js'
 import { PaginationParamsDto } from '../../../shared/src/dtos/in/pagination-params.dto.js'
 import { RoleParamDto } from '../../../shared/src/dtos/in/role-param.dto.js'
 import { UpdateUserDto } from '../../../shared/src/dtos/in/update-user.dto.js'
+import { ErrorCode } from '../../../shared/src/models/error-code.model.js'
 
 export class UsersController {
 	static async getNameById(request: Request, response: Response) {
@@ -19,7 +20,7 @@ export class UsersController {
 		const { id } = CUIDParamDto.parse(request.params)
 
 		if (request.user.id !== id) {
-			throw new UnauthorizedError('You do not have permission to access this user')
+			throw new UnauthorizedError(ErrorCode.FORBIDDEN)
 		}
 
 		const user = await UsersService.getById(id)
@@ -49,9 +50,7 @@ export class UsersController {
 		const { id } = CUIDParamDto.parse(request.params)
 
 		if (request.user.id !== id) {
-			throw new UnauthorizedError(
-				'You do not have permission to update this user'
-			)
+			throw new UnauthorizedError(ErrorCode.FORBIDDEN)
 		}
 
 		const data = UpdateUserDto.parse(request.body)

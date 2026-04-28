@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { ZodError, type ZodType } from 'zod'
+import { parseZodError } from '../utilities/parse-zod-error.utility'
+import { parseBackendError } from '../utilities/parse-backend-error.utility'
 
 export function useForm<T extends Record<string, unknown>>(
 	onSuccess: (data: T) => Promise<void>,
@@ -20,9 +22,13 @@ export function useForm<T extends Record<string, unknown>>(
 			await onSuccess(validatedData)
 		} catch (error: any) {
 			if (error instanceof ZodError) {
-				setError(error.issues[0]?.message || 'Error de validación')
+				let parsedError = parseZodError(error.issues[0])
+
+				setError(parsedError)
 			} else {
-				setError(error.message || 'Ocurrió un error')
+				let parsedError = parseBackendError(error)
+
+				setError(parsedError)
 			}
 		}
 	}

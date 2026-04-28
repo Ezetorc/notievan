@@ -1,10 +1,7 @@
 import { useLocation } from 'wouter'
 import { Hero } from '../../../components/Hero'
 import { SignInput } from '../../../components/SignInput'
-import {
-	SignInSchema,
-	type SignInFormData
-} from '../models/sign-in-form-data.model'
+import { SignInDto, type SignInDtoType } from "../../../../../shared/src/dtos/in/sign-in.dto"
 import { useSession } from '../../../hooks/use-session.hook'
 import { ErrorMessage } from '../../../components/ErrorMessage'
 import { useForm } from '../../../hooks/use-form.hook'
@@ -13,12 +10,12 @@ export default function SignInPage() {
 	const [, setLocation] = useLocation()
 	const { login } = useSession()
 
-	const onSuccess = async (data: SignInFormData) => {
+	const onSuccess = async (data: SignInDtoType) => {
 		await login(data)
 		setLocation('/cuenta')
 	}
 
-	const { error, onSubmit, watch } = useForm(onSuccess, SignInSchema, {
+	const { error, onSubmit, watch } = useForm(onSuccess, SignInDto, {
 		email: '',
 		password: ''
 	})

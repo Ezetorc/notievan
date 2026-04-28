@@ -3,10 +3,7 @@ import { ArticleInput } from '../../../components/ArticleInput'
 import { MarkdownEditor } from '../../../components/MarkdownEditor'
 import { ErrorMessage } from '../../../components/ErrorMessage'
 import { ImageInput } from '../../../components/ImageInput'
-import {
-	CreateArticleSchema,
-	type CreateArticleFormData
-} from '../models/create-article-form-data.model'
+import { CreateArticleDto, type CreateArticleDtoType } from "../../../../../shared/src/dtos/in/create-article.dto"
 import { useForm } from '../../../hooks/use-form.hook'
 import { ArticlesService } from '../../../services/articles.service'
 import { getFormDataFrom } from '../../../utilities/get-form-data-from.utility'
@@ -20,7 +17,7 @@ export default function CreateArticlePage() {
 	const [isLoading, setIsLoading] = useState(false)
 	const [error, setError] = useState<string>('')
 
-	const onSuccess = async (data: CreateArticleFormData) => {
+	const onSuccess = async (data: CreateArticleDtoType) => {
 		try {
 			setIsLoading(true)
 			const formData = getFormDataFrom(data)
@@ -48,7 +45,7 @@ export default function CreateArticlePage() {
 		error: schemaError,
 		onSubmit,
 		watch
-	} = useForm(onSuccess, CreateArticleSchema, {
+	} = useForm(onSuccess, CreateArticleDto, {
 		image: '',
 		content: '',
 		description: '',
@@ -93,7 +90,6 @@ export default function CreateArticlePage() {
 					/>
 
 					<ErrorMessage value={error} />
-
 					<ErrorMessage value={schemaError} />
 				</div>
 

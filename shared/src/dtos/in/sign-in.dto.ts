@@ -1,6 +1,6 @@
 import * as z from 'zod'
 
-export const LoginDto = z.object({
+export const SignInDto = z.object({
 	email: z
 		.email()
 		.trim()
@@ -13,4 +13,4 @@ export const LoginDto = z.object({
 		.max(30)
 })
 
-export type LoginDtoType = z.infer<typeof LoginDto>
+export type SignInDtoType = z.infer<typeof SignInDto>
