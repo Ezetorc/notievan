@@ -3,7 +3,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "netlify dev",
-		"build": "npx tsc",
+		"build": "tsc",
 		"lint": "npx @biomejs/biome lint --write",
 		"format": "npx @biomejs/biome format --write"
 	},
