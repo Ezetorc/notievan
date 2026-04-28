@@ -1,4 +1,3 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
-  "buildCommand": "pnpm install && pnpm --filter shared build && pnpm --filter frontend build"
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }
