@@ -1,11 +1,11 @@
 import * as z from 'zod'
 
 export const UpdateArticleDto = z.object({
-	title: z.string().optional(),
-	subtitle: z.string().optional(),
-	description: z.string().optional(),
-	content: z.string().optional(),
-	image: z.string().optional()
+	title: z.string().trim().optional(),
+	subtitle: z.string().trim().optional(),
+	description: z.string().trim().optional(),
+	content: z.string().trim().optional(),
+	image: z.string().trim().optional()
 })
 
 export type UpdateArticleType = z.infer<typeof UpdateArticleDto>
