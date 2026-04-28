@@ -19,7 +19,7 @@ export class UsersController {
 		const { id } = CUIDParamDto.parse(request.params)
 
 		if (request.user.id !== id) {
-			throw new UnauthorizedError('No tienes permiso para obtener este usuario')
+			throw new UnauthorizedError('You do not have permission to access this user')
 		}
 
 		const user = await UsersService.getById(id)
@@ -50,7 +50,7 @@ export class UsersController {
 
 		if (request.user.id !== id) {
 			throw new UnauthorizedError(
-				'No tienes permiso para actualizar este usuario'
+				'You do not have permission to update this user'
 			)
 		}
 

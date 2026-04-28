@@ -11,7 +11,7 @@ export class ArticlesService {
 	static async getById(id: string) {
 		const article = await ArticlesRepository.findById(id)
 
-		if (!article) throw new NotFoundError('Artículo no encontrado')
+		if (!article) throw new NotFoundError('Article not found')
 
 		return {
 			...article,
@@ -26,9 +26,7 @@ export class ArticlesService {
 	}
 
 	static async delete(id: string) {
-		const article = await ArticlesRepository.findById(id)
-
-		if (!article) throw new NotFoundError('Artículo no encontrado')
+		const article = await ArticlesService.getById(id)
 
 		await ArticlesRepository.delete(id)
 
@@ -40,16 +38,16 @@ export class ArticlesService {
 			}
 		}
 
-		return { value: 'Artículo eliminado' }
+		return { value: true }
 	}
 
 	static async update(id: string, data: UpdateArticleType, request: Request) {
 		const article = await ArticlesRepository.findById(id)
 
-		if (!article) throw new NotFoundError('Artículo no encontrado')
+		if (!article) throw new NotFoundError('Article not found')
 
 		if (request.user?.id !== article.authorId)
-			throw new UnauthorizedError('No se puede editar artículos de otros')
+			throw new UnauthorizedError("You do not have permission to update other's articles")
 
 		const { body, file } = request
 

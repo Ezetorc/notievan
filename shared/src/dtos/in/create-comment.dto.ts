@@ -4,8 +4,8 @@ export const CreateCommentDto = z.object({
 	content: z
 		.string()
 		.trim()
-		.min(1, 'El comentario debe tener al menos 1 caracter')
-		.max(255, 'El comentario debe tener menos de 255 caracteres'),
+		.min(1)
+		.max(255),
 	articleId: z.string().trim()
 })
 

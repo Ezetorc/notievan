@@ -8,7 +8,7 @@ export class UsersService {
 	static async getById(id: string) {
 		const user = await UsersRepository.findById(id)
 
-		if (!user) throw new NotFoundError('Usuario no encontrado')
+		if (!user) throw new NotFoundError('User not found')
 
 		return user
 	}
@@ -16,7 +16,7 @@ export class UsersService {
 	static async getNameById(id: string) {
 		const name = await UsersRepository.findNameById(id)
 
-		if (!name) throw new NotFoundError('Usuario no encontrado')
+		if (!name) throw new NotFoundError('User not found')
 
 		return name
 	}
@@ -24,7 +24,7 @@ export class UsersService {
 	static async updateRole(id: string, role: UserRole) {
 		const user = await UsersRepository.updateRole(id, role)
 
-		if (!user) throw new NotFoundError('Usuario no encontrado')
+		if (!user) throw new NotFoundError('User not found')
 
 		return user
 	}
@@ -35,13 +35,13 @@ export class UsersService {
 
 	static async update(id: string, data: UpdateUserDtoType) {
 		const user = await UsersRepository.findById(id)
-		if (!user) throw new NotFoundError('Usuario no encontrado')
+		if (!user) throw new NotFoundError('User not found')
 
 		if (data.name && data.name !== user.name) {
 			const existingUser = await UsersRepository.findByName(data.name)
 
 			if (existingUser && existingUser.id !== id) {
-				throw new ConflictError('El nombre de usuario ya está en uso')
+				throw new ConflictError('Name is already in use')
 			}
 		}
 

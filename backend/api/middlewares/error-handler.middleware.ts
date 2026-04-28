@@ -10,7 +10,7 @@ export function errorHandlerMiddleware() {
 		response: Response,
 		_next: NextFunction
 	) => {
-		console.error('Error captured:', error)
+		console.error('[ErrorHandlerMiddleware] Error captured: ', error)
 
 		if (error instanceof CustomError) {
 			return response.status(error.code).json({ error: error.value })

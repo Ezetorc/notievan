@@ -21,10 +21,10 @@ export class AuthService {
 
 	static async register(name: string, email: string, password: string) {
 		const existingEmail = await UsersRepository.findByEmail(email)
-		if (existingEmail) throw new ConflictError('Email en uso')
+		if (existingEmail) throw new ConflictError('Email is already in use')
 
 		const existingName = await UsersRepository.findByName(name)
-		if (existingName) throw new ConflictError('Nombre en uso')
+		if (existingName) throw new ConflictError('Name is already in use')
 
 		const hashedPassword = await bcrypt.hash(password, 10)
 		const user = await UsersRepository.create({
@@ -40,11 +40,11 @@ export class AuthService {
 	static async login(email: string, password: string) {
 		const user = await UsersRepository.findByEmail(email)
 
-		if (!user) throw new UnauthorizedError('Email incorrecto')
+		if (!user) throw new UnauthorizedError('Wrong email')
 
 		const isPasswordValid = await bcrypt.compare(password, user.password)
 
-		if (!isPasswordValid) throw new UnauthorizedError('Contraseña incorrecta')
+		if (!isPasswordValid) throw new UnauthorizedError('Wrong password')
 
 		const token = await AuthService.getAuthorizationToken(user)
 

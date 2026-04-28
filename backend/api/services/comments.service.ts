@@ -7,7 +7,7 @@ export class CommentsService {
 	static async create(content: string, articleId: string, authorId: string) {
 		const articleExists = await ArticlesService.exists(articleId)
 
-		if (!articleExists) throw new NotFoundError('Artículo no encontrado')
+		if (!articleExists) throw new NotFoundError('Article not found')
 
 		const comment = await CommentsRepository.create({
 			content,
@@ -31,10 +31,10 @@ export class CommentsService {
 	static async delete(id: string, authorId: string) {
 		const comment = await CommentsRepository.findById(id)
 
-		if (!comment) throw new NotFoundError('Comentario no encontrado')
+		if (!comment) throw new NotFoundError('Comment not found')
 
 		if (authorId !== comment.authorId)
-			throw new UnauthorizedError('No se puede eliminar comentarios de otros')
+			throw new UnauthorizedError("You do not have permission to delete other's comments")
 
 		return await CommentsRepository.delete(id)
 	}
