@@ -1,4 +1,3 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
-  "installCommand": "npm install --include=optional"
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }
