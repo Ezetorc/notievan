@@ -21,7 +21,7 @@ export const CreateArticleDto = z.object({
 		.trim()
 		.min(1)
 		.max(1000),
-	image: z.url().optional()
+	image: z.string().optional()
 })
 
 export type CreateArticleDtoType = z.infer<typeof CreateArticleDto>

@@ -3,6 +3,7 @@
 	"type": "module",
 	"scripts": {
 		"build": "tsup api/index.ts --format esm --out-dir dist --minify",
+		"dev": "npm run build && node --env-file=./.env dist/index.js",
 		"lint": "npx @biomejs/biome lint --write",
 		"format": "npx @biomejs/biome format --write"
 	},

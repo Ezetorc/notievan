@@ -4,6 +4,8 @@ import { fallbackMessages, messages } from "../configuration/error-messages.conf
 export function parseZodError(error: core.$ZodIssue): string {
     if (!error) return 'Error de validación'
 
+    console.error("[ZodError > parseZodError] ", error)
+
     const field = error.path.join('.')
 
     return (

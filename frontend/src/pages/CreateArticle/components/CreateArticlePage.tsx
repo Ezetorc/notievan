@@ -32,7 +32,7 @@ export default function CreateArticlePage() {
         formData.append("image", data.imageFile);
       } else if (data.imageUrl) {
         formData.append("image", data.imageUrl);
-      } else {
+      } else if (!data.imageFile && !data.imageUrl) {
         throw new Error("Falta poner una imagen");
       }
 

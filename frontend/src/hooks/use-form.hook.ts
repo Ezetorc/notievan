@@ -15,11 +15,19 @@ export function useForm<T extends Record<string, unknown>>(
 		event.preventDefault()
 
 		try {
-			const validatedData = schema.parse(data) as T
+			const currentData = { ...data }
+
+			schema.parse({
+				title: currentData.title,
+				subtitle: currentData.subtitle,
+				description: currentData.description,
+				content: currentData.content,
+				image: currentData.imageUrl,
+			})
 
 			setError(undefined)
 
-			await onSuccess(validatedData)
+			await onSuccess(currentData)
 		} catch (error: any) {
 			if (error instanceof ZodError) {
 				let parsedError = parseZodError(error.issues[0])
