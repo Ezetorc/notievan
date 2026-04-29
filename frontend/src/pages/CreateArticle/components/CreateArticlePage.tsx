@@ -3,16 +3,13 @@ import { ArticleInput } from "../../../components/ArticleInput";
 import { MarkdownEditor } from "../../../components/MarkdownEditor";
 import { ErrorMessage } from "../../../components/ErrorMessage";
 import { ImageInput } from "../../../components/ImageInput";
-import {
-  CreateArticleDto,
-  type CreateArticleDtoType,
-} from "../../../../../shared/src/dtos/in/create-article.dto";
+import { CreateArticleDto } from "../../../../../shared/src/dtos/in/create-article.dto";
 import { useForm } from "../../../hooks/use-form.hook";
 import { ArticlesService } from "../../../services/articles.service";
-import { getFormDataFrom } from "../../../utilities/get-form-data-from.utility";
 import { useQueryClient } from "@tanstack/react-query";
 import { ActionButton } from "../../../components/ActionButton";
 import { useState } from "react";
+import type { CreateArticleForm } from "../models/create-article-form.model";
 
 export default function CreateArticlePage() {
   const [, setLocation] = useLocation();
@@ -20,13 +17,23 @@ export default function CreateArticlePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>("");
 
-  const onSuccess = async (data: CreateArticleDtoType) => {
+  const onSuccess = async (data: CreateArticleForm) => {
     try {
       setIsLoading(true);
-      const formData = getFormDataFrom(data);
 
-      if (!data.image) {
-        throw new Error("Falta poner una imágen al artículo");
+      const formData = new FormData();
+
+      formData.append("title", data.title);
+      formData.append("subtitle", data.subtitle);
+      formData.append("description", data.description);
+      formData.append("content", data.content);
+
+      if (data.imageFile) {
+        formData.append("image", data.imageFile);
+      } else if (data.imageUrl) {
+        formData.append("image", data.imageUrl);
+      } else {
+        throw new Error("Falta poner una imagen");
       }
 
       const newArticle = await ArticlesService.create(formData);
@@ -53,8 +60,9 @@ export default function CreateArticlePage() {
     error: schemaError,
     onSubmit,
     watch,
-  } = useForm(onSuccess, CreateArticleDto, {
-    image: "",
+  } = useForm<CreateArticleForm>(onSuccess, CreateArticleDto, {
+    imageFile: undefined,
+    imageUrl: "",
     content: "",
     description: "",
     title: "",
@@ -102,7 +110,17 @@ export default function CreateArticlePage() {
         </div>
 
         <aside className="flex flex-col gap-y-5 order-1 md:order-2">
-          <ImageInput onImageSelected={(value) => watch("image", value)} />
+          <ImageInput
+            onImageSelected={(value) => {
+              if (value instanceof File) {
+                watch("imageFile", value);
+                watch("imageUrl", "");
+              } else {
+                watch("imageUrl", value);
+                watch("imageFile", undefined);
+              }
+            }}
+          />
         </aside>
 
         <div className="w-full order-3">
