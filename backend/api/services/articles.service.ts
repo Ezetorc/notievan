@@ -7,6 +7,7 @@ import sharp from 'sharp'
 import type { UpdateArticleType } from '../../../shared/src/dtos/in/update-article.dto.js'
 import type { CreateArticleDtoType } from '../../../shared/src/dtos/in/create-article.dto.js'
 import { ErrorCode } from '../../../shared/src/models/error-code.model.js'
+import { BadRequestError } from '../models/errors/bad-request.error.js'
 
 
 export class ArticlesService {
@@ -59,9 +60,9 @@ export class ArticlesService {
 	}
 
 	static async create(data: CreateArticleDtoType, request: Request) {
-		const { file } = request
+		const file = request.file
 
-		let image: string = ''
+		let image: string
 
 		if (file) {
 			const optimizedBuffer = await sharp(file.buffer)
@@ -75,8 +76,12 @@ export class ArticlesService {
 			)
 
 			image = uploadResult.secure_url
-		} else if (typeof data.image === 'string') {
+
+		} else if (data.image) {
 			image = data.image
+
+		} else {
+			throw new BadRequestError(ErrorCode.IMAGE_NOT_FOUND)
 		}
 
 		const article = await ArticlesRepository.create({

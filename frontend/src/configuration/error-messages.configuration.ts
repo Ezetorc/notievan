@@ -62,6 +62,7 @@ export const backendMessages: Record<ErrorCode, string> = {
   USER_NOT_FOUND: 'Usuario no encontrado',
   COMMENT_NOT_FOUND: 'Comentario no encontrado',
   ARTICLE_NOT_FOUND: 'Artículo no encontrado',
+  IMAGE_NOT_FOUND: 'Imágen no encontrada',
 
   FORBIDDEN: 'No tienes permiso para realizar esta acción',
 }
