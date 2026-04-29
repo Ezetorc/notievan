@@ -1,4 +1,9 @@
 {
   "name": "notievan",
-  "private": true
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend",
+    "shared"
+  ]
 }

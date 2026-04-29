@@ -2,6 +2,7 @@ import type { Request, Response, NextFunction } from 'express'
 import { CustomError } from '../models/errors/custom.error.js'
 import { getErrorMessage } from '../utilities/get-error-message.utility.js'
 import { ZodError } from 'zod'
+import { env } from '../configuration/env.configuration.js'
 
 export function errorHandlerMiddleware() {
 	return (
@@ -21,6 +22,18 @@ export function errorHandlerMiddleware() {
 		}
 
 		const errorMessage = getErrorMessage(error)
-		return response.status(500).json({ error: errorMessage })
+		const err = error as any
+		
+		return response.status(500).json({
+			error: errorMessage,
+			...(env.showFullErrors && {
+				debug: {
+					message: err?.message,
+					stack: err?.stack,
+					cause: err?.cause,
+					name: err?.name,
+				},
+			}),
+		})
 	}
 }

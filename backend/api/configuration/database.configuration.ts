@@ -1,12 +1,9 @@
-import { drizzle } from 'drizzle-orm/node-postgres'
-import { Pool } from 'pg'
+import { drizzle } from 'drizzle-orm/neon-http'
+import { neon } from '@neondatabase/serverless'
 import { env } from './env.configuration.js'
 
-const pool = new Pool({
-	connectionString: env.databaseUrl,
-	max: 1
-})
+const sql = neon(env.databaseUrl)
 
-export const database = drizzle(pool, {
-	logger: true
+export const database = drizzle(sql, {
+  logger: true,
 })

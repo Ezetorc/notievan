@@ -1,41 +1,62 @@
+import { z } from 'zod'
+
 if (process.env.NODE_ENV !== 'production') {
 	process.loadEnvFile()
 }
 
-type Env = {
-	jwt: {
-		secret: string
-		expiresIn: string
-	}
-	cloudinary: {
-		cloudName: string
-		apiKey: string
-		apiSecret: string
-	}
-	nodeEnv: string
-	port: string
-	databaseUrl: string
+const envSchema = z.object({
+	NODE_ENV: z.string().default('development'),
+
+	SHOW_FULL_ERRORS: z.coerce.boolean().default(false),
+
+	PORT: z.coerce.number().default(3000),
+
+	DATABASE_URL: z
+		.string()
+		.min(1, 'DATABASE_URL is required'),
+
+	JWT_SECRET: z
+		.string()
+		.min(1, 'JWT_SECRET is required'),
+
+	JWT_EXPIRES_IN: z
+		.string()
+		.default('24h'),
+
+	CLOUDINARY_CLOUD_NAME: z
+		.string()
+		.min(1, 'CLOUDINARY_CLOUD_NAME is required'),
+
+	CLOUDINARY_API_KEY: z
+		.string()
+		.min(1, 'CLOUDINARY_API_KEY is required'),
+
+	CLOUDINARY_API_SECRET: z
+		.string()
+		.min(1, 'CLOUDINARY_API_SECRET is required'),
+})
+
+const parsed = envSchema.safeParse(process.env)
+
+if (!parsed.success) {
+	console.error('❌ Invalid environment variables:', z.treeifyError(parsed.error).errors)
+	throw new Error('Invalid environment variables')
 }
 
-function getEnvVar(key: string, fallback?: string): string {
-	const value = process.env[key] || fallback
+export const env = {
+	nodeEnv: parsed.data.NODE_ENV,
+	port: parsed.data.PORT,
+	databaseUrl: parsed.data.DATABASE_URL,
+	showFullErrors: parsed.data.SHOW_FULL_ERRORS,
 
-	if (!value) throw new Error(`Missing environment variable: ${key}`)
-
-	return value
-}
-
-export const env: Env = {
 	jwt: {
-		secret: getEnvVar('JWT_SECRET', 'JWT_SECRET'),
-		expiresIn: getEnvVar('JWT_EXPIRES_IN', '24h')
+		secret: parsed.data.JWT_SECRET,
+		expiresIn: parsed.data.JWT_EXPIRES_IN,
 	},
+
 	cloudinary: {
-		cloudName: getEnvVar('CLOUDINARY_CLOUD_NAME'),
-		apiKey: getEnvVar('CLOUDINARY_API_KEY'),
-		apiSecret: getEnvVar('CLOUDINARY_API_SECRET')
+		cloudName: parsed.data.CLOUDINARY_CLOUD_NAME,
+		apiKey: parsed.data.CLOUDINARY_API_KEY,
+		apiSecret: parsed.data.CLOUDINARY_API_SECRET,
 	},
-	nodeEnv: getEnvVar('NODE_ENV', 'development'),
-	databaseUrl: getEnvVar('DATABASE_URL'),
-	port: getEnvVar('PORT', '3000')
 }

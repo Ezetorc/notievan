@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type FormEventHandler } from 'react'
 import { ZodError, type ZodType } from 'zod'
 import { parseZodError } from '../utilities/parse-zod-error.utility'
 import { parseBackendError } from '../utilities/parse-backend-error.utility'
@@ -11,7 +11,7 @@ export function useForm<T extends Record<string, unknown>>(
 	const [error, setError] = useState<string>()
 	const [data, setData] = useState<T>(defaultData)
 
-	const onSubmit: React.SubmitEventHandler<HTMLFormElement> = async (event) => {
+	const onSubmit: FormEventHandler<HTMLFormElement> = async (event) => {
 		event.preventDefault()
 
 		try {
