@@ -2,13 +2,11 @@
 	"name": "@app/backend",
 	"type": "module",
 	"scripts": {
-		"dev": "netlify dev",
 		"build": "tsc",
 		"lint": "npx @biomejs/biome lint --write",
 		"format": "npx @biomejs/biome format --write"
 	},
 	"dependencies": {
-		"@app/shared": "workspace:*",
 		"@paralleldrive/cuid2": "^3.3.0",
 		"bcrypt": "^6.0.0",
 		"cloudinary": "^2.8.0",
@@ -32,7 +30,6 @@
 		"@types/multer": "^2.0.0",
 		"@types/node": "^20.19.39",
 		"@types/pg": "^8.20.0",
-		"netlify-cli": "^25.6.1",
 		"tsx": "^4.21.0",
 		"typescript": "^5.9.3"
 	}

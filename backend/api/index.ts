@@ -5,6 +5,7 @@ import { ArticlesRouter } from './routers/articles.router.js'
 import corsMiddleware from 'cors'
 import { errorHandlerMiddleware } from './middlewares/error-handler.middleware.js'
 import { CommentsRouter } from './routers/comments.router.js'
+import { env } from './configuration/env.configuration.js'
 
 const app = express()
 
@@ -16,4 +17,4 @@ app.use('/api/articles', ArticlesRouter)
 app.use('/api/comments', CommentsRouter)
 app.use(errorHandlerMiddleware())
 
-export default app
+app.listen(env.port)
