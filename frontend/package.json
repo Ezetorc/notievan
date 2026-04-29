@@ -1,43 +1,44 @@
 {
-	"name": "@app/frontend",
-	"private": true,
-	"version": "0.0.0",
-	"type": "module",
-	"scripts": {
-		"dev": "vite",
-		"build": "tsc -b && vite build",
-		"lint": "npx @biomejs/biome lint --write",
-		"format": "npx @biomejs/biome format --write",
-		"preview": "vite preview"
-	},
-	"dependencies": {
-		"@tailwindcss/vite": "^4.1.16",
-		"@tanstack/query-async-storage-persister": "^5.90.7",
-		"@tanstack/react-query": "^5.90.5",
-		"@tanstack/react-query-devtools": "^5.90.2",
-		"@tanstack/react-query-persist-client": "^5.90.7",
-		"axios": "^1.12.2",
-		"browser-image-compression": "^2.0.2",
-		"date-fns": "^4.1.0",
-		"dompurify": "^3.3.0",
-		"easymde": "^2.20.0",
-		"jwt-decode": "^4.0.0",
-		"marked": "^16.4.1",
-		"react": "^19.2.3",
-		"react-dom": "^19.2.3",
-		"tailwindcss": "^4.1.16",
-		"wouter": "^3.7.1",
-		"zod": "^4.3.6",
-		"zustand": "^5.0.8"
-	},
-	"devDependencies": {
-		"@biomejs/biome": "2.3.5",
-		"@types/node": "^24.6.0",
-		"@types/react": "^19.1.16",
-		"@types/react-dom": "^19.1.9",
-		"@vitejs/plugin-react-swc": "^4.1.0",
-		"globals": "^16.4.0",
-		"typescript": "~5.9.3",
-		"vite": "^7.2.7"
-	}
+  "name": "@app/frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "npx @biomejs/biome lint --write",
+    "format": "npx @biomejs/biome format --write",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@app/shared": "workspace:*",
+    "@tailwindcss/vite": "^4.1.16",
+    "@tanstack/query-async-storage-persister": "^5.90.7",
+    "@tanstack/react-query": "^5.90.5",
+    "@tanstack/react-query-devtools": "^5.90.2",
+    "@tanstack/react-query-persist-client": "^5.90.7",
+    "axios": "^1.12.2",
+    "browser-image-compression": "^2.0.2",
+    "date-fns": "^4.1.0",
+    "dompurify": "^3.3.0",
+    "easymde": "^2.20.0",
+    "jwt-decode": "^4.0.0",
+    "marked": "^16.4.1",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "tailwindcss": "^4.1.16",
+    "wouter": "^3.7.1",
+    "zod": "^4.3.6",
+    "zustand": "^5.0.8"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.3.5",
+    "@types/node": "^24.6.0",
+    "@types/react": "^19.1.16",
+    "@types/react-dom": "^19.1.9",
+    "@vitejs/plugin-react-swc": "^4.1.0",
+    "globals": "^16.4.0",
+    "typescript": "~5.9.3",
+    "vite": "^7.2.7"
+  }
 }
