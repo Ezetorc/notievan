@@ -6,7 +6,10 @@ import { Modal } from '../../../components/Modal'
 import { ErrorMessage } from '../../../components/ErrorMessage'
 import { useForm } from '../../../hooks/use-form.hook'
 import type { Comment } from '../../../../../shared/src/models/comment.model'
-import { CreateCommentDto, type CreateCommentDtoType } from "../../../../../shared/src/dtos/in/create-comment.dto"
+import {
+	CreateCommentDto,
+	type CreateCommentDtoType
+} from '../../../../../shared/src/dtos/in/create-comment.dto'
 
 export function CreateCommentModal({
 	setIsModalOpen,

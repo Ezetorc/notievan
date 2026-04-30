@@ -1,6 +1,6 @@
 import type { AuthResponse } from '../models/auth-response.model'
-import type { SignInDtoType } from "../../../shared/src/dtos/in/sign-in.dto"
-import type { SignUpDtoType } from "../../../shared/src/dtos/in/sign-up.dto"
+import type { SignInDtoType } from '../../../shared/src/dtos/in/sign-in.dto'
+import type { SignUpDtoType } from '../../../shared/src/dtos/in/sign-up.dto'
 
 import { HttpClient } from '../models/http-client.model'
 

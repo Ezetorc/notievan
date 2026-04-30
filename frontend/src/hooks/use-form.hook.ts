@@ -17,25 +17,19 @@ export function useForm<T extends Record<string, unknown>>(
 		try {
 			const currentData = { ...data }
 
-			schema.parse({
-				title: currentData.title,
-				subtitle: currentData.subtitle,
-				description: currentData.description,
-				content: currentData.content,
-				image: currentData.imageUrl,
-			})
+			schema.parse(currentData)
 
 			setError(undefined)
 
 			await onSuccess(currentData)
 		} catch (error: any) {
-			if (error instanceof ZodError) {
-				let parsedError = parseZodError(error.issues[0])
+			console.error('[useForm] ', error)
 
+			if (error instanceof ZodError) {
+				const parsedError = parseZodError(error.issues[0])
 				setError(parsedError)
 			} else {
-				let parsedError = parseBackendError(error)
-
+				const parsedError = parseBackendError(error)
 				setError(parsedError)
 			}
 		}

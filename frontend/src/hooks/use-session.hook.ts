@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
-import type { SignInDtoType } from "../../../shared/src/dtos/in/sign-in.dto"
-import type { SignUpDtoType } from "../../../shared/src/dtos/in/sign-up.dto"
+import type { SignInDtoType } from '../../../shared/src/dtos/in/sign-in.dto'
+import type { SignUpDtoType } from '../../../shared/src/dtos/in/sign-up.dto'
 import { AuthService } from '../services/auth.service'
 import { SessionService } from '../services/session.service'
 import { useSessionStore } from '../stores/session.store'

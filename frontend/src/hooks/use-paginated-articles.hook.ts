@@ -19,8 +19,10 @@ export function usePaginatedArticles({
 		queryKey: excludeId
 			? ['articles', type, limit, initialPage, excludeId]
 			: ['articles', type, limit, initialPage],
+
 		queryFn: async ({ pageParam }): Promise<Article[]> => {
 			const page = pageParam !== undefined ? pageParam : initialPage
+
 			switch (type) {
 				case 'own':
 					return ArticlesService.getOwn({ page, limit })
@@ -32,11 +34,18 @@ export function usePaginatedArticles({
 					return ArticlesService.getAll({ page, limit })
 			}
 		},
+
 		getNextPageParam: (lastPage, allPages) => {
 			if (lastPage.length < limit) return undefined
 			return allPages.length + initialPage
 		},
-		initialPageParam: initialPage
+
+		initialPageParam: initialPage,
+		staleTime: 0,
+		gcTime: 0,
+		refetchOnMount: true,
+		refetchOnWindowFocus: false,
+		refetchOnReconnect: false
 	})
 
 	const articles = query.data?.pages.flat() ?? []
