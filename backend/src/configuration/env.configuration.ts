@@ -43,20 +43,22 @@ if (!parsed.success) {
 	throw new Error('Invalid environment variables')
 }
 
+const { NODE_ENV, PORT, DATABASE_URL, SHOW_FULL_ERRORS, JWT_EXPIRES_IN, JWT_SECRET, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET, CLOUDINARY_CLOUD_NAME } = parsed.data
+
 export const env = {
-	nodeEnv: parsed.data.NODE_ENV,
-	port: parsed.data.PORT,
-	databaseUrl: parsed.data.DATABASE_URL,
-	showFullErrors: parsed.data.SHOW_FULL_ERRORS,
+	nodeEnv: NODE_ENV,
+	port: PORT,
+	databaseUrl: DATABASE_URL,
+	showFullErrors: SHOW_FULL_ERRORS,
 
 	jwt: {
-		secret: parsed.data.JWT_SECRET,
-		expiresIn: parsed.data.JWT_EXPIRES_IN,
+		secret: JWT_SECRET,
+		expiresIn: JWT_EXPIRES_IN,
 	},
 
 	cloudinary: {
-		cloudName: parsed.data.CLOUDINARY_CLOUD_NAME,
-		apiKey: parsed.data.CLOUDINARY_API_KEY,
-		apiSecret: parsed.data.CLOUDINARY_API_SECRET,
+		cloudName: CLOUDINARY_CLOUD_NAME,
+		apiKey: CLOUDINARY_API_KEY,
+		apiSecret: CLOUDINARY_API_SECRET,
 	},
 }

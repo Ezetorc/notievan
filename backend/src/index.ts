@@ -1,20 +1,20 @@
 import express, { json as jsonMiddleware } from 'express'
-import { AuthRouter } from './routers/auth.router.js'
-import { UsersRouter } from './routers/users.router.js'
-import { ArticlesRouter } from './routers/articles.router.js'
 import corsMiddleware from 'cors'
-import { errorHandlerMiddleware } from './middlewares/error-handler.middleware.js'
-import { CommentsRouter } from './routers/comments.router.js'
 import { env } from './configuration/env.configuration.js'
+import { ArticlesRouter } from './articles/articles.router.js'
+import { AuthRouter } from './auth/auth.router.js'
+import { CommentsRouter } from './comments/comments.router.js'
+import { errorHandlerMiddleware } from './errors/error-handler.middleware.js'
+import { UsersRouter } from './users/users.router.js'
 
 const app = express()
 
 app.use(corsMiddleware())
 app.use(jsonMiddleware())
-app.use('/api/auth', AuthRouter)
-app.use('/api/users', UsersRouter)
-app.use('/api/articles', ArticlesRouter)
-app.use('/api/comments', CommentsRouter)
+app.use('/auth', AuthRouter)
+app.use('/users', UsersRouter)
+app.use('/articles', ArticlesRouter)
+app.use('/comments', CommentsRouter)
 app.use(errorHandlerMiddleware())
 
 app.listen(env.port)
