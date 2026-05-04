@@ -7,9 +7,9 @@ import { neon } from '@neondatabase/serverless'
 const isLocal = env.databaseUrl.includes('localhost')
 
 export const database = isLocal
-  ? drizzlePg(
-    new Pool({
-      connectionString: env.databaseUrl
-    })
-  )
-  : drizzleNeon(neon(env.databaseUrl))
+	? drizzlePg(
+			new Pool({
+				connectionString: env.databaseUrl
+			})
+		)
+	: drizzleNeon(neon(env.databaseUrl))

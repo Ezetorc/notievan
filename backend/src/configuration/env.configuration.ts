@@ -11,39 +11,40 @@ const envSchema = z.object({
 
 	PORT: z.coerce.number().default(3000),
 
-	DATABASE_URL: z
-		.string()
-		.min(1, 'DATABASE_URL is required'),
+	DATABASE_URL: z.string().min(1, 'DATABASE_URL is required'),
 
-	JWT_SECRET: z
-		.string()
-		.min(1, 'JWT_SECRET is required'),
+	JWT_SECRET: z.string().min(1, 'JWT_SECRET is required'),
 
-	JWT_EXPIRES_IN: z
-		.string()
-		.default('24h'),
+	JWT_EXPIRES_IN: z.string().default('24h'),
 
-	CLOUDINARY_CLOUD_NAME: z
-		.string()
-		.min(1, 'CLOUDINARY_CLOUD_NAME is required'),
+	CLOUDINARY_CLOUD_NAME: z.string().min(1, 'CLOUDINARY_CLOUD_NAME is required'),
 
-	CLOUDINARY_API_KEY: z
-		.string()
-		.min(1, 'CLOUDINARY_API_KEY is required'),
+	CLOUDINARY_API_KEY: z.string().min(1, 'CLOUDINARY_API_KEY is required'),
 
-	CLOUDINARY_API_SECRET: z
-		.string()
-		.min(1, 'CLOUDINARY_API_SECRET is required'),
+	CLOUDINARY_API_SECRET: z.string().min(1, 'CLOUDINARY_API_SECRET is required')
 })
 
 const parsed = envSchema.safeParse(process.env)
 
 if (!parsed.success) {
-	console.error('❌ Invalid environment variables:', z.treeifyError(parsed.error).properties)
+	console.error(
+		'❌ Invalid environment variables:',
+		z.treeifyError(parsed.error).properties
+	)
 	throw new Error('Invalid environment variables')
 }
 
-const { NODE_ENV, PORT, DATABASE_URL, SHOW_FULL_ERRORS, JWT_EXPIRES_IN, JWT_SECRET, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET, CLOUDINARY_CLOUD_NAME } = parsed.data
+const {
+	NODE_ENV,
+	PORT,
+	DATABASE_URL,
+	SHOW_FULL_ERRORS,
+	JWT_EXPIRES_IN,
+	JWT_SECRET,
+	CLOUDINARY_API_KEY,
+	CLOUDINARY_API_SECRET,
+	CLOUDINARY_CLOUD_NAME
+} = parsed.data
 
 export const env = {
 	nodeEnv: NODE_ENV,
@@ -53,12 +54,12 @@ export const env = {
 
 	jwt: {
 		secret: JWT_SECRET,
-		expiresIn: JWT_EXPIRES_IN,
+		expiresIn: JWT_EXPIRES_IN
 	},
 
 	cloudinary: {
 		cloudName: CLOUDINARY_CLOUD_NAME,
 		apiKey: CLOUDINARY_API_KEY,
-		apiSecret: CLOUDINARY_API_SECRET,
-	},
+		apiSecret: CLOUDINARY_API_SECRET
+	}
 }

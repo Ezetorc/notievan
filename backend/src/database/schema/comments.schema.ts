@@ -1,8 +1,8 @@
-import { createId } from "@paralleldrive/cuid2";
-import { relations } from "drizzle-orm";
-import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
-import { articles } from "./articles.schema.js";
-import { users } from "./users.schema.js";
+import { createId } from '@paralleldrive/cuid2'
+import { relations } from 'drizzle-orm'
+import { pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import { articles } from './articles.schema.js'
+import { users } from './users.schema.js'
 
 export const comments = pgTable('comment', {
 	id: text('id')

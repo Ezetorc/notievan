@@ -5,7 +5,8 @@
 		"build": "tsup src/index.ts --format esm --out-dir dist --minify",
 		"dev": "npm run build && node --env-file=./.env dist/index.js",
 		"lint": "npx @biomejs/biome lint --write",
-		"format": "npx @biomejs/biome format --write"
+		"format": "npx @biomejs/biome format --write",
+		"test": "vitest"
 	},
 	"dependencies": {
 		"@neondatabase/serverless": "^1.1.0",
@@ -19,6 +20,8 @@
 		"jsonwebtoken": "^9.0.2",
 		"multer": "^2.0.2",
 		"pg": "^8.20.0",
+		"qs": "^6.15.1",
+		"resolve-from": "^5.0.0",
 		"serverless-http": "^4.0.0",
 		"sharp": "^0.34.5",
 		"zod": "^4.1.12"
@@ -34,6 +37,7 @@
 		"@types/pg": "^8.20.0",
 		"tsup": "^8.5.1",
 		"tsx": "^4.21.0",
-		"typescript": "^5.9.3"
+		"typescript": "^5.9.3",
+		"vitest": "^4.1.5"
 	}
 }

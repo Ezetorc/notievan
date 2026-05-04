@@ -1,4 +1,3 @@
-import type { Request } from 'express'
 import { ArticlesRepository } from './articles.repository.js'
 import { CloudinaryService } from '../shared/services/cloudinary/cloudinary.service.js'
 import sharp from 'sharp'
@@ -8,7 +7,6 @@ import { ErrorCode } from '../../../shared/src/models/error-code.model.js'
 import { NotFoundError } from '../errors/not-found.error.js'
 import { BadRequestError } from '../errors/bad-request.error.js'
 import { UnauthorizedError } from '../errors/unauthorized.error.js'
-
 
 export class ArticlesService {
 	static async getById(id: string) {
@@ -28,8 +26,11 @@ export class ArticlesService {
 		return Boolean(article)
 	}
 
-	static async delete(id: string) {
+	static async delete(id: string, userId: string) {
 		const article = await ArticlesService.getById(id)
+
+		if (article.authorId !== userId)
+			throw new UnauthorizedError(ErrorCode.FORBIDDEN)
 
 		await ArticlesRepository.delete(id)
 
@@ -44,24 +45,34 @@ export class ArticlesService {
 		return { value: true }
 	}
 
-	static async update(id: string, data: UpdateArticleType, request: Request) {
+	static async update(
+		id: string,
+		data: UpdateArticleType,
+		userId: string,
+		file?: Express.Multer.File
+	) {
 		const article = await ArticlesService.getById(id)
 
-		if (request.user?.id !== article.authorId)
+		if (userId !== article.authorId) {
 			throw new UnauthorizedError(ErrorCode.FORBIDDEN)
+		}
 
-		const { body, file } = request
-
-		await CloudinaryService.updateImage({ file, body, article })
+		await CloudinaryService.updateImage({
+			file,
+			body: data,
+			article
+		})
 
 		const updatedArticle = await ArticlesRepository.update(id, data)
 
 		return Boolean(updatedArticle)
 	}
 
-	static async create(data: CreateArticleDtoType, request: Request) {
-		const file = request.file
-
+	static async create(
+		data: CreateArticleDtoType,
+		userId: string,
+		file?: Express.Multer.File
+	) {
 		let image: string
 
 		if (file) {
@@ -76,10 +87,8 @@ export class ArticlesService {
 			)
 
 			image = uploadResult.secure_url
-
 		} else if (data.image) {
 			image = data.image
-
 		} else {
 			throw new BadRequestError(ErrorCode.IMAGE_NOT_FOUND)
 		}
@@ -87,7 +96,7 @@ export class ArticlesService {
 		const article = await ArticlesRepository.create({
 			...data,
 			image,
-			authorId: request.user.id
+			authorId: userId
 		})
 
 		return article

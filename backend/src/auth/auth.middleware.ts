@@ -16,20 +16,16 @@ export function authMiddleware(...requiredRoles: UserRole[]) {
 		if (typeof authHeader !== 'string' || !authHeader.startsWith('Bearer '))
 			throw new UnauthorizedError(ErrorCode.TOKEN_NOT_FOUND)
 
-
 		const tokenParts = authHeader.split(' ')
 		if (tokenParts.length !== 2)
 			throw new UnauthorizedError(ErrorCode.INVALID_TOKEN)
 
-
 		const token = tokenParts[1]
 
-		if (!token)
-			throw new UnauthorizedError(ErrorCode.TOKEN_NOT_FOUND)
-
+		if (!token) throw new UnauthorizedError(ErrorCode.TOKEN_NOT_FOUND)
 
 		let payload: JwtPayload
-		
+
 		try {
 			payload = jwt.verify(token, env.jwt.secret, {
 				algorithms: ['HS256']

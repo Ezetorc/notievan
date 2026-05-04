@@ -3,8 +3,8 @@ import { ArticlesController } from './articles.controller.js'
 import multer from 'multer'
 import { authMiddleware } from '../auth/auth.middleware.js'
 const upload = multer({
-  storage: multer.memoryStorage(),
-  limits: { fileSize: 5 * 1024 * 1024 }
+	storage: multer.memoryStorage(),
+	limits: { fileSize: 5 * 1024 * 1024 }
 })
 
 export const ArticlesRouter = Router()
@@ -18,21 +18,21 @@ ArticlesRouter.get('/:id', ArticlesController.findById)
 ArticlesRouter.get('/', ArticlesController.getAll)
 
 ArticlesRouter.delete(
-  '/:id',
-  authMiddleware('AUTHOR'),
-  ArticlesController.delete
+	'/:id',
+	authMiddleware('AUTHOR'),
+	ArticlesController.delete
 )
 
 ArticlesRouter.patch(
-  '/:id',
-  authMiddleware('AUTHOR'),
-  upload.single('image'),
-  ArticlesController.update
+	'/:id',
+	authMiddleware('AUTHOR'),
+	upload.single('image'),
+	ArticlesController.update
 )
 
 ArticlesRouter.post(
-  '/',
-  authMiddleware('AUTHOR'),
-  upload.single('image'),
-  ArticlesController.create
+	'/',
+	authMiddleware('AUTHOR'),
+	upload.single('image'),
+	ArticlesController.create
 )

@@ -23,7 +23,7 @@ export function errorHandlerMiddleware() {
 
 		const errorMessage = getErrorMessage(error)
 		const err = error as any
-		
+
 		return response.status(500).json({
 			error: errorMessage,
 			...(env.showFullErrors && {
@@ -31,9 +31,9 @@ export function errorHandlerMiddleware() {
 					message: err?.message,
 					stack: err?.stack,
 					cause: err?.cause,
-					name: err?.name,
-				},
-			}),
+					name: err?.name
+				}
+			})
 		})
 	}
 }

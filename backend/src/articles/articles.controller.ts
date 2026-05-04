@@ -16,7 +16,7 @@ export class ArticlesController {
 
 	static async delete(request: Request, response: Response) {
 		const { id } = CUIDParamDto.parse(request.params)
-		const success = await ArticlesService.delete(id)
+		const success = await ArticlesService.delete(id, request.user.id)
 
 		return response.json(success)
 	}

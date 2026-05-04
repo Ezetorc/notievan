@@ -1,4 +1,4 @@
-import type { ErrorCode } from "../../../shared/src/models/error-code.model.js"
+import type { ErrorCode } from '../../../shared/src/models/error-code.model.js'
 
 export class CustomError {
 	code: number
