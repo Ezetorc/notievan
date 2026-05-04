@@ -3,14 +3,14 @@ import { useQueryClient } from '@tanstack/react-query'
 import { ActionButton } from '../../../components/ActionButton'
 import { Modal } from '../../../components/Modal'
 import { CommentsService } from '../../../services/comments.service'
-import type { Comment } from '../../../../../shared/src/models/comment.model'
+import type { CommentOut } from '../../../../../shared/src/dtos/out/comment-out.dto'
 
 export function DeleteCommentModal({
 	setIsModalOpen,
 	comment
 }: {
 	setIsModalOpen: Dispatch<SetStateAction<boolean>>
-	comment: Comment
+	comment: CommentOut
 }) {
 	const queryClient = useQueryClient()
 	const [loading, setLoading] = useState<boolean>(false)

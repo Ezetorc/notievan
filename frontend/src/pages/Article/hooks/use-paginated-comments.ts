@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { CommentsService } from '../../../services/comments.service'
-import type { Comment } from '../../../../../shared/src/models/comment.model'
+import type { CommentOut } from '../../../../../shared/src/dtos/out/comment-out.dto'
 
 type UsePaginatedCommentsOptions = {
 	initialPage?: number
@@ -15,7 +15,7 @@ export function usePaginatedComments({
 }: UsePaginatedCommentsOptions) {
 	const query = useInfiniteQuery({
 		queryKey: ['comments', articleId],
-		queryFn: async ({ pageParam = initialPage }): Promise<Comment[]> =>
+		queryFn: async ({ pageParam = initialPage }): Promise<CommentOut[]> =>
 			CommentsService.getAllOfArticle({ page: pageParam, limit, articleId }),
 		getNextPageParam: (lastPage, allPages) => {
 			if (lastPage.length < limit) return undefined

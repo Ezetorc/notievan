@@ -1,12 +1,12 @@
 import type { Article } from '../../../shared/src/models/article.model.js'
 
-export const articleMock: Article = {
+export const articleMock: Article & { authorName: string } = {
 	authorId: 'ckv9z0a1b0000qzrmn831abcd',
+	authorName: 'Juan Perez',
 	createdAt: new Date('2024-03-15T10:30:00Z'),
 	title: 'The Future of Web Development',
 	subtitle: 'Trends shaping modern applications',
-	description:
-		'An overview of tech',
+	description: 'An overview of tech',
 	content: `
     Web development continues to evolve rapidly, driven by new frameworks,
     performance demands, and user expectations. Developers are increasingly

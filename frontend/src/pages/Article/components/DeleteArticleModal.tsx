@@ -4,14 +4,14 @@ import { ArticlesService } from '../../../services/articles.service'
 import { useQueryClient } from '@tanstack/react-query'
 import { ActionButton } from '../../../components/ActionButton'
 import { Modal } from '../../../components/Modal'
-import type { Article } from '../../../../../shared/src/models/article.model'
+import type { ArticleOut } from '../../../../../shared/src/dtos/out/article-out.dto'
 
 export function DeleteArticleModal({
 	setIsModalOpen,
 	article
 }: {
 	setIsModalOpen: Dispatch<SetStateAction<boolean>>
-	article: Article
+	article: ArticleOut
 }) {
 	const queryClient = useQueryClient()
 	const [, setLocation] = useLocation()

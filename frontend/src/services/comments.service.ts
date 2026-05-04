@@ -1,4 +1,4 @@
-import type { Comment } from '../../../shared/src/models/comment.model'
+import type { CommentOut } from '../../../shared/src/dtos/out/comment-out.dto'
 import { HttpClient } from '../models/http-client.model'
 
 type CreateCommentData = {
@@ -18,11 +18,14 @@ export class CommentsService {
 	static async create({
 		articleId,
 		content
-	}: CreateCommentData): Promise<Comment> {
-		const response = await HttpClient.post<Comment>(CommentsService.API_BASE, {
-			articleId,
-			content
-		})
+	}: CreateCommentData): Promise<CommentOut> {
+		const response = await HttpClient.post<CommentOut>(
+			CommentsService.API_BASE,
+			{
+				articleId,
+				content
+			}
+		)
 
 		if (response.error || !response.data) {
 			throw new Error(response.error || 'Error al crear comentario')
@@ -42,8 +45,8 @@ export class CommentsService {
 		page = 1,
 		limit = 4,
 		articleId
-	}: GetAllOfArticleParams): Promise<Comment[]> {
-		const response = await HttpClient.get<Comment[]>(
+	}: GetAllOfArticleParams): Promise<CommentOut[]> {
+		const response = await HttpClient.get<CommentOut[]>(
 			`${CommentsService.API_BASE}/article/${articleId}?page=${page}&limit=${limit}`
 		)
 

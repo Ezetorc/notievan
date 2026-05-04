@@ -1,5 +1,4 @@
 import { useArticle } from '../../../hooks/use-article.hook'
-import { useUserName } from '../../../hooks/use-user-name.hook'
 import { AsideArticles } from './AsideArticles'
 import { useParsedMarkdown } from '../../../hooks/use-parsed-markdown.hook'
 import { useState } from 'react'
@@ -12,8 +11,7 @@ export default function ArticlePage({ id }: { id: string }) {
 	const { article } = useArticle(id)
 	const { user } = useSession()
 	const parsedContent = useParsedMarkdown(article?.content)
-	const authorName = useUserName(article?.authorId)
-	const isAuthor = user?.id === article?.authorId
+	const isAuthor = user?.id === article?.author.id
 
 	if (!article)
 		return (
@@ -59,7 +57,7 @@ export default function ArticlePage({ id }: { id: string }) {
 				<h2 className='text-gray-600 text-3xl mb-[15px]'>
 					{article.description}
 				</h2>
-				<h3 className='text-gray-600 text-[18px] mb-[30px]'>{`Por ${authorName}`}</h3>
+				<h3 className='text-gray-600 text-[18px] mb-[30px]'>{`Por ${article.author.name}`}</h3>
 
 				<div className='grid gap-x-10 gap-y-10 desktop:grid-cols-[2fr_1fr]'>
 					<div className='overflow-x-auto'>

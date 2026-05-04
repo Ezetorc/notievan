@@ -1,11 +1,12 @@
-import type { Article } from '../../../shared/src/models/article.model'
 import { HttpClient } from '../models/http-client.model'
+import type { ArticleOut } from '../../../shared/src/dtos/out/article-out.dto'
+import type { ArticlePreviewOut } from '../../../shared/src/dtos/out/article-preview-out.dto'
 
 export class ArticlesService {
 	private static readonly API_BASE = '/articles'
 
-	static async create(data: FormData): Promise<Article> {
-		const response = await HttpClient.post<Article>(
+	static async create(data: FormData): Promise<ArticleOut> {
+		const response = await HttpClient.post<ArticleOut>(
 			ArticlesService.API_BASE,
 			data,
 			{
@@ -43,8 +44,8 @@ export class ArticlesService {
 		return !response.error
 	}
 
-	static async getById(id: string): Promise<Article | undefined> {
-		const response = await HttpClient.get<Article>(
+	static async getById(id: string): Promise<ArticleOut | undefined> {
+		const response = await HttpClient.get<ArticleOut>(
 			`${ArticlesService.API_BASE}/${id}`
 		)
 		return response.data
@@ -56,8 +57,8 @@ export class ArticlesService {
 	}: {
 		page?: number
 		limit?: number
-	} = {}): Promise<Article[]> {
-		const response = await HttpClient.get<Article[]>(
+	} = {}): Promise<ArticlePreviewOut[]> {
+		const response = await HttpClient.get<ArticlePreviewOut[]>(
 			`${ArticlesService.API_BASE}?page=${page}&limit=${limit}`
 		)
 		return response.data ?? []
@@ -69,8 +70,8 @@ export class ArticlesService {
 	}: {
 		page?: number
 		limit?: number
-	} = {}): Promise<Article[]> {
-		const response = await HttpClient.get<Article[]>(
+	} = {}): Promise<ArticlePreviewOut[]> {
+		const response = await HttpClient.get<ArticlePreviewOut[]>(
 			`${ArticlesService.API_BASE}/own?page=${page}&limit=${limit}`
 		)
 		return response.data ?? []
@@ -82,8 +83,8 @@ export class ArticlesService {
 	}: {
 		omitId: string
 		limit?: number
-	}): Promise<Article[]> {
-		const response = await HttpClient.get<Article[]>(
+	}): Promise<ArticlePreviewOut[]> {
+		const response = await HttpClient.get<ArticlePreviewOut[]>(
 			`${ArticlesService.API_BASE}/random?omit=${omitId}&limit=${limit}`
 		)
 		return response.data ?? []

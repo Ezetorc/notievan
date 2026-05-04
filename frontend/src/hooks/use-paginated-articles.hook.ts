@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { ArticlesService } from '../services/articles.service'
-import type { Article } from '../../../shared/src/models/article.model'
+import type { ArticlePreviewOut } from '../../../shared/src/dtos/out/article-preview-out.dto'
 
 type usePaginatedArticlesOptions = {
 	type?: 'all' | 'own' | 'random'
@@ -20,7 +20,7 @@ export function usePaginatedArticles({
 			? ['articles', type, limit, initialPage, excludeId]
 			: ['articles', type, limit, initialPage],
 
-		queryFn: async ({ pageParam }): Promise<Article[]> => {
+		queryFn: async ({ pageParam }): Promise<ArticlePreviewOut[]> => {
 			const page = pageParam !== undefined ? pageParam : initialPage
 
 			switch (type) {

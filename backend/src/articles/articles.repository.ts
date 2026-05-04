@@ -1,12 +1,24 @@
 import { database } from '../database/database.configuration.js'
 import { eq, desc, inArray, ne } from 'drizzle-orm'
 import { articles } from '../database/schema/articles.schema.js'
+import { users } from '../database/schema/users.schema.js'
 
 export class ArticlesRepository {
 	static async findById(id: string) {
 		const result = await database
-			.select()
+			.select({
+				id: articles.id,
+				title: articles.title,
+				subtitle: articles.subtitle,
+				description: articles.description,
+				content: articles.content,
+				createdAt: articles.createdAt,
+				image: articles.image,
+				authorId: articles.authorId,
+				authorName: users.name
+			})
 			.from(articles)
+			.innerJoin(users, eq(users.id, articles.authorId))
 			.where(eq(articles.id, id))
 			.limit(1)
 
@@ -31,7 +43,12 @@ export class ArticlesRepository {
 		image: string
 	}) {
 		const result = await database.insert(articles).values(data).returning()
-		return result[0]
+
+		const created = result[0]
+
+		if (!created) return null
+
+		return await ArticlesRepository.findById(created.id)
 	}
 
 	static async update(
@@ -61,10 +78,12 @@ export class ArticlesRepository {
 				subtitle: articles.subtitle,
 				description: articles.description,
 				createdAt: articles.createdAt,
+				image: articles.image,
 				authorId: articles.authorId,
-				image: articles.image
+				authorName: users.name
 			})
 			.from(articles)
+			.innerJoin(users, eq(users.id, articles.authorId))
 			.orderBy(desc(articles.createdAt))
 			.limit(limit)
 			.offset(skip)
@@ -78,10 +97,12 @@ export class ArticlesRepository {
 				subtitle: articles.subtitle,
 				description: articles.description,
 				createdAt: articles.createdAt,
+				image: articles.image,
 				authorId: articles.authorId,
-				image: articles.image
+				authorName: users.name
 			})
 			.from(articles)
+			.innerJoin(users, eq(users.id, articles.authorId))
 			.where(eq(articles.authorId, userId))
 			.orderBy(desc(articles.createdAt))
 			.limit(limit)
@@ -98,8 +119,18 @@ export class ArticlesRepository {
 
 	static async getByIds(ids: string[]) {
 		return await database
-			.select()
+			.select({
+				id: articles.id,
+				title: articles.title,
+				subtitle: articles.subtitle,
+				description: articles.description,
+				createdAt: articles.createdAt,
+				image: articles.image,
+				authorId: articles.authorId,
+				authorName: users.name
+			})
 			.from(articles)
+			.innerJoin(users, eq(users.id, articles.authorId))
 			.where(inArray(articles.id, ids))
 	}
 }

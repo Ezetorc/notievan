@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express'
 import { UsersService } from './users.service.js'
 import { UserOut } from '../../../shared/src/dtos/out/user-out.dto.js'
-import { CUIDParamDto } from '../../../shared/src/dtos/in/cuuid-param.dto.js'
+import { CUIDParamDto } from '../../../shared/src/dtos/in/cuid-param.dto.js'
 import { PaginationParamsDto } from '../../../shared/src/dtos/in/pagination-params.dto.js'
 import { RoleParamDto } from '../../../shared/src/dtos/in/role-param.dto.js'
 import { UpdateUserDto } from '../../../shared/src/dtos/in/update-user.dto.js'

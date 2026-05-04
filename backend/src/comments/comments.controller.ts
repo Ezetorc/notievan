@@ -1,8 +1,9 @@
 import type { Request, Response } from 'express'
 import { CreateCommentDto } from '../../../shared/src/dtos/in/create-comment.dto.js'
-import { CUIDParamDto } from '../../../shared/src/dtos/in/cuuid-param.dto.js'
+import { CUIDParamDto } from '../../../shared/src/dtos/in/cuid-param.dto.js'
 import { PaginationParamsDto } from '../../../shared/src/dtos/in/pagination-params.dto.js'
 import { CommentsService } from './comments.service.js'
+import { CommentOut } from '../../../shared/src/dtos/out/comment-out.dto.js'
 
 export class CommentsController {
 	static async create(request: Request, response: Response) {
@@ -14,7 +15,9 @@ export class CommentsController {
 			request.user.id
 		)
 
-		return response.status(201).json(newComment)
+		return response
+			.status(201)
+			.json(new CommentOut(newComment, newComment.authorName))
 	}
 
 	static async getAll(request: Request, response: Response) {
@@ -23,7 +26,9 @@ export class CommentsController {
 		const skip = (page - 1) * limit
 		const comments = await CommentsService.getAllOfArticle(id, limit, skip)
 
-		return response.json(comments)
+		return response.json(
+			comments.map((comment) => new CommentOut(comment, comment.authorName))
+		)
 	}
 
 	static async delete(request: Request, response: Response) {

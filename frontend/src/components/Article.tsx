@@ -1,10 +1,8 @@
-import { useUserName } from '../hooks/use-user-name.hook'
 import { isRecent } from '../pages/Home/utilities/is-recent.utility'
 import { useRandomImage } from '../hooks/use-random-image.hook'
-import type { ArticlePreview } from '../../../shared/src/models/article-preview.model'
+import type { ArticlePreviewOut } from '../../../shared/src/dtos/out/article-preview-out.dto'
 
-export function Article({ article }: { article?: ArticlePreview }) {
-	const authorName = useUserName(article?.authorId)
+export function Article({ article }: { article?: ArticlePreviewOut }) {
 	const { image } = useRandomImage({
 		id: article?.id,
 		enabled: !article?.image
@@ -13,7 +11,7 @@ export function Article({ article }: { article?: ArticlePreview }) {
 	if (!article) {
 		return (
 			<article className='animate-pulse flex flex-col w-full max-w-[400px] mx-auto'>
-				<div className='h-[400px] w-full bg-gray-300 rounded-[4px]'></div>
+				<div className='h-[400px] w-full bg-gray-300 rounded-sm'></div>
 				<div className='flex flex-col gap-y-2 w-full mt-4'>
 					<div className='h-6 w-3/4 bg-gray-300 rounded' />
 					<div className='h-8 w-full bg-gray-300 rounded mt-2' />
@@ -28,7 +26,7 @@ export function Article({ article }: { article?: ArticlePreview }) {
 			href={`/articulos/${article.id}`}
 			className='group clickable block w-full max-w-[400px] mx-auto overflow-hidden'
 		>
-			<div className='relative w-full aspect-video bg-gray-100 rounded-[4px] overflow-hidden'>
+			<div className='relative w-full aspect-video bg-gray-100 rounded-sm overflow-hidden'>
 				{isRecent(article.createdAt) && (
 					<div className='absolute top-3 left-3 bg-brand-red text-white text-sm font-bold px-3 py-1 rounded-sm z-10'>
 						NUEVO
@@ -57,7 +55,7 @@ export function Article({ article }: { article?: ArticlePreview }) {
 					</p>
 
 					<div className='text-gray-700 text-[18px] line-clamp-4 mt-2 wrap-break-word'>
-						{authorName}
+						{article.author.name}
 					</div>
 				</div>
 			</div>

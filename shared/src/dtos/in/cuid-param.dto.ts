@@ -4,5 +4,5 @@ export const CUIDParamDto = z.object({
 	id: z
 		.string()
 		.trim()
-		.regex(/^c[a-z0-9]{24}$/)
+		.regex(/^[a-z0-9]+$/i)
 })
