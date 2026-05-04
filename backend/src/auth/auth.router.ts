@@ -4,8 +4,8 @@ import { authMiddleware } from './auth.middleware.js'
 
 export const AuthRouter = Router()
 
-AuthRouter.post('/register', AuthController.register)
+AuthRouter.post('/sign-up', AuthController.signUp)
 
-AuthRouter.post('/login', AuthController.login)
+AuthRouter.post('/sign-in', AuthController.signIn)
 
 AuthRouter.get('/', authMiddleware(), AuthController.getSelf)

@@ -20,7 +20,7 @@ export class AuthService {
 		)
 	}
 
-	static async register(name: string, email: string, password: string) {
+	static async signUp(name: string, email: string, password: string) {
 		const existingEmail = await UsersRepository.findByEmail(email)
 		if (existingEmail) throw new ConflictError(ErrorCode.EMAIL_IN_USE)
 
@@ -38,7 +38,7 @@ export class AuthService {
 		return { user, token }
 	}
 
-	static async login(email: string, password: string) {
+	static async signIn(email: string, password: string) {
 		const user = await UsersRepository.findByEmail(email)
 
 		if (!user) throw new UnauthorizedError(ErrorCode.WRONG_EMAIL)
