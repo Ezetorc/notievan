@@ -78,7 +78,7 @@ describe('ArticlesService', () => {
 			const result = await ArticlesService.delete(mockedArticle.id, userMock.id)
 
 			expect(deleteMock).toHaveBeenCalledWith(mockedArticle.id)
-			expect(result).toEqual({ value: true })
+			expect(result).toEqual(true)
 		})
 
 		it('should throw UnauthorizedError if user is not owner', async () => {

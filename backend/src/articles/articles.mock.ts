@@ -6,7 +6,7 @@ export const articleMock: Article = {
 	title: 'The Future of Web Development',
 	subtitle: 'Trends shaping modern applications',
 	description:
-		'An overview of emerging technologies and practices in web development.',
+		'An overview of tech',
 	content: `
     Web development continues to evolve rapidly, driven by new frameworks,
     performance demands, and user expectations. Developers are increasingly

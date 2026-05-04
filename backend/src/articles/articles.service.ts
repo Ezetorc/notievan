@@ -42,7 +42,7 @@ export class ArticlesService {
 			}
 		}
 
-		return { value: true }
+		return true
 	}
 
 	static async update(
