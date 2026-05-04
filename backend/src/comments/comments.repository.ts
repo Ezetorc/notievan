@@ -14,7 +14,21 @@ export class CommentsRepository {
 		const created = result[0]
 		if (!created) return null
 
-		return await CommentsRepository.findById(created.id)
+		const withAuthor = await database
+			.select({
+				id: comments.id,
+				content: comments.content,
+				articleId: comments.articleId,
+				authorId: comments.authorId,
+				createdAt: comments.createdAt,
+				authorName: users.name
+			})
+			.from(comments)
+			.innerJoin(users, eq(users.id, comments.authorId))
+			.where(eq(comments.id, created.id))
+			.limit(1)
+
+		return withAuthor[0] ?? null
 	}
 
 	static async getAllOfArticle(articleId: string, limit: number, skip: number) {

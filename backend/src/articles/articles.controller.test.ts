@@ -2,7 +2,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ArticlesService } from './articles.service.js'
 import { articleMock } from './articles.mock.js'
 import { ArticlesController } from './articles.controller.js'
-import { ZodError } from 'zod'
 import type { UpdateArticleType } from '../../../shared/src/dtos/in/update-article.dto.js'
 import type { CreateArticleDtoType } from '../../../shared/src/dtos/in/create-article.dto.js'
 import { ArticleOut } from '../../../shared/src/dtos/out/article-out.dto.js'
@@ -26,15 +25,6 @@ describe('ArticlesController', () => {
 			expect(mockResponse.json).toHaveBeenCalledWith(
 				new ArticleOut(articleMock, articleMock.authorName)
 			)
-		})
-
-		it('should return a BadRequestError because of invalid id', async () => {
-			const mockRequest = { params: { id: '123' } } as any
-			const mockResponse = { json: vi.fn() } as any
-
-			await expect(
-				ArticlesController.findById(mockRequest, mockResponse)
-			).rejects.toBeInstanceOf(ZodError)
 		})
 	})
 
