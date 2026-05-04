@@ -9,7 +9,7 @@ export class AuthService {
 
 	static async register(data: SignUpDtoType): Promise<AuthResponse> {
 		const response = await HttpClient.post<AuthResponse>(
-			`${AuthService.API_BASE}/register`,
+			`${AuthService.API_BASE}/sign-up`,
 			data
 		)
 
@@ -19,7 +19,7 @@ export class AuthService {
 
 	static async login(data: SignInDtoType): Promise<AuthResponse> {
 		const response = await HttpClient.post<AuthResponse>(
-			`${AuthService.API_BASE}/login`,
+			`${AuthService.API_BASE}/sign-in`,
 			data
 		)
 
