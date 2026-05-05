@@ -10,6 +10,7 @@ import {
 	CreateCommentDto,
 	type CreateCommentDtoType
 } from '../../../../../shared/src/dtos/in/create-comment.dto'
+import type { PaginatedResult } from '../../../../../shared/src/models/paginated-result.model'
 
 export function CreateCommentModal({
 	setIsModalOpen,
@@ -26,14 +27,16 @@ export function CreateCommentModal({
 		try {
 			setLoading(true)
 			const comment = await CommentsService.create(data)
-			queryClient.setQueryData(
-				['comments', articleId],
-				(prevComments: InfiniteData<Comment[]>) => {
-					if (!prevComments) return prevComments
+			queryClient.setQueriesData(
+				{ queryKey: ['comments', articleId] },
+				(prev: InfiniteData<PaginatedResult<Comment>> | undefined) => {
+					if (!prev) return prev
 
 					return {
-						...prevComments,
-						pages: [...prevComments.pages, [comment]]
+						...prev,
+						pages: prev.pages.map((page, i) =>
+							i === 0 ? { ...page, data: [comment, ...page.data] } : page
+						)
 					}
 				}
 			)

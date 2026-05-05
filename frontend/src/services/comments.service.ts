@@ -1,4 +1,5 @@
 import type { CommentOut } from '../../../shared/src/dtos/out/comment-out.dto'
+import type { PaginatedResult } from '../../../shared/src/models/paginated-result.model'
 import { HttpClient } from '../models/http-client.model'
 
 type CreateCommentData = {
@@ -7,9 +8,9 @@ type CreateCommentData = {
 }
 
 type GetAllOfArticleParams = {
-	page?: number
-	limit?: number
 	articleId: string
+	cursor?: string
+	limit?: number
 }
 
 export class CommentsService {
@@ -42,14 +43,23 @@ export class CommentsService {
 	}
 
 	static async getAllOfArticle({
-		page = 1,
-		limit = 4,
-		articleId
-	}: GetAllOfArticleParams): Promise<CommentOut[]> {
-		const response = await HttpClient.get<CommentOut[]>(
-			`${CommentsService.API_BASE}/article/${articleId}?page=${page}&limit=${limit}`
+		articleId,
+		cursor,
+		limit = 4
+	}: GetAllOfArticleParams): Promise<PaginatedResult<CommentOut>> {
+		const params = new URLSearchParams()
+
+		if (cursor) params.append('cursor', cursor)
+		params.append('limit', String(limit))
+
+		const response = await HttpClient.get<PaginatedResult<CommentOut>>(
+			`${CommentsService.API_BASE}/article/${articleId}?${params.toString()}`
 		)
 
-		return response.data ?? []
+		if (response.error || !response.data) {
+			throw new Error(response.error || 'Error al obtener comentarios')
+		}
+
+		return response.data
 	}
 }

@@ -1,9 +1,8 @@
 import { Article } from '../../../components/Article'
-import { usePaginatedArticles } from '../../../hooks/use-paginated-articles.hook'
+import { useRandomArticles } from '../../../hooks/use-random-articles.hook'
 
 export function AsideArticles({ excludeId }: { excludeId: string }) {
-	const { articles, loading } = usePaginatedArticles({
-		type: 'random',
+	const { articles, loading } = useRandomArticles({
 		excludeId,
 		limit: 2
 	})

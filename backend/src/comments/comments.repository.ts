@@ -1,7 +1,8 @@
 import { database } from '../database/database.configuration.js'
-import { eq, desc } from 'drizzle-orm'
+import { eq, desc, and, lt, or } from 'drizzle-orm'
 import { comments } from '../database/schema/comments.schema.js'
 import { users } from '../database/schema/users.schema.js'
+import type { Cursor } from '../../../shared/src/models/cursor.model.js'
 
 export class CommentsRepository {
 	static async create(data: {
@@ -31,7 +32,11 @@ export class CommentsRepository {
 		return withAuthor[0] ?? null
 	}
 
-	static async getAllOfArticle(articleId: string, limit: number, skip: number) {
+	static async getAllOfArticle(
+		articleId: string,
+		limit: number,
+		cursor?: Cursor
+	) {
 		return await database
 			.select({
 				id: comments.id,
@@ -43,10 +48,22 @@ export class CommentsRepository {
 			})
 			.from(comments)
 			.innerJoin(users, eq(users.id, comments.authorId))
-			.where(eq(comments.articleId, articleId))
-			.orderBy(desc(comments.createdAt))
+			.where(
+				cursor
+					? and(
+							eq(comments.articleId, articleId),
+							or(
+								lt(comments.createdAt, cursor.createdAt),
+								and(
+									eq(comments.createdAt, cursor.createdAt),
+									lt(comments.id, cursor.id)
+								)
+							)
+						)
+					: eq(comments.articleId, articleId)
+			)
+			.orderBy(desc(comments.createdAt), desc(comments.id))
 			.limit(limit)
-			.offset(skip)
 	}
 
 	static async findById(id: string) {

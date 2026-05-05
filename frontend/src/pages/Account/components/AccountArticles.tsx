@@ -1,12 +1,16 @@
 import { Article } from '../../../components/Article'
-import { LoadMoreButton } from '../../../components/LoadMoreButton'
-import { usePaginatedArticles } from '../../../hooks/use-paginated-articles.hook'
+import { useInfiniteScroll } from '../../../hooks/use-infinite-scroll.hook'
+import { usePaginatedAccountArticles } from '../../../hooks/use-paginated-account-articles.hook'
 
 const SKELETON_KEYS = ['s1', 's2', 's3', 's4']
 
 export function AccountArticles() {
-	const { articles, hasMore, loadMore, loading } = usePaginatedArticles({
-		type: 'own'
+	const { articles, hasMore, loadMore, loading } = usePaginatedAccountArticles()
+
+	const { sentinelRef } = useInfiniteScroll({
+		hasMore,
+		loading,
+		onLoadMore: loadMore
 	})
 
 	if (articles.length === 0 && !loading) return null
@@ -23,10 +27,10 @@ export function AccountArticles() {
 						))}
 			</main>
 
-			{hasMore && (
-				<LoadMoreButton loading={loading} onClick={loadMore}>
-					Ver más
-				</LoadMoreButton>
+			<div ref={sentinelRef} className='h-10' />
+
+			{loading && articles.length > 0 && (
+				<div className='mt-4 text-center'>Cargando...</div>
 			)}
 		</section>
 	)

@@ -7,6 +7,9 @@ import { ErrorCode } from '../../../shared/src/models/error-code.model.js'
 import { NotFoundError } from '../errors/not-found.error.js'
 import { BadRequestError } from '../errors/bad-request.error.js'
 import { UnauthorizedError } from '../errors/unauthorized.error.js'
+import type { PaginatedResult } from '../../../shared/src/models/paginated-result.model.js'
+import { Cursor } from '../../../shared/src/models/cursor.model.js'
+import type { ArticlePreview } from '../../../shared/src/models/article-preview.model.js'
 
 export class ArticlesService {
 	static async getById(id: string) {
@@ -102,22 +105,43 @@ export class ArticlesService {
 		return article
 	}
 
-	static async getAll(limit: number, skip: number) {
-		const articles = await ArticlesRepository.getAll(limit, skip)
+	static async getAll(
+		limit: number,
+		cursor?: Cursor
+	): Promise<PaginatedResult<ArticlePreview & { authorName: string }>> {
+		const articles = await ArticlesRepository.getAll(limit, cursor)
 
-		return articles.map((article) => ({
+		const mapped = articles.map((article) => ({
 			...article,
 			image: CloudinaryService.optimizeUrl(article.image, 600)
 		}))
+
+		const last = articles[articles.length - 1]
+
+		return {
+			data: mapped,
+			nextCursor: last ? new Cursor(last.createdAt, last.id).encode() : null
+		}
 	}
 
-	static async getOwn(limit: number, skip: number, userId: string) {
-		const articles = await ArticlesRepository.getOwn(limit, skip, userId)
+	static async getOwn(
+		limit: number,
+		userId: string,
+		cursor?: Cursor
+	): Promise<PaginatedResult<ArticlePreview & { authorName: string }>> {
+		const articles = await ArticlesRepository.getOwn(limit, userId, cursor)
 
-		return articles.map((article) => ({
+		const mapped = articles.map((article) => ({
 			...article,
 			image: CloudinaryService.optimizeUrl(article.image, 600)
 		}))
+
+		const last = articles[articles.length - 1]
+
+		return {
+			data: mapped,
+			nextCursor: last ? new Cursor(last.createdAt, last.id).encode() : null
+		}
 	}
 
 	static async getRandom(limit: number, omitId: string) {

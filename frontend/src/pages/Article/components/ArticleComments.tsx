@@ -2,15 +2,21 @@ import { useState } from 'react'
 import { usePaginatedComments } from '../hooks/use-paginated-comments'
 import { CommentDisplay } from './CommentDisplay'
 import { CreateCommentModal } from './CreateCommentModal'
-import { LoadMoreButton } from '../../../components/LoadMoreButton'
 import { useSession } from '../../../hooks/use-session.hook'
 import { useLocation } from 'wouter'
+import { useInfiniteScroll } from '../../../hooks/use-infinite-scroll.hook'
 
 export function ArticleComments({ articleId }: { articleId: string }) {
 	const { user } = useSession()
 	const [, setLocation] = useLocation()
 	const { comments, hasMore, loading, loadMore } = usePaginatedComments({
 		articleId
+	})
+
+	const { sentinelRef } = useInfiniteScroll({
+		hasMore,
+		loading,
+		onLoadMore: loadMore
 	})
 	const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
 
@@ -47,10 +53,10 @@ export function ArticleComments({ articleId }: { articleId: string }) {
 				))}
 			</main>
 
-			{hasMore && (
-				<LoadMoreButton loading={loading} onClick={loadMore}>
-					Ver más
-				</LoadMoreButton>
+			<div ref={sentinelRef} className='h-10' />
+
+			{loading && comments.length > 0 && (
+				<div className='mt-4 text-center'>Cargando...</div>
 			)}
 		</section>
 	)

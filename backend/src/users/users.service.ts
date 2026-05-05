@@ -1,4 +1,5 @@
 import type { UpdateUserDtoType } from '../../../shared/src/dtos/in/update-user.dto.js'
+import { Cursor } from '../../../shared/src/models/cursor.model.js'
 import { ErrorCode } from '../../../shared/src/models/error-code.model.js'
 import type { UserRole } from '../../../shared/src/models/user-role.model.js'
 import { ConflictError } from '../errors/conflict.error.js'
@@ -30,8 +31,21 @@ export class UsersService {
 		return user
 	}
 
-	static async getAll(limit: number, skip: number) {
-		return await UsersRepository.findAll(limit, skip)
+	static async getAll({ limit, cursor }: { limit: number; cursor?: string }) {
+		const decodedCursor = cursor ? Cursor.decode(cursor) : undefined
+
+		const users = await UsersRepository.findAll(limit, decodedCursor)
+
+		const lastUser = users.at(-1)
+
+		const nextCursor = lastUser
+			? new Cursor(lastUser.createdAt, lastUser.id).encode()
+			: null
+
+		return {
+			data: users,
+			nextCursor
+		}
 	}
 
 	static async update(id: string, data: UpdateUserDtoType) {

@@ -1,7 +1,8 @@
 import type { UserRole } from '../../../shared/src/models/user-role.model.js'
 import { database } from '../database/database.configuration.js'
-import { eq, desc } from 'drizzle-orm'
+import { eq, desc, and, lt, or } from 'drizzle-orm'
 import { users } from '../database/schema/users.schema.js'
+import type { Cursor } from '../../../shared/src/models/cursor.model.js'
 
 export class UsersRepository {
 	static async create(data: {
@@ -58,13 +59,23 @@ export class UsersRepository {
 		return result[0] ?? null
 	}
 
-	static async findAll(limit: number, skip: number) {
+	static async findAll(limit: number, cursor?: Cursor) {
 		return await database
 			.select()
 			.from(users)
-			.orderBy(desc(users.createdAt))
+			.where(
+				cursor
+					? or(
+							lt(users.createdAt, new Date(cursor.createdAt)),
+							and(
+								eq(users.createdAt, new Date(cursor.createdAt)),
+								lt(users.id, cursor.id)
+							)
+						)
+					: undefined
+			)
+			.orderBy(desc(users.createdAt), desc(users.id))
 			.limit(limit)
-			.offset(skip)
 	}
 
 	static async updateRole(id: string, role: UserRole) {

@@ -1,12 +1,12 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { ArticlesService } from '../services/articles.service'
+import { UsersService } from '../../../services/users.service'
 
-export function usePaginatedArticles({ limit = 4 }: { limit?: number }) {
+export function usePaginatedUsers({ limit = 4 }: { limit?: number } = {}) {
 	const query = useInfiniteQuery({
-		queryKey: ['articles', 'all', limit],
+		queryKey: ['users', limit],
 
-		queryFn: async ({ pageParam }: { pageParam: string | undefined }) => {
-			return ArticlesService.getAll({
+		queryFn: async ({ pageParam }: { pageParam?: string }) => {
+			return UsersService.getAll({
 				cursor: pageParam,
 				limit
 			})
@@ -19,7 +19,7 @@ export function usePaginatedArticles({ limit = 4 }: { limit?: number }) {
 		initialPageParam: undefined
 	})
 
-	const articles = query.data?.pages.flatMap((p) => p.data) ?? []
+	const users = query.data?.pages.flatMap((p) => p.data) ?? []
 
 	const hasMore = !!query.hasNextPage
 	const loading = query.isFetching && !query.isFetchingNextPage
@@ -29,7 +29,7 @@ export function usePaginatedArticles({ limit = 4 }: { limit?: number }) {
 	}
 
 	return {
-		articles,
+		users,
 		loading,
 		hasMore,
 		loadMore

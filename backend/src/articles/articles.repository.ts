@@ -1,7 +1,8 @@
 import { database } from '../database/database.configuration.js'
-import { eq, desc, inArray, ne } from 'drizzle-orm'
+import { eq, desc, inArray, ne, and, lt, or } from 'drizzle-orm'
 import { articles } from '../database/schema/articles.schema.js'
 import { users } from '../database/schema/users.schema.js'
+import type { Cursor } from '../../../shared/src/models/cursor.model.js'
 
 export class ArticlesRepository {
 	static async findById(id: string) {
@@ -70,7 +71,7 @@ export class ArticlesRepository {
 		return result[0] ?? null
 	}
 
-	static async getAll(limit: number, skip: number) {
+	static async getAll(limit: number, cursor?: Cursor) {
 		return await database
 			.select({
 				id: articles.id,
@@ -84,12 +85,22 @@ export class ArticlesRepository {
 			})
 			.from(articles)
 			.innerJoin(users, eq(users.id, articles.authorId))
-			.orderBy(desc(articles.createdAt))
+			.where(
+				cursor
+					? or(
+							lt(articles.createdAt, cursor.createdAt),
+							and(
+								eq(articles.createdAt, cursor.createdAt),
+								lt(articles.id, cursor.id)
+							)
+						)
+					: undefined
+			)
+			.orderBy(desc(articles.createdAt), desc(articles.id))
 			.limit(limit)
-			.offset(skip)
 	}
 
-	static async getOwn(limit: number, skip: number, userId: string) {
+	static async getOwn(limit: number, userId: string, cursor?: Cursor) {
 		return await database
 			.select({
 				id: articles.id,
@@ -103,10 +114,22 @@ export class ArticlesRepository {
 			})
 			.from(articles)
 			.innerJoin(users, eq(users.id, articles.authorId))
-			.where(eq(articles.authorId, userId))
-			.orderBy(desc(articles.createdAt))
+			.where(
+				and(
+					eq(articles.authorId, userId),
+					cursor
+						? or(
+								lt(articles.createdAt, cursor.createdAt),
+								and(
+									eq(articles.createdAt, cursor.createdAt),
+									lt(articles.id, cursor.id)
+								)
+							)
+						: undefined
+				)
+			)
+			.orderBy(desc(articles.createdAt), desc(articles.id))
 			.limit(limit)
-			.offset(skip)
 	}
 
 	static async getRandomIds(limit: number, omit?: string) {

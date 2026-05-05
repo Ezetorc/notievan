@@ -1,9 +1,10 @@
 import { HttpClient } from '../models/http-client.model'
 import type { UserRole } from '../../../shared/src/models/user-role.model.js'
 import type { UserOut } from '../../../shared/src/dtos/out/user-out.dto.js'
+import type { PaginatedResult } from '../../../shared/src/models/paginated-result.model.js'
 
 type GetAllUsersParams = {
-	page?: number
+	cursor?: string
 	limit?: number
 }
 
@@ -13,20 +14,6 @@ type UpdateUserData = {
 
 export class UsersService {
 	private static readonly API_BASE = '/users'
-
-	static async getNameOfUser(id?: string): Promise<string> {
-		if (!id) return ''
-
-		const response = await HttpClient.get<string>(
-			`${UsersService.API_BASE}/${id}/name`
-		)
-
-		if (response.error) {
-			throw new Error(response.error || 'Error obteniendo nombre de usuario')
-		}
-
-		return response.data || ''
-	}
 
 	static async getById(id: string): Promise<UserOut> {
 		const response = await HttpClient.get<UserOut>(
@@ -67,13 +54,22 @@ export class UsersService {
 	}
 
 	static async getAll({
-		page = 1,
+		cursor,
 		limit = 4
-	}: GetAllUsersParams = {}): Promise<UserOut[]> {
-		const response = await HttpClient.get<UserOut[]>(
-			`${UsersService.API_BASE}?page=${page}&limit=${limit}`
+	}: GetAllUsersParams = {}): Promise<PaginatedResult<UserOut>> {
+		const params = new URLSearchParams()
+
+		if (cursor) params.append('cursor', cursor)
+		params.append('limit', String(limit))
+
+		const response = await HttpClient.get<PaginatedResult<UserOut>>(
+			`${UsersService.API_BASE}?${params.toString()}`
 		)
 
-		return response.data ?? []
+		if (response.error || !response.data) {
+			throw new Error(response.error || 'Error obteniendo usuarios')
+		}
+
+		return response.data
 	}
 }

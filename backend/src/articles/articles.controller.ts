@@ -7,6 +7,7 @@ import { PaginationParamsDto } from '../../../shared/src/dtos/in/pagination-para
 import { UpdateArticleDto } from '../../../shared/src/dtos/in/update-article.dto.js'
 import { ArticleOut } from '../../../shared/src/dtos/out/article-out.dto.js'
 import { ArticlePreviewOut } from '../../../shared/src/dtos/out/article-preview-out.dto.js'
+import { Cursor } from '../../../shared/src/models/cursor.model.js'
 
 export class ArticlesController {
 	static async findById(request: Request, response: Response) {
@@ -50,27 +51,38 @@ export class ArticlesController {
 	}
 
 	static async getAll(request: Request, response: Response) {
-		const { limit, page } = PaginationParamsDto.parse(request.query)
-		const skip = (page - 1) * limit
-		const articles = await ArticlesService.getAll(limit, skip)
-
-		return response.json(
-			articles.map(
-				(article) => new ArticlePreviewOut(article, article.authorName)
-			)
+		const { limit, cursor } = PaginationParamsDto.parse(request.query)
+		const decodedCursor = cursor ? Cursor.decode(cursor) : undefined
+		const { data, nextCursor } = await ArticlesService.getAll(
+			limit,
+			decodedCursor
 		)
+
+		return response.json({
+			data: data.map(
+				(article) => new ArticlePreviewOut(article, article.authorName)
+			),
+			nextCursor
+		})
 	}
 
 	static async getOwn(request: Request, response: Response) {
-		const { limit, page } = PaginationParamsDto.parse(request.query)
-		const skip = (page - 1) * limit
-		const articles = await ArticlesService.getOwn(limit, skip, request.user.id)
+		const { limit, cursor } = PaginationParamsDto.parse(request.query)
 
-		return response.json(
-			articles.map(
-				(article) => new ArticlePreviewOut(article, article.authorName)
-			)
+		const decodedCursor = cursor ? Cursor.decode(cursor) : undefined
+
+		const { data, nextCursor } = await ArticlesService.getOwn(
+			limit,
+			request.user.id,
+			decodedCursor
 		)
+
+		return response.json({
+			data: data.map(
+				(article) => new ArticlePreviewOut(article, article.authorName)
+			),
+			nextCursor
+		})
 	}
 
 	static async getRandom(request: Request, response: Response) {

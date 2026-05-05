@@ -20,7 +20,7 @@ export const CreateArticleDto = z.object({
 		.string()
 		.trim()
 		.min(1)
-		.max(1000),
+		.max(5000),
 	image: z.string().optional()
 })
 

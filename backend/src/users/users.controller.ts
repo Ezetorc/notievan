@@ -38,12 +38,17 @@ export class UsersController {
 	}
 
 	static async getAll(request: Request, response: Response) {
-		const { limit, page } = PaginationParamsDto.parse(request.query)
-		const skip = (page - 1) * limit
-		const users = await UsersService.getAll(limit, skip)
-		const sanitizedUsers = users.map((user) => new UserOut(user))
+		const { limit, cursor } = PaginationParamsDto.parse(request.query)
 
-		return response.json(sanitizedUsers)
+		const result = await UsersService.getAll({
+			limit,
+			cursor
+		})
+
+		return response.json({
+			data: result.data.map((user) => new UserOut(user)),
+			nextCursor: result.nextCursor
+		})
 	}
 
 	static async update(request: Request, response: Response) {

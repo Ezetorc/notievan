@@ -114,51 +114,59 @@ describe('ArticlesController', () => {
 	})
 
 	describe('getAll', () => {
-		it('should return paginated articles', async () => {
-			const page = 1
+		it('should return paginated articles with cursor', async () => {
 			const limit = 4
+
 			const mockRequest = {
-				query: { page: page.toString(), limit: limit.toString() }
+				query: { limit: limit.toString() }
 			} as any
+
 			const mockResponse = { json: vi.fn() } as any
 
-			vi.spyOn(ArticlesService, 'getAll').mockResolvedValue([articleMock])
+			vi.spyOn(ArticlesService, 'getAll').mockResolvedValue({
+				data: [articleMock],
+				nextCursor: 'next-cursor'
+			})
 
 			await ArticlesController.getAll(mockRequest, mockResponse)
 
-			const skip = (page - 1) * limit
+			expect(ArticlesService.getAll).toHaveBeenCalledWith(limit, undefined)
 
-			expect(ArticlesService.getAll).toHaveBeenCalledWith(limit, skip)
-			expect(mockResponse.json).toHaveBeenCalledWith([
-				new ArticlePreviewOut(articleMock, articleMock.authorName)
-			])
+			expect(mockResponse.json).toHaveBeenCalledWith({
+				data: [new ArticlePreviewOut(articleMock, articleMock.authorName)],
+				nextCursor: 'next-cursor'
+			})
 		})
 	})
 
 	describe('getOwn', () => {
-		it('should return user-owned paginated articles', async () => {
-			const page = 1
+		it('should return user-owned paginated articles with cursor', async () => {
 			const limit = 4
+
 			const mockRequest = {
 				user: { id: articleMock.authorId },
-				query: { page: page.toString(), limit: limit.toString() }
+				query: { limit: limit.toString() }
 			} as any
+
 			const mockResponse = { json: vi.fn() } as any
 
-			vi.spyOn(ArticlesService, 'getOwn').mockResolvedValue([articleMock])
+			vi.spyOn(ArticlesService, 'getOwn').mockResolvedValue({
+				data: [articleMock],
+				nextCursor: 'next-cursor'
+			})
 
 			await ArticlesController.getOwn(mockRequest, mockResponse)
 
-			const skip = (page - 1) * limit
-
 			expect(ArticlesService.getOwn).toHaveBeenCalledWith(
 				limit,
-				skip,
-				mockRequest.user.id
+				mockRequest.user.id,
+				undefined
 			)
-			expect(mockResponse.json).toHaveBeenCalledWith([
-				new ArticlePreviewOut(articleMock, articleMock.authorName)
-			])
+
+			expect(mockResponse.json).toHaveBeenCalledWith({
+				data: [new ArticlePreviewOut(articleMock, articleMock.authorName)],
+				nextCursor: 'next-cursor'
+			})
 		})
 	})
 

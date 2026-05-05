@@ -1,11 +1,16 @@
 import { Hero } from '../../../components/Hero'
 import { Loading } from '../../../components/Loading'
-import { LoadMoreButton } from '../../../components/LoadMoreButton'
-import { usePaginatedUsers } from '../../../hooks/use-paginated-users.hook'
+import { useInfiniteScroll } from '../../../hooks/use-infinite-scroll.hook'
+import { usePaginatedUsers } from '../hooks/use-paginated-users.hook'
 import { UserDisplay } from './UserDisplay'
 
 export default function DashboardPage() {
 	const { users, hasMore, loadMore, loading } = usePaginatedUsers()
+	const { sentinelRef } = useInfiniteScroll({
+		hasMore,
+		loading,
+		onLoadMore: loadMore
+	})
 
 	if (users.length === 0) return <Loading />
 
@@ -22,7 +27,6 @@ export default function DashboardPage() {
 								<th className='p-3 text-left border'>Email</th>
 								<th className='p-3 text-left border'>ID</th>
 								<th className='p-3 text-left border'>Rol</th>
-								<th className='p-3 text-left border'>Cambiar rol</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -33,10 +37,10 @@ export default function DashboardPage() {
 					</table>
 				</div>
 
-				{hasMore && (
-					<LoadMoreButton loading={loading} onClick={loadMore}>
-						Ver más
-					</LoadMoreButton>
+				<div ref={sentinelRef} className='h-10' />
+
+				{loading && users.length > 0 && (
+					<div className='mt-4 text-center'>Cargando...</div>
 				)}
 			</section>
 		</>

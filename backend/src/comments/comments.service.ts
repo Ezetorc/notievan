@@ -1,4 +1,7 @@
+import type { Comment } from '../../../shared/src/models/comment.model.js'
+import { Cursor } from '../../../shared/src/models/cursor.model.js'
 import { ErrorCode } from '../../../shared/src/models/error-code.model.js'
+import type { PaginatedResult } from '../../../shared/src/models/paginated-result.model.js'
 import { ArticlesService } from '../articles/articles.service.js'
 import { NotFoundError } from '../errors/not-found.error.js'
 import { UnauthorizedError } from '../errors/unauthorized.error.js'
@@ -19,14 +22,23 @@ export class CommentsService {
 		return comment
 	}
 
-	static async getAllOfArticle(articleId: string, limit: number, skip: number) {
+	static async getAllOfArticle(
+		articleId: string,
+		limit: number,
+		cursor?: Cursor
+	): Promise<PaginatedResult<Comment & { authorName: string }>> {
 		const comments = await CommentsRepository.getAllOfArticle(
 			articleId,
 			limit,
-			skip
+			cursor
 		)
 
-		return comments
+		const last = comments[comments.length - 1]
+
+		return {
+			data: comments,
+			nextCursor: last ? new Cursor(last.createdAt, last.id).encode() : null
+		}
 	}
 
 	static async delete(id: string, authorId: string) {

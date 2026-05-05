@@ -4,6 +4,7 @@ import { CUIDParamDto } from '../../../shared/src/dtos/in/cuid-param.dto.js'
 import { PaginationParamsDto } from '../../../shared/src/dtos/in/pagination-params.dto.js'
 import { CommentsService } from './comments.service.js'
 import { CommentOut } from '../../../shared/src/dtos/out/comment-out.dto.js'
+import { Cursor } from '../../../shared/src/models/cursor.model.js'
 
 export class CommentsController {
 	static async create(request: Request, response: Response) {
@@ -22,13 +23,18 @@ export class CommentsController {
 
 	static async getAll(request: Request, response: Response) {
 		const { id } = CUIDParamDto.parse(request.params)
-		const { limit, page } = PaginationParamsDto.parse(request.query)
-		const skip = (page - 1) * limit
-		const comments = await CommentsService.getAllOfArticle(id, limit, skip)
-
-		return response.json(
-			comments.map((comment) => new CommentOut(comment, comment.authorName))
+		const { limit, cursor } = PaginationParamsDto.parse(request.query)
+		const decodedCursor = cursor ? Cursor.decode(cursor) : undefined
+		const { data, nextCursor } = await CommentsService.getAllOfArticle(
+			id,
+			limit,
+			decodedCursor
 		)
+
+		return response.json({
+			data: data.map((comment) => new CommentOut(comment, comment.authorName)),
+			nextCursor
+		})
 	}
 
 	static async delete(request: Request, response: Response) {

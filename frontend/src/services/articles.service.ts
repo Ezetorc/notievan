@@ -1,6 +1,7 @@
 import { HttpClient } from '../models/http-client.model'
 import type { ArticleOut } from '../../../shared/src/dtos/out/article-out.dto'
 import type { ArticlePreviewOut } from '../../../shared/src/dtos/out/article-preview-out.dto'
+import type { PaginatedResult } from '../../../shared/src/models/paginated-result.model'
 
 export class ArticlesService {
 	private static readonly API_BASE = '/articles'
@@ -52,31 +53,62 @@ export class ArticlesService {
 	}
 
 	static async getAll({
-		page = 1,
+		cursor,
 		limit = 4
 	}: {
-		page?: number
+		cursor?: string
 		limit?: number
-	} = {}): Promise<ArticlePreviewOut[]> {
-		const response = await HttpClient.get<ArticlePreviewOut[]>(
-			`${ArticlesService.API_BASE}?page=${page}&limit=${limit}`
+	} = {}): Promise<PaginatedResult<ArticlePreviewOut>> {
+		const params = new URLSearchParams()
+
+		if (cursor) params.append('cursor', cursor)
+		params.append('limit', String(limit))
+
+		const response = await HttpClient.get<PaginatedResult<ArticlePreviewOut>>(
+			`${ArticlesService.API_BASE}?${params.toString()}`
 		)
-		return response.data ?? []
+
+		if (response.error || !response.data) {
+			const error = new Error(response.error) as Error & {
+				status?: number
+				payload?: unknown
+			}
+			error.status = response.status
+			error.payload = response.data
+			throw error
+		}
+
+		return response.data
 	}
 
 	static async getOwn({
-		page = 1,
+		cursor,
 		limit = 4
 	}: {
-		page?: number
+		cursor?: string
 		limit?: number
-	} = {}): Promise<ArticlePreviewOut[]> {
-		const response = await HttpClient.get<ArticlePreviewOut[]>(
-			`${ArticlesService.API_BASE}/own?page=${page}&limit=${limit}`
-		)
-		return response.data ?? []
-	}
+	} = {}): Promise<PaginatedResult<ArticlePreviewOut>> {
+		const params = new URLSearchParams()
 
+		if (cursor) params.append('cursor', cursor)
+		params.append('limit', String(limit))
+
+		const response = await HttpClient.get<PaginatedResult<ArticlePreviewOut>>(
+			`${ArticlesService.API_BASE}/own?${params.toString()}`
+		)
+
+		if (response.error || !response.data) {
+			const error = new Error(response.error) as Error & {
+				status?: number
+				payload?: unknown
+			}
+			error.status = response.status
+			error.payload = response.data
+			throw error
+		}
+
+		return response.data
+	}
 	static async getRandom({
 		omitId,
 		limit = 4
