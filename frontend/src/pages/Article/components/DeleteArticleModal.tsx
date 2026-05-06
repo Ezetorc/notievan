@@ -1,10 +1,11 @@
-import { useState, type Dispatch, type SetStateAction } from 'react'
-import { useLocation } from 'wouter'
-import { ArticlesService } from '../../../services/articles.service'
 import { useQueryClient } from '@tanstack/react-query'
+import { type Dispatch, type SetStateAction, useState } from 'react'
+import { useLocation } from 'wouter'
+import type { ArticleOut } from '../../../../../shared/src/dtos/out/article-out.dto'
 import { ActionButton } from '../../../components/ActionButton'
 import { Modal } from '../../../components/Modal'
-import type { ArticleOut } from '../../../../../shared/src/dtos/out/article-out.dto'
+import { QueryKeys } from '../../../models/query-keys.model'
+import { ArticlesService } from '../../../services/articles.service'
 
 export function DeleteArticleModal({
 	setIsModalOpen,
@@ -24,10 +25,13 @@ export function DeleteArticleModal({
 
 			setLocation('/')
 
-			queryClient.invalidateQueries({ queryKey: ['article', article.id] })
+			queryClient.invalidateQueries({
+				queryKey: QueryKeys.Articles.Single(article.id)
+			})
 			queryClient.invalidateQueries({
 				predicate: ({ queryKey }) =>
-					Array.isArray(queryKey) && queryKey[0] === 'articles'
+					Array.isArray(queryKey) &&
+					queryKey[0] === QueryKeys.Articles.Multiple.Base
 			})
 		} catch (error) {
 			console.error(error)

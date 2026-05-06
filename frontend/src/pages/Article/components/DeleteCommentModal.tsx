@@ -1,9 +1,10 @@
-import { useState, type Dispatch, type SetStateAction } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
+import { type Dispatch, type SetStateAction, useState } from 'react'
+import type { CommentOut } from '../../../../../shared/src/dtos/out/comment-out.dto'
 import { ActionButton } from '../../../components/ActionButton'
 import { Modal } from '../../../components/Modal'
+import { QueryKeys } from '../../../models/query-keys.model'
 import { CommentsService } from '../../../services/comments.service'
-import type { CommentOut } from '../../../../../shared/src/dtos/out/comment-out.dto'
 
 export function DeleteCommentModal({
 	setIsModalOpen,
@@ -21,7 +22,7 @@ export function DeleteCommentModal({
 			await CommentsService.delete(comment.id)
 
 			queryClient.invalidateQueries({
-				queryKey: ['comments', comment.articleId]
+				queryKey: QueryKeys.Comments(comment.articleId)
 			})
 		} catch (error) {
 			console.error(error)

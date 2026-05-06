@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react'
 import EasyMDE from 'easymde'
+import { useEffect, useRef } from 'react'
 import 'easymde/dist/easymde.min.css'
 
 interface MarkdownEditorProps {
@@ -21,7 +21,9 @@ export function MarkdownEditor({
 	const editorRef = useRef<EasyMDE | null>(null)
 
 	useEffect(() => {
-		if (!textareaRef.current) return
+		if (!textareaRef.current) {
+			return
+		}
 
 		const editor = new EasyMDE({
 			element: textareaRef.current,

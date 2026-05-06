@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
-import { Route, type RouteProps, type Params, useLocation } from 'wouter'
-import { SessionService } from '../services/session.service'
+import { type Params, Route, type RouteProps, useLocation } from 'wouter'
 import type { UserRole } from '../../../shared/src/models/user-role.model'
+import { SessionService } from '../services/session.service'
 
 export function ProtectedRoute<P extends Params>({
 	component: Component,
@@ -17,7 +17,9 @@ export function ProtectedRoute<P extends Params>({
 		}
 	}, [setLocation, fallback])
 
-	if (!SessionService.value) return null
+	if (!SessionService.value) {
+		return null
+	}
 
 	if (
 		userRole &&

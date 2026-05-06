@@ -1,39 +1,65 @@
+import { useQueryClient } from '@tanstack/react-query'
+import { useState } from 'react'
 import { useLocation } from 'wouter'
+
+import { ActionButton } from '../../../components/ActionButton'
 import { ArticleInput } from '../../../components/ArticleInput'
-import { MarkdownEditor } from '../../../components/MarkdownEditor'
 import { ErrorMessage } from '../../../components/ErrorMessage'
 import { ImageInput } from '../../../components/ImageInput'
-import { useForm } from '../../../hooks/use-form.hook'
-import {
-	EditArticleSchema,
-	type EditArticleFormData
-} from '../models/edit-article-form-data.model'
-import { useArticle } from '../../../hooks/use-article.hook'
-import NotFoundPage from '../../NotFoundPage'
-import { ArticlesService } from '../../../services/articles.service'
-import { getFormDataFrom } from '../../../utilities/get-form-data-from.utility'
 import { Loading } from '../../../components/Loading'
-import { useQueryClient } from '@tanstack/react-query'
-import { ActionButton } from '../../../components/ActionButton'
-import { useState } from 'react'
+import { MarkdownEditor } from '../../../components/MarkdownEditor'
+
+import { useArticle } from '../../../hooks/use-article.hook'
+import { useForm } from '../../../hooks/use-form.hook'
+
+import { QueryKeys } from '../../../models/query-keys.model'
+
+import { ArticlesService } from '../../../services/articles.service'
+
+import NotFoundPage from '../../NotFoundPage'
+import type { UpdateArticleForm } from '../models/update-article-form.model'
+import { UpdateArticleSchema } from '../models/update-article-form.schema'
 
 export default function EditArticlePage({ id }: { id: string }) {
 	const { article, isLoading, isError } = useArticle(id)
-	const [, setLocation] = useLocation()
-	const [isEditing, setIsEditing] = useState(false)
-	const queryClient = useQueryClient()
-	const [error, setError] = useState<string>('')
 
-	const onSuccess = async (data: EditArticleFormData) => {
+	const [, setLocation] = useLocation()
+
+	const queryClient = useQueryClient()
+
+	const [isEditing, setIsEditing] = useState(false)
+
+	const [error, setError] = useState('')
+
+	const onSuccess = async (data: UpdateArticleForm) => {
 		try {
 			setIsEditing(true)
-			const formData = getFormDataFrom(data)
-			await ArticlesService.update(formData, id)
 
-			queryClient.invalidateQueries({ queryKey: ['article', id] })
+			const image = data.imageFile ?? data.imageUrl
+
+			if (!image) {
+				throw new Error('Debe proporcionar una imagen')
+			}
+
+			await ArticlesService.update(
+				{
+					title: data.title,
+					subtitle: data.subtitle,
+					description: data.description,
+					content: data.content,
+					image
+				},
+				id
+			)
+
+			queryClient.invalidateQueries({
+				queryKey: QueryKeys.Articles.Single(id)
+			})
+
 			queryClient.invalidateQueries({
 				predicate: (q) =>
-					Array.isArray(q.queryKey) && q.queryKey[0] === 'articles'
+					Array.isArray(q.queryKey) &&
+					q.queryKey[0] === QueryKeys.Articles.Multiple.Base
 			})
 
 			setLocation(`/articulos/${id}`)
@@ -41,7 +67,7 @@ export default function EditArticlePage({ id }: { id: string }) {
 			if (error instanceof Error) {
 				setError(error.message)
 			} else {
-				setError('Error creando el comentario')
+				setError('Error editando artículo')
 			}
 		} finally {
 			setIsEditing(false)
@@ -52,22 +78,27 @@ export default function EditArticlePage({ id }: { id: string }) {
 		error: schemaError,
 		onSubmit,
 		watch
-	} = useForm(onSuccess, EditArticleSchema, {
-		image: article?.image || '',
+	} = useForm<UpdateArticleForm>(onSuccess, UpdateArticleSchema, {
+		imageUrl: article?.image || '',
+		imageFile: undefined,
 		content: article?.content || '',
 		description: article?.description || '',
 		title: article?.title || '',
 		subtitle: article?.subtitle || ''
 	})
 
-	if (isLoading) return <Loading />
+	if (isLoading) {
+		return <Loading />
+	}
 
-	if (isError || !article) return <NotFoundPage />
+	if (isError || !article) {
+		return <NotFoundPage />
+	}
 
 	return (
 		<form
 			onSubmit={onSubmit}
-			className='flex flex-col pb-[5vw] mobile:mt-[20px] tablet:mt-[60px]'
+			className='flex flex-col pb-[5vw] mobile:mt-5 tablet:mt-[60px]'
 		>
 			<ArticleInput
 				placeholder='Subtítulo de tu artículo...'
@@ -111,8 +142,16 @@ export default function EditArticlePage({ id }: { id: string }) {
 
 				<aside className='flex flex-col gap-y-5 order-1 tablet:order-2'>
 					<ImageInput
-						onImageSelected={(value) => watch('image', value)}
 						value={article.image}
+						onImageSelected={(value) => {
+							if (value instanceof File) {
+								watch('imageFile', value)
+								watch('imageUrl', '')
+							} else {
+								watch('imageUrl', value)
+								watch('imageFile', undefined)
+							}
+						}}
 					/>
 				</aside>
 

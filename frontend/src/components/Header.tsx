@@ -1,8 +1,8 @@
+import notievanLogoImage from '../assets/images/notievan-logo.webp'
 import { INSTAGRAM } from '../configuration/information.configuration'
 import { useSession } from '../hooks/use-session.hook'
 import { HeaderLink } from './HeaderLink'
 import { InstagramIcon } from './icons/InstagramIcon'
-import notievanLogoImage from '../assets/images/notievan-logo.webp'
 
 export function Header() {
 	const { user } = useSession()
@@ -14,7 +14,7 @@ export function Header() {
 		>
 			<div className='w-full gap-x-[5px] text-white mobile:px-3 desktop:px-0 text-2xl max-w-[1270px] min-w-[320px] flex justify-between items-center'>
 				<nav
-					className='flex items-center desktop:gap-x-[40px] mobile:gap-x-[25px]'
+					className='flex items-center desktop:gap-x-10 mobile:gap-x-[25px]'
 					id='header-buttons'
 				>
 					<HeaderLink href='/'>

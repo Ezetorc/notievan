@@ -1,10 +1,10 @@
-import { useArticle } from '../../../hooks/use-article.hook'
-import { AsideArticles } from './AsideArticles'
-import { useParsedMarkdown } from '../../../hooks/use-parsed-markdown.hook'
 import { useState } from 'react'
+import { useArticle } from '../../../hooks/use-article.hook'
 import { useSession } from '../../../hooks/use-session.hook'
-import { DeleteArticleModal } from './DeleteArticleModal'
+import { useParsedMarkdown } from '../hooks/use-parsed-markdown.hook'
 import { ArticleComments } from './ArticleComments'
+import { AsideArticles } from './AsideArticles'
+import { DeleteArticleModal } from './DeleteArticleModal'
 
 export default function ArticlePage({ id }: { id: string }) {
 	const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
@@ -13,7 +13,7 @@ export default function ArticlePage({ id }: { id: string }) {
 	const parsedContent = useParsedMarkdown(article?.content)
 	const isAuthor = user?.id === article?.author.id
 
-	if (!article)
+	if (!article) {
 		return (
 			<div className='animate-pulse mt-[60px]'>
 				<div className='h-[70px] bg-gray-300 rounded w-[50%] mb-2.5'></div>
@@ -28,6 +28,7 @@ export default function ArticlePage({ id }: { id: string }) {
 				</div>
 			</div>
 		)
+	}
 
 	return (
 		<>

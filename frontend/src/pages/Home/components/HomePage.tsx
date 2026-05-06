@@ -1,5 +1,5 @@
 import { Hero } from '../../../components/Hero'
-import { usePaginatedArticles } from '../../../hooks/use-paginated-articles.hook'
+import { usePaginatedArticles } from '../hooks/use-paginated-articles.hook'
 import { MainArticles } from './MainArticles'
 import { SecondaryArticles } from './SecondaryArticles'
 

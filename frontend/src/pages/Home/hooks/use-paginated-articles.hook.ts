@@ -1,16 +1,13 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { ArticlesService } from '../services/articles.service'
+import { QueryKeys } from '../../../models/query-keys.model'
+import { ArticlesService } from '../../../services/articles.service'
 
-export function usePaginatedAccountArticles({
-	limit = 4
-}: {
-	limit?: number
-} = {}) {
+export function usePaginatedArticles({ limit = 4 }: { limit?: number }) {
 	const query = useInfiniteQuery({
-		queryKey: ['articles', 'account', limit],
+		queryKey: QueryKeys.Articles.Multiple.All(limit),
 
 		queryFn: async ({ pageParam }: { pageParam: string | undefined }) => {
-			return ArticlesService.getOwn({
+			return ArticlesService.getAll({
 				cursor: pageParam,
 				limit
 			})
@@ -20,13 +17,7 @@ export function usePaginatedAccountArticles({
 			return lastPage.nextCursor ?? undefined
 		},
 
-		initialPageParam: undefined,
-
-		staleTime: 0,
-		gcTime: 0,
-		refetchOnMount: true,
-		refetchOnWindowFocus: false,
-		refetchOnReconnect: false
+		initialPageParam: undefined
 	})
 
 	const articles = query.data?.pages.flatMap((p) => p.data) ?? []
@@ -35,7 +26,9 @@ export function usePaginatedAccountArticles({
 	const loading = query.isFetching && !query.isFetchingNextPage
 
 	const loadMore = () => {
-		if (hasMore) query.fetchNextPage()
+		if (hasMore) {
+			query.fetchNextPage()
+		}
 	}
 
 	return {

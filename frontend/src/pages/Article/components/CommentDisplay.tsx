@@ -1,8 +1,8 @@
-import { getParsedDate } from '../../../utilities/get-parsed-date.utility'
 import { useState } from 'react'
-import { DeleteCommentModal } from './DeleteCommentModal'
-import { useSession } from '../../../hooks/use-session.hook'
 import type { CommentOut } from '../../../../../shared/src/dtos/out/comment-out.dto'
+import { useSession } from '../../../hooks/use-session.hook'
+import { getParsedDate } from '../../../utilities/get-parsed-date.utility'
+import { DeleteCommentModal } from './DeleteCommentModal'
 
 export function CommentDisplay({ comment }: { comment: CommentOut }) {
 	const { user } = useSession()

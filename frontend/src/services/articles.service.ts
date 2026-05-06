@@ -1,124 +1,112 @@
-import { HttpClient } from '../models/http-client.model'
 import type { ArticleOut } from '../../../shared/src/dtos/out/article-out.dto'
 import type { ArticlePreviewOut } from '../../../shared/src/dtos/out/article-preview-out.dto'
 import type { PaginatedResult } from '../../../shared/src/models/paginated-result.model'
+import { HttpClient } from '../models/http-client.model'
 
 export class ArticlesService {
-	private static readonly API_BASE = '/articles'
+	private static readonly BASE = '/articles'
 
-	static async create(data: FormData): Promise<ArticleOut> {
-		const response = await HttpClient.post<ArticleOut>(
-			ArticlesService.API_BASE,
-			data,
-			{
-				headers: { 'Content-Type': 'multipart/form-data' }
-			}
-		)
+	static async create(data: {
+		title: string
+		subtitle: string
+		description: string
+		content: string
+		image: File | string
+	}): Promise<ArticleOut> {
+		const formData = new FormData()
 
-		if (response.error || !response.data) {
-			const error = new Error(response.error) as Error & {
-				status?: number
-				payload?: unknown
-			}
-			error.status = response.status
-			error.payload = response.data
-			throw error
+		formData.append('title', data.title)
+		formData.append('subtitle', data.subtitle)
+		formData.append('description', data.description)
+		formData.append('content', data.content)
+
+		if (data.image instanceof File) {
+			formData.append('image', data.image)
+		} else {
+			formData.append('image', data.image)
 		}
 
-		return response.data
+		return HttpClient.post<ArticleOut>(ArticlesService.BASE, formData)
+	}
+	static delete(id: string): Promise<boolean> {
+		return HttpClient.delete<boolean>(`${ArticlesService.BASE}/${id}`)
 	}
 
-	static async update(data: FormData, id: string): Promise<boolean> {
-		const response = await HttpClient.patch<{ success: boolean }>(
-			`${ArticlesService.API_BASE}/${id}`,
-			data,
-			{ headers: { 'Content-Type': 'multipart/form-data' } }
-		)
-		if (response.error) throw new Error(response.error)
-		return response.data?.success ?? false
+	static async update(
+		data: {
+			title?: string
+			subtitle?: string
+			description?: string
+			content?: string
+			image?: string | File
+		},
+		id: string
+	): Promise<boolean> {
+		const formData = new FormData()
+
+		Object.entries(data).forEach(([key, value]) => {
+			if (value != null) {
+				formData.append(key, value)
+			}
+		})
+
+		const response = await HttpClient.patch<{
+			success: boolean
+		}>(`${ArticlesService.BASE}/${id}`, formData)
+
+		return response.success
 	}
 
-	static async delete(id: string): Promise<boolean> {
-		const response = await HttpClient.delete<{ success: boolean }>(
-			`${ArticlesService.API_BASE}/${id}`
-		)
-		return !response.error
+	static getById(id: string): Promise<ArticleOut> {
+		return HttpClient.get<ArticleOut>(`${ArticlesService.BASE}/${id}`)
 	}
 
-	static async getById(id: string): Promise<ArticleOut | undefined> {
-		const response = await HttpClient.get<ArticleOut>(
-			`${ArticlesService.API_BASE}/${id}`
-		)
-		return response.data
-	}
-
-	static async getAll({
-		cursor,
-		limit = 4
-	}: {
+	static getAll(params?: {
 		cursor?: string
 		limit?: number
-	} = {}): Promise<PaginatedResult<ArticlePreviewOut>> {
-		const params = new URLSearchParams()
+	}): Promise<PaginatedResult<ArticlePreviewOut>> {
+		const search = new URLSearchParams()
 
-		if (cursor) params.append('cursor', cursor)
-		params.append('limit', String(limit))
-
-		const response = await HttpClient.get<PaginatedResult<ArticlePreviewOut>>(
-			`${ArticlesService.API_BASE}?${params.toString()}`
-		)
-
-		if (response.error || !response.data) {
-			const error = new Error(response.error) as Error & {
-				status?: number
-				payload?: unknown
-			}
-			error.status = response.status
-			error.payload = response.data
-			throw error
+		if (params?.cursor) {
+			search.set('cursor', params.cursor)
 		}
 
-		return response.data
+		search.set('limit', String(params?.limit ?? 4))
+
+		return HttpClient.get<PaginatedResult<ArticlePreviewOut>>(
+			`${ArticlesService.BASE}?${search}`
+		)
 	}
 
-	static async getOwn({
-		cursor,
-		limit = 4
-	}: {
+	static getOwn(params?: {
 		cursor?: string
 		limit?: number
-	} = {}): Promise<PaginatedResult<ArticlePreviewOut>> {
-		const params = new URLSearchParams()
+	}): Promise<PaginatedResult<ArticlePreviewOut>> {
+		const search = new URLSearchParams()
 
-		if (cursor) params.append('cursor', cursor)
-		params.append('limit', String(limit))
-
-		const response = await HttpClient.get<PaginatedResult<ArticlePreviewOut>>(
-			`${ArticlesService.API_BASE}/own?${params.toString()}`
-		)
-
-		if (response.error || !response.data) {
-			const error = new Error(response.error) as Error & {
-				status?: number
-				payload?: unknown
-			}
-			error.status = response.status
-			error.payload = response.data
-			throw error
+		if (params?.cursor) {
+			search.set('cursor', params.cursor)
 		}
 
-		return response.data
+		search.set('limit', String(params?.limit ?? 4))
+
+		return HttpClient.get<PaginatedResult<ArticlePreviewOut>>(
+			`${ArticlesService.BASE}/own?${search}`
+		)
 	}
-	static async getRandom({
-		omitId,
-		limit = 4
-	}: {
-		omitId: string
+
+	static getRandom(params: {
+		excludeId: string
 		limit?: number
 	}): Promise<ArticlePreviewOut[]> {
-		const response = await HttpClient.get<ArticlePreviewOut[]>(
-			`${ArticlesService.API_BASE}/random?omit=${omitId}&limit=${limit}`
+		const search = new URLSearchParams()
+
+		search.set('omit', params.excludeId)
+
+		search.set('limit', String(params?.limit ?? 4))
+
+		return HttpClient.get<ArticlePreviewOut[]>(
+			`${ArticlesService.BASE}/random?${search}`
 		)
-		return response.data ?? []
 	}
 }

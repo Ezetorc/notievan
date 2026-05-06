@@ -8,4 +8,4 @@ export const UpdateArticleDto = z.object({
   image: z.string().trim().optional()
 }).strict()
 
-export type UpdateArticleType = z.infer<typeof UpdateArticleDto>
+export type UpdateArticleDtoType = z.infer<typeof UpdateArticleDto>

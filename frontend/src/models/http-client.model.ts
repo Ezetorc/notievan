@@ -1,72 +1,73 @@
-import { AxiosError, type AxiosRequestConfig, type AxiosResponse } from 'axios'
-import axios from 'axios'
 import { env } from '../configuration/env.configuration'
 import { SessionService } from '../services/session.service'
-import type { ApiResponse } from './api-response.model'
+import { ApiError } from './api-error.model'
 
 export class HttpClient {
-	static async request<T = any>(
-		config: AxiosRequestConfig
-	): Promise<ApiResponse<T>> {
-		try {
-			const token = SessionService.token
-			const response: AxiosResponse<T> = await axios({
-				...config,
-				url: `${env.baseUrl}${config.url}`,
-				headers: {
-					'Content-Type': 'application/json',
-					...config.headers,
-					...(token ? { Authorization: `Bearer ${token}` } : {})
-				}
-			})
+	private static async request<T>(
+		url: string,
+		options: RequestInit & {
+			body?: unknown
+		} = {}
+	): Promise<T> {
+		const headers = new Headers(options.headers)
+		const isFormData = options.body instanceof FormData
+		const token = SessionService.token
+		const finalUrl = url.startsWith('/')
+			? `${env.baseUrl}${url}`
+			: `${env.baseUrl}/${url}`
 
-			return { data: response.data, status: response.status }
-		} catch (error) {
-			if (error instanceof AxiosError) {
-				const errorMessage =
-					error.response?.data?.error ||
-					error.response?.data?.message ||
-					error.message ||
-					'Ocurrió un error inesperado'
-
-				console.error('API Error:', {
-					url: config.url,
-					method: config.method,
-					status: error.response?.status,
-					error: errorMessage,
-					response: error.response?.data
-				})
-
-				return {
-					error: errorMessage,
-					status: error.response?.status,
-					data: error.response?.data
-				}
-			}
-
-			console.error('Unexpected error:', error)
-			return { error: 'Ocurrió un error inesperado' }
+		if (!isFormData) {
+			headers.set('Content-Type', 'application/json')
 		}
+
+		if (token) {
+			headers.set('Authorization', `Bearer ${token}`)
+		}
+
+		const response = await fetch(finalUrl, {
+			...options,
+			headers,
+			body: isFormData
+				? (options.body as FormData)
+				: options.body
+					? JSON.stringify(options.body)
+					: undefined
+		})
+
+		const data = await response.json().catch(() => null)
+
+		if (!response.ok) {
+			throw new ApiError(
+				data?.message ?? 'Request failed',
+				response.status,
+				data
+			)
+		}
+
+		return data
 	}
 
-	static async get<T>(url: string, config?: AxiosRequestConfig) {
-		return await HttpClient.request<T>({ ...config, method: 'GET', url })
+	static get<T>(url: string) {
+		return HttpClient.request<T>(url)
 	}
 
-	static async post<T>(url: string, data?: any, config?: AxiosRequestConfig) {
-		return await HttpClient.request<T>({ ...config, method: 'POST', url, data })
-	}
-
-	static async patch<T>(url: string, data?: any, config?: AxiosRequestConfig) {
-		return await HttpClient.request<T>({
-			...config,
-			method: 'PATCH',
-			url,
-			data
+	static post<T>(url: string, body?: any) {
+		return HttpClient.request<T>(url, {
+			method: 'POST',
+			body
 		})
 	}
 
-	static async delete<T>(url: string, config?: AxiosRequestConfig) {
-		return await HttpClient.request<T>({ ...config, method: 'DELETE', url })
+	static patch<T>(url: string, body?: any) {
+		return HttpClient.request<T>(url, {
+			method: 'PATCH',
+			body
+		})
+	}
+
+	static delete<T>(url: string) {
+		return HttpClient.request<T>(url, {
+			method: 'DELETE'
+		})
 	}
 }

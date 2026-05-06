@@ -1,11 +1,12 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { useCallback } from 'react'
+import { useLocation } from 'wouter'
 import type { SignInDtoType } from '../../../shared/src/dtos/in/sign-in.dto'
 import type { SignUpDtoType } from '../../../shared/src/dtos/in/sign-up.dto'
+import { QueryKeys } from '../models/query-keys.model'
 import { AuthService } from '../services/auth.service'
 import { SessionService } from '../services/session.service'
 import { useSessionStore } from '../stores/session.store'
-import { useLocation } from 'wouter'
-import { useQueryClient } from '@tanstack/react-query'
 import { useUser } from './use-user.hook'
 
 export function useSession() {
@@ -23,16 +24,19 @@ export function useSession() {
 
 		const result = await refetchSelf()
 		const fetched = result.data
-		if (!fetched) return
+		if (!fetched) {
+			return
+		}
 		SessionService.user = fetched
 		setUser(fetched)
 	}, [selfUser, refetchSelf])
 
 	const logout = () => {
-		queryClient.invalidateQueries({ queryKey: ['self-user'] })
+		queryClient.invalidateQueries({ queryKey: QueryKeys.User.Self })
 		queryClient.removeQueries({
 			predicate: (query) =>
-				Array.isArray(query.queryKey) && query.queryKey[0] === 'articles'
+				Array.isArray(query.queryKey) &&
+				query.queryKey[0] === QueryKeys.Articles.Multiple.Base
 		})
 
 		SessionService.delete()
@@ -40,19 +44,19 @@ export function useSession() {
 		setLocation('/sesion')
 	}
 	const login = async (data: SignInDtoType) => {
-		const result = await AuthService.login(data)
+		const result = await AuthService.signIn(data)
 
 		SessionService.value = result
 		setUser(result.user)
-		queryClient.invalidateQueries({ queryKey: ['self-user'] })
+		queryClient.invalidateQueries({ queryKey: QueryKeys.User.Self })
 	}
 
 	const register = async (data: SignUpDtoType) => {
-		const result = await AuthService.register(data)
+		const result = await AuthService.signUp(data)
 
 		SessionService.value = result
 		setUser(result.user)
-		queryClient.invalidateQueries({ queryKey: ['self-user'] })
+		queryClient.invalidateQueries({ queryKey: QueryKeys.User.Self })
 	}
 
 	return { user, logout, login, register, updateSession }

@@ -1,5 +1,5 @@
-import { useState, type ChangeEvent } from 'react'
 import imageCompression from 'browser-image-compression'
+import { type ChangeEvent, useState } from 'react'
 
 export function ImageInput({
 	onImageSelected,
@@ -16,7 +16,9 @@ export function ImageInput({
 
 	const onFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
 		const selectedFile = event.target.files?.[0]
-		if (!selectedFile) return
+		if (!selectedFile) {
+			return
+		}
 
 		setLoading(true)
 

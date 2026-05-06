@@ -1,11 +1,14 @@
 import { useQuery } from '@tanstack/react-query'
+import { QueryKeys } from '../models/query-keys.model'
 import { UsersService } from '../services/users.service'
 
 export function useUser(userId?: string) {
 	const { data, isLoading, isError, error, refetch } = useQuery({
-		queryKey: ['user', userId],
+		queryKey: QueryKeys.User.Single(userId),
 		queryFn: () => {
-			if (!userId) return
+			if (!userId) {
+				return
+			}
 			return UsersService.getById(userId)
 		},
 		retry: false,

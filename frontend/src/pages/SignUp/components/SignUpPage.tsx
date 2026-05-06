@@ -1,13 +1,13 @@
-import { Hero } from '../../../components/Hero'
-import { SignInput } from '../../../components/SignInput'
 import { useLocation } from 'wouter'
 import {
 	SignUpDto,
 	type SignUpDtoType
 } from '../../../../../shared/src/dtos/in/sign-up.dto'
-import { useSession } from '../../../hooks/use-session.hook'
 import { ErrorMessage } from '../../../components/ErrorMessage'
+import { Hero } from '../../../components/Hero'
+import { SignInput } from '../../../components/SignInput'
 import { useForm } from '../../../hooks/use-form.hook'
+import { useSession } from '../../../hooks/use-session.hook'
 
 export default function SignUpPage() {
 	const [, setLocation] = useLocation()

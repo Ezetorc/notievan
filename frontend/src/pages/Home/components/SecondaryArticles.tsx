@@ -1,6 +1,6 @@
 import { Article } from '../../../components/Article'
 import { useInfiniteScroll } from '../../../hooks/use-infinite-scroll.hook'
-import type { usePaginatedArticles } from '../../../hooks/use-paginated-articles.hook'
+import type { usePaginatedArticles } from '../hooks/use-paginated-articles.hook'
 
 const SKELETON_KEYS = ['s1', 's2', 's3', 's4']
 
@@ -18,7 +18,9 @@ export function SecondaryArticles({
 		onLoadMore: loadMore
 	})
 
-	if (rest.length === 0 && !loading) return null
+	if (rest.length === 0 && !loading) {
+		return null
+	}
 
 	return (
 		<section className='my-9'>

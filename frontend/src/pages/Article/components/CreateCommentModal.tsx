@@ -1,16 +1,17 @@
-import { useState, type Dispatch, type SetStateAction } from 'react'
-import { ActionButton } from '../../../components/ActionButton'
-import { useQueryClient, type InfiniteData } from '@tanstack/react-query'
-import { CommentsService } from '../../../services/comments.service'
-import { Modal } from '../../../components/Modal'
-import { ErrorMessage } from '../../../components/ErrorMessage'
-import { useForm } from '../../../hooks/use-form.hook'
-import type { Comment } from '../../../../../shared/src/models/comment.model'
+import { type InfiniteData, useQueryClient } from '@tanstack/react-query'
+import { type Dispatch, type SetStateAction, useState } from 'react'
 import {
 	CreateCommentDto,
 	type CreateCommentDtoType
 } from '../../../../../shared/src/dtos/in/create-comment.dto'
+import type { Comment } from '../../../../../shared/src/models/comment.model'
 import type { PaginatedResult } from '../../../../../shared/src/models/paginated-result.model'
+import { ActionButton } from '../../../components/ActionButton'
+import { ErrorMessage } from '../../../components/ErrorMessage'
+import { Modal } from '../../../components/Modal'
+import { useForm } from '../../../hooks/use-form.hook'
+import { QueryKeys } from '../../../models/query-keys.model'
+import { CommentsService } from '../../../services/comments.service'
 
 export function CreateCommentModal({
 	setIsModalOpen,
@@ -28,9 +29,11 @@ export function CreateCommentModal({
 			setLoading(true)
 			const comment = await CommentsService.create(data)
 			queryClient.setQueriesData(
-				{ queryKey: ['comments', articleId] },
+				{ queryKey: QueryKeys.Comments(articleId) },
 				(prev: InfiniteData<PaginatedResult<Comment>> | undefined) => {
-					if (!prev) return prev
+					if (!prev) {
+						return prev
+					}
 
 					return {
 						...prev,

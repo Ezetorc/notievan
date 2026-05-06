@@ -5,7 +5,9 @@ import {
 } from '../configuration/error-messages.configuration'
 
 export function parseZodError(error: core.$ZodIssue): string {
-	if (!error) return 'Error de validación'
+	if (!error) {
+		return 'Error de validación'
+	}
 
 	console.error('[ZodError > parseZodError] ', error)
 

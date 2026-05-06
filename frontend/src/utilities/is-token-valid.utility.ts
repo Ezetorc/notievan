@@ -4,7 +4,9 @@ export function isTokenValid(token: string): boolean {
 	try {
 		const decoded: { exp?: number } = jwtDecode(token)
 
-		if (!decoded.exp) return true
+		if (!decoded.exp) {
+			return true
+		}
 
 		const now = Date.now() / 1000
 

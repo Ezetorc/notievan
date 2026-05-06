@@ -22,8 +22,12 @@ export function useInfiniteScroll({
 	const sentinelRef = useRef<HTMLDivElement | null>(null)
 
 	useEffect(() => {
-		if (disabled) return
-		if (!sentinelRef.current) return
+		if (disabled) {
+			return
+		}
+		if (!sentinelRef.current) {
+			return
+		}
 
 		const element = sentinelRef.current
 

@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
-import { ArticlesService } from '../services/articles.service'
-import type { ArticlePreviewOut } from '../../../shared/src/dtos/out/article-preview-out.dto'
+import type { ArticlePreviewOut } from '../../../../../shared/src/dtos/out/article-preview-out.dto'
+import { QueryKeys } from '../../../models/query-keys.model'
+import { ArticlesService } from '../../../services/articles.service'
 
 export function useRandomArticles({
 	excludeId,
@@ -10,10 +11,10 @@ export function useRandomArticles({
 	limit?: number
 }) {
 	const query = useQuery({
-		queryKey: ['articles', 'random', limit, excludeId],
+		queryKey: QueryKeys.Articles.Multiple.Random(limit, excludeId),
 
 		queryFn: async (): Promise<ArticlePreviewOut[]> => {
-			return ArticlesService.getRandom({ omitId: excludeId, limit })
+			return ArticlesService.getRandom({ excludeId, limit })
 		},
 
 		staleTime: 0,

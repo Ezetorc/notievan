@@ -1,4 +1,4 @@
-import { subDays, isToday, isYesterday, isSameDay } from 'date-fns'
+import { isSameDay, isToday, isYesterday, subDays } from 'date-fns'
 
 export function isRecent(date: Date | string): boolean {
 	const today = new Date()

@@ -1,9 +1,10 @@
+import { useQueryClient } from '@tanstack/react-query'
 import type { ChangeEvent } from 'react'
 import { useState } from 'react'
-import { UsersService } from '../../../services/users.service'
-import { useQueryClient } from '@tanstack/react-query'
 import type { UserOut } from '../../../../../shared/src/dtos/out/user-out.dto'
 import type { UserRole } from '../../../../../shared/src/models/user-role.model'
+import { QueryKeys } from '../../../models/query-keys.model'
+import { UsersService } from '../../../services/users.service'
 
 export function UserDisplay({ user }: { user: UserOut }) {
 	const [newRole, setNewRole] = useState<UserRole>(user.role)
@@ -15,12 +16,16 @@ export function UserDisplay({ user }: { user: UserOut }) {
 	}
 
 	const onSaveNewRole = async () => {
-		if (newRole === user.role) return
+		if (newRole === user.role) {
+			return
+		}
 
 		try {
 			await UsersService.updateRole(user.id, newRole)
 
-			queryClient.invalidateQueries({ queryKey: ['users'] })
+			queryClient.invalidateQueries({
+				queryKey: [QueryKeys.User.Multiple.Base]
+			})
 		} catch (error) {
 			console.error(error)
 			alert('Error actualizando rol')

@@ -1,16 +1,17 @@
+import { useQueryClient } from '@tanstack/react-query'
+import { useState } from 'react'
 import { useLocation } from 'wouter'
+import { CreateArticleDto } from '../../../../../shared/src/dtos/in/create-article.dto'
+import { ActionButton } from '../../../components/ActionButton'
 import { ArticleInput } from '../../../components/ArticleInput'
-import { MarkdownEditor } from '../../../components/MarkdownEditor'
 import { ErrorMessage } from '../../../components/ErrorMessage'
 import { ImageInput } from '../../../components/ImageInput'
-import { CreateArticleDto } from '../../../../../shared/src/dtos/in/create-article.dto'
+import { MarkdownEditor } from '../../../components/MarkdownEditor'
 import { useForm } from '../../../hooks/use-form.hook'
+import { QueryKeys } from '../../../models/query-keys.model'
 import { ArticlesService } from '../../../services/articles.service'
-import { useQueryClient } from '@tanstack/react-query'
-import { ActionButton } from '../../../components/ActionButton'
-import { useState } from 'react'
 import type { CreateArticleForm } from '../models/create-article-form.model'
-import z from 'zod'
+import { CreateArticleSchema } from '../models/create-article-form.schema'
 
 export default function CreateArticlePage() {
 	const [, setLocation] = useLocation()
@@ -22,27 +23,27 @@ export default function CreateArticlePage() {
 		try {
 			setIsLoading(true)
 
-			const formData = new FormData()
+			const image = data.imageFile ?? data.imageUrl
 
-			formData.append('title', data.title)
-			formData.append('subtitle', data.subtitle)
-			formData.append('description', data.description)
-			formData.append('content', data.content)
-
-			if (data.imageFile) {
-				formData.append('image', data.imageFile)
-			} else if (data.imageUrl) {
-				formData.append('image', data.imageUrl)
-			} else if (!data.imageFile && !data.imageUrl) {
-				throw new Error('Falta poner una imagen')
+			if (!image) {
+				throw new Error('Debe proporcionar una imagen')
 			}
 
-			const newArticle = await ArticlesService.create(formData)
+			const newArticle = await ArticlesService.create({
+				title: data.title,
+				subtitle: data.subtitle,
+				description: data.description,
+				content: data.content,
+				image
+			})
 
-			queryClient.invalidateQueries({ queryKey: ['article', newArticle.id] })
+			queryClient.invalidateQueries({
+				queryKey: QueryKeys.Articles.Single(newArticle.id)
+			})
 			queryClient.invalidateQueries({
 				predicate: (q) =>
-					Array.isArray(q.queryKey) && q.queryKey[0] === 'articles'
+					Array.isArray(q.queryKey) &&
+					q.queryKey[0] === QueryKeys.Articles.Multiple.Base
 			})
 
 			setLocation(`/articulos/${newArticle.id}`)
@@ -76,14 +77,7 @@ export default function CreateArticlePage() {
 				imageUrl: parsed.image
 			})
 		},
-		z.object({
-			title: z.string().min(1),
-			subtitle: z.string().min(1),
-			description: z.string().min(1),
-			content: z.string().min(1),
-			imageUrl: z.url().optional().or(z.literal('')),
-			imageFile: z.any().optional()
-		}),
+		CreateArticleSchema,
 		{
 			imageFile: undefined,
 			imageUrl: '',
@@ -97,7 +91,7 @@ export default function CreateArticlePage() {
 	return (
 		<form
 			onSubmit={onSubmit}
-			className='flex flex-col pb-[5vw] mobile:mt-[20px] tablet:mt-[60px]'
+			className='flex flex-col pb-[5vw] mobile:mt-5 tablet:mt-[60px]'
 		>
 			<ArticleInput
 				placeholder='Subtítulo de tu artículo...'

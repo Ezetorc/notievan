@@ -40,7 +40,7 @@ export function EditableUserInfo({
 				<button
 					type='button'
 					onClick={isEditing ? handleSave : handleEdit}
-					className='bg-brand-orange rounded-[4px] font-bold text-white clickable px-2 whitespace-nowrap ml-4'
+					className='bg-brand-orange rounded-sm font-bold text-white clickable px-2 whitespace-nowrap ml-4'
 				>
 					{isEditing ? 'Guardar' : 'Editar'}
 				</button>

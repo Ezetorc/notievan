@@ -24,6 +24,9 @@
 			"complexity": {
 				"noStaticOnlyClass": "off"
 			},
+			"style": {
+				"useBlockStatements": "error"
+			},
 			"suspicious": {
 				"noExplicitAny": "off"
 			},
@@ -47,7 +50,7 @@
 		"enabled": true,
 		"actions": {
 			"source": {
-				"organizeImports": "off"
+				"organizeImports": "on"
 			}
 		}
 	}

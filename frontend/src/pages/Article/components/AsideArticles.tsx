@@ -1,5 +1,5 @@
 import { Article } from '../../../components/Article'
-import { useRandomArticles } from '../../../hooks/use-random-articles.hook'
+import { useRandomArticles } from '../hooks/use-random-articles.hook'
 
 export function AsideArticles({ excludeId }: { excludeId: string }) {
 	const { articles, loading } = useRandomArticles({

@@ -1,6 +1,6 @@
-import { isTokenValid } from '../utilities/is-token-valid.utility'
-import type { Session } from '../models/session.model'
 import type { UserOut } from '../../../shared/src/dtos/out/user-out.dto'
+import type { Session } from '../models/session.model'
+import { isTokenValid } from '../utilities/is-token-valid.utility'
 
 export class SessionService {
 	private static name = 'session'
@@ -8,7 +8,9 @@ export class SessionService {
 	static get value(): Session | undefined {
 		const raw = localStorage.getItem(SessionService.name)
 
-		if (!raw) return undefined
+		if (!raw) {
+			return undefined
+		}
 
 		try {
 			const parsed = JSON.parse(raw)
@@ -20,13 +22,13 @@ export class SessionService {
 				typeof parsed.user !== 'object' ||
 				parsed.user === null
 			) {
-				console.warn('SessionService: datos de sesión corruptos o inválidos')
+				console.warn('SessionService: Invalid session data')
 				return undefined
 			}
 
 			return parsed as Session
-		} catch (err) {
-			console.error('SessionService: error parseando la sesión', err)
+		} catch (error) {
+			console.error('SessionService: Error parsing session', error)
 			return undefined
 		}
 	}

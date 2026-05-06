@@ -1,4 +1,4 @@
-import type { ReactNode, MouseEvent, ButtonHTMLAttributes } from 'react'
+import type { ButtonHTMLAttributes, MouseEvent, ReactNode } from 'react'
 
 export function ActionButton(props: {
 	onClick?: (event: MouseEvent<HTMLButtonElement>) => void

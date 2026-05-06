@@ -1,26 +1,31 @@
+import { useQueryClient } from '@tanstack/react-query'
+import { useState } from 'react'
 import { Hero } from '../../../components/Hero'
+import { useSession } from '../../../hooks/use-session.hook'
+import { QueryKeys } from '../../../models/query-keys.model'
+import { UsersService } from '../../../services/users.service'
 import { getDisplayableDate } from '../utilities/get-displayable-date.utility'
 import { AccountArticles } from './AccountArticles'
 import { EditableUserInfo } from './EditableUserInfo'
-import { useSession } from '../../../hooks/use-session.hook'
-import { UsersService } from '../../../services/users.service'
-import { useQueryClient } from '@tanstack/react-query'
 import { UserInfo } from './UserInfo'
-import { useState } from 'react'
 
 export default function AccountPage() {
 	const { user, logout } = useSession()
 	const queryClient = useQueryClient()
 	const [error, setError] = useState<string>('')
 
-	if (!user) return
+	if (!user) {
+		return
+	}
 
 	const handleEditName = async (newValue: string) => {
-		if (newValue === user.name.trim()) return true
+		if (newValue === user.name.trim()) {
+			return true
+		}
 
 		try {
 			await UsersService.update(user.id, { name: newValue })
-			queryClient.setQueryData(['self-user'], { ...user, name: newValue })
+			queryClient.setQueryData(QueryKeys.User.Self, { ...user, name: newValue })
 			setError('')
 			return true
 		} catch (error) {
@@ -55,7 +60,7 @@ export default function AccountPage() {
 				<button
 					type='button'
 					onClick={logout}
-					className='w-fit px-4 py-3 clickable bg-brand-orange rounded-[4px] text-white text-3xl'
+					className='w-fit px-4 py-3 clickable bg-brand-orange rounded-sm text-white text-3xl'
 				>
 					Cerrar sesión
 				</button>

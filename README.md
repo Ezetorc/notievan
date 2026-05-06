@@ -1,31 +1,34 @@
-# NotiEvan
+# 📰 NotiEvan
 
-NotiEvan is a school newspaper for my school. It’s a simple way to share news, stories, and updates about what’s happening.
+Welcome to **NotiEvan** — the digital newspaper of our school 🎒✨  
+A place where news, stories, opinions, memes-that-should-probably-not-be-posted 👀, and school updates come together.
 
-## What it does
+Built to keep students and teachers connected without needing 37 WhatsApp groups.
 
-- Publish and read articles about school life.
-- Highlight recent updates and random picks.
-- Give authors tools to write, edit, and manage their posts.
-- Keep the experience safe and friendly for all readers.
-- Comment and share your opinion of articles.
+---
 
-## Project structure
+## 🚀 Features
 
-- backend — REST API for articles, users, auth, and image uploads.
-- frontend — Web app to read and manage articles.
+### 📖 Read & Explore
+- Browse articles about school life, events, announcements, and more.
+- Discover recent posts and random featured articles 🎲
+- Comment and share opinions with the community 💬
 
-## Who it’s for
+### ✍️ Author Tools
+- Create, edit, and manage articles easily.
+- Upload images for posts 🖼️
+- Organize and maintain content like a real newsroom.
 
-- Students and teachers who want to stay informed.
-- Authors and admins who manage content for the community.
+### 🔐 Safety & Moderation
+- Authentication and role-based access.
+- Friendly and secure environment for everyone 🛡️
 
-## Get started
+---
 
-- To run locally, check the guides:
-  - Backend: backend/README.md
-  - Frontend: frontend/README.md
+## 🏗️ Project Structure
 
-## License
-
-MIT
+```txt
+notievan/
+├── backend/   # REST API ⚙️
+├── frontend/  # Web app 🌐
+└── shared/    # Shared models & types 📦

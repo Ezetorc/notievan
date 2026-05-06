@@ -1,75 +1,43 @@
-import { HttpClient } from '../models/http-client.model'
-import type { UserRole } from '../../../shared/src/models/user-role.model.js'
 import type { UserOut } from '../../../shared/src/dtos/out/user-out.dto.js'
 import type { PaginatedResult } from '../../../shared/src/models/paginated-result.model.js'
-
-type GetAllUsersParams = {
-	cursor?: string
-	limit?: number
-}
-
-type UpdateUserData = {
-	name: string
-}
+import type { UserRole } from '../../../shared/src/models/user-role.model.js'
+import type { UpdateUserDtoType } from '../../../shared/src/dtos/in/update-user.dto.js'
+import { HttpClient } from '../models/http-client.model'
 
 export class UsersService {
-	private static readonly API_BASE = '/users'
+	private static readonly BASE = '/users'
 
-	static async getById(id: string): Promise<UserOut> {
-		const response = await HttpClient.get<UserOut>(
-			`${UsersService.API_BASE}/${id}`
-		)
-
-		if (response.error) {
-			throw new Error(response.error || 'Error obteniendo usuario')
-		}
-
-		if (!response.data) {
-			throw new Error('No se encontró el usuario')
-		}
-
-		return response.data
+	static getById(id: string): Promise<UserOut> {
+		return HttpClient.get<UserOut>(`${UsersService.BASE}/${id}`)
 	}
 
-	static async updateRole(id: string, role: UserRole): Promise<void> {
-		const response = await HttpClient.patch<{ success: boolean }>(
-			`${UsersService.API_BASE}/${id}/role`,
-			{ role }
-		)
-
-		if (response.error) {
-			throw new Error(response.error || 'Error actualizando rol de usuario')
-		}
+	static updateRole(id: string, role: UserRole): Promise<boolean> {
+		return HttpClient.patch<boolean>(`${UsersService.BASE}/${id}/role`, {
+			role
+		})
 	}
 
-	static async update(id: string, data: UpdateUserData): Promise<void> {
-		const response = await HttpClient.patch<{ success: boolean }>(
-			`${UsersService.API_BASE}/${id}`,
-			data
-		)
-
-		if (response.error) {
-			throw new Error(response.error || 'Error actualizando usuario')
-		}
+	static update(id: string, data: UpdateUserDtoType): Promise<boolean> {
+		return HttpClient.patch<boolean>(`${UsersService.BASE}/${id}`, data)
 	}
 
 	static async getAll({
 		cursor,
 		limit = 4
-	}: GetAllUsersParams = {}): Promise<PaginatedResult<UserOut>> {
+	}: {
+		cursor?: string
+		limit?: number
+	} = {}): Promise<PaginatedResult<UserOut>> {
 		const params = new URLSearchParams()
 
-		if (cursor) params.append('cursor', cursor)
-		params.append('limit', String(limit))
-
-		const response = await HttpClient.get<PaginatedResult<UserOut>>(
-			`${UsersService.API_BASE}?${params.toString()}`
-		)
-
-		if (response.error || !response.data) {
-			throw new Error(response.error || 'Error obteniendo usuarios')
+		if (cursor) {
+			params.set('cursor', cursor)
 		}
 
-		return response.data
+		params.set('limit', String(limit))
+
+		return HttpClient.get<PaginatedResult<UserOut>>(
+			`${UsersService.BASE}?${params}`
+		)
 	}
 }

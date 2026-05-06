@@ -1,6 +1,6 @@
-import { isRecent } from '../pages/Home/utilities/is-recent.utility'
-import { useRandomImage } from '../hooks/use-random-image.hook'
 import type { ArticlePreviewOut } from '../../../shared/src/dtos/out/article-preview-out.dto'
+import { useRandomImage } from '../hooks/use-random-image.hook'
+import { isRecent } from '../pages/Home/utilities/is-recent.utility'
 
 export function Article({ article }: { article?: ArticlePreviewOut }) {
 	const { image } = useRandomImage({

@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react'
-import { marked } from 'marked'
 import DOMPurify from 'dompurify'
+import { marked } from 'marked'
+import { useEffect, useState } from 'react'
 
 export function useParsedMarkdown(markdown: string | undefined) {
 	const [html, setHtml] = useState<string>('')

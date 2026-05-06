@@ -1,10 +1,10 @@
 import { useState } from 'react'
+import { useLocation } from 'wouter'
+import { useInfiniteScroll } from '../../../hooks/use-infinite-scroll.hook'
+import { useSession } from '../../../hooks/use-session.hook'
 import { usePaginatedComments } from '../hooks/use-paginated-comments'
 import { CommentDisplay } from './CommentDisplay'
 import { CreateCommentModal } from './CreateCommentModal'
-import { useSession } from '../../../hooks/use-session.hook'
-import { useLocation } from 'wouter'
-import { useInfiniteScroll } from '../../../hooks/use-infinite-scroll.hook'
 
 export function ArticleComments({ articleId }: { articleId: string }) {
 	const { user } = useSession()

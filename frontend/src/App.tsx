@@ -1,11 +1,11 @@
-import { Switch, Route } from 'wouter'
-import { Header } from './components/Header'
-import { SessionService } from './services/session.service'
-import { ProtectedRoute } from './components/ProtectedRoute'
-import { lazy, Suspense, useEffect } from 'react'
-import { Loading } from './components/Loading'
-import { useSession } from './hooks/use-session.hook'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { lazy, Suspense, useEffect } from 'react'
+import { Route, Switch } from 'wouter'
+import { Header } from './components/Header'
+import { Loading } from './components/Loading'
+import { ProtectedRoute } from './components/ProtectedRoute'
+import { useSession } from './hooks/use-session.hook'
+import { SessionService } from './services/session.service'
 
 const LazyHomePage = lazy(() => import('./pages/Home/components/HomePage'))
 const LazySignUpPage = lazy(

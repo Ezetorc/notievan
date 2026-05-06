@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { QueryKeys } from '../models/query-keys.model'
 
 export function useRandomImage({
 	id,
@@ -12,14 +13,14 @@ export function useRandomImage({
 	enabled?: boolean
 }) {
 	const { data, isLoading, isError, error, refetch } = useQuery({
-		queryKey: ['random-image', id],
+		queryKey: QueryKeys.RandomImage(id),
 		queryFn: async () =>
 			await fetch(`https://picsum.photos/${width}/${height}`).then(
 				(res) => res.url
 			),
 		retry: false,
 		staleTime: 1000 * 60 * 5,
-		enabled: enabled && Boolean(id)
+		enabled: enabled && typeof id === 'string' && id.length > 0
 	})
 
 	return {
