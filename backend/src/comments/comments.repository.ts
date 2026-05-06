@@ -3,17 +3,21 @@ import { eq, desc, and, lt, or } from 'drizzle-orm'
 import { comments } from '../database/schema/comments.schema.js'
 import { users } from '../database/schema/users.schema.js'
 import type { Cursor } from '../../../shared/src/models/cursor.model.js'
+import type { CommentWithAuthorName } from './comment-with-author-name.model.js'
+import type { Comment } from '../../../shared/src/models/comment.model.js'
 
 export class CommentsRepository {
 	static async create(data: {
 		content: string
 		articleId: string
 		authorId: string
-	}) {
+	}): Promise<CommentWithAuthorName | null> {
 		const result = await database.insert(comments).values(data).returning()
 
 		const created = result[0]
-		if (!created) return null
+		if (!created) {
+			return null
+		}
 
 		const withAuthor = await database
 			.select({
@@ -36,7 +40,7 @@ export class CommentsRepository {
 		articleId: string,
 		limit: number,
 		cursor?: Cursor
-	) {
+	): Promise<CommentWithAuthorName[]> {
 		return await database
 			.select({
 				id: comments.id,
@@ -66,7 +70,7 @@ export class CommentsRepository {
 			.limit(limit)
 	}
 
-	static async findById(id: string) {
+	static async findById(id: string): Promise<Comment | null> {
 		const result = await database
 			.select()
 			.from(comments)
@@ -76,7 +80,7 @@ export class CommentsRepository {
 		return result[0] ?? null
 	}
 
-	static async delete(id: string) {
+	static async delete(id: string): Promise<boolean> {
 		const result = await database
 			.delete(comments)
 			.where(eq(comments.id, id))

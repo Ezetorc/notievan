@@ -1,7 +1,8 @@
 import type { Article } from '../../../shared/src/models/article.model.js'
+import { userMock } from '../users/users.mock.js'
 
 export const articleMock: Article & { authorName: string } = {
-	authorId: 'ckv9z0a1b0000qzrmn831abcd',
+	authorId: userMock.id,
 	authorName: 'Juan Perez',
 	createdAt: new Date('2024-03-15T10:30:00Z'),
 	title: 'The Future of Web Development',

@@ -9,16 +9,14 @@ import { Cursor } from '../../../shared/src/models/cursor.model.js'
 export class CommentsController {
 	static async create(request: Request, response: Response) {
 		const { content, articleId } = CreateCommentDto.parse(request.body)
-
-		const newComment = await CommentsService.create(
+		const comment = await CommentsService.create(
 			content,
 			articleId,
 			request.user.id
 		)
+		const commentOut = new CommentOut(comment, comment.authorName)
 
-		return response
-			.status(201)
-			.json(new CommentOut(newComment, newComment.authorName))
+		return response.status(201).json(commentOut)
 	}
 
 	static async getAllOfArticle(request: Request, response: Response) {

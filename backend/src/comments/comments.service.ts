@@ -5,13 +5,20 @@ import type { PaginatedResult } from '../../../shared/src/models/paginated-resul
 import { ArticlesService } from '../articles/articles.service.js'
 import { NotFoundError } from '../errors/not-found.error.js'
 import { UnauthorizedError } from '../errors/unauthorized.error.js'
+import type { CommentWithAuthorName } from './comment-with-author-name.model.js'
 import { CommentsRepository } from './comments.repository.js'
 
 export class CommentsService {
-	static async create(content: string, articleId: string, authorId: string) {
+	static async create(
+		content: string,
+		articleId: string,
+		authorId: string
+	): Promise<CommentWithAuthorName> {
 		const articleExists = await ArticlesService.exists(articleId)
 
-		if (!articleExists) throw new NotFoundError(ErrorCode.ARTICLE_NOT_FOUND)
+		if (!articleExists) {
+			throw new NotFoundError(ErrorCode.ARTICLE_NOT_FOUND)
+		}
 
 		const comment = await CommentsRepository.create({
 			content,
@@ -32,22 +39,24 @@ export class CommentsService {
 			limit,
 			cursor
 		)
-
-		const last = comments[comments.length - 1]
+		const lastComment = comments[comments.length - 1]
 
 		return {
 			data: comments,
-			nextCursor: last ? new Cursor(last.createdAt, last.id).encode() : null
+			nextCursor: Cursor.encodedFrom(lastComment)
 		}
 	}
 
-	static async delete(id: string, userId: string) {
+	static async delete(id: string, userId: string): Promise<boolean> {
 		const comment = await CommentsRepository.findById(id)
 
-		if (!comment) throw new NotFoundError(ErrorCode.COMMENT_NOT_FOUND)
+		if (!comment) {
+			throw new NotFoundError(ErrorCode.COMMENT_NOT_FOUND)
+		}
 
-		if (userId !== comment.authorId)
+		if (userId !== comment.authorId) {
 			throw new UnauthorizedError(ErrorCode.FORBIDDEN)
+		}
 
 		return await CommentsRepository.delete(id)
 	}

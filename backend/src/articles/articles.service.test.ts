@@ -73,7 +73,7 @@ describe('ArticlesService', () => {
 				.spyOn(ArticlesRepository, 'delete')
 				.mockResolvedValue(undefined)
 
-			vi.spyOn(CloudinaryService, 'extractIdOf').mockReturnValue(null)
+			vi.spyOn(CloudinaryService, 'extractPublicId').mockReturnValue(null)
 
 			const result = await ArticlesService.delete(mockedArticle.id, userMock.id)
 
@@ -110,7 +110,9 @@ describe('ArticlesService', () => {
 			vi.spyOn(ArticlesRepository, 'findById').mockResolvedValue(mockedArticle)
 			vi.spyOn(ArticlesRepository, 'delete').mockResolvedValue(undefined)
 
-			vi.spyOn(CloudinaryService, 'extractIdOf').mockReturnValue('public-id')
+			vi.spyOn(CloudinaryService, 'extractPublicId').mockReturnValue(
+				'public-id'
+			)
 			const cloudinaryDeleteMock = vi
 				.spyOn(CloudinaryService, 'delete')
 				.mockResolvedValue(undefined)
@@ -129,7 +131,7 @@ describe('ArticlesService', () => {
 
 			const updateMock = vi
 				.spyOn(ArticlesRepository, 'update')
-				.mockResolvedValue({ ...mockedArticle })
+				.mockResolvedValue(true)
 
 			const cloudinaryMock = vi
 				.spyOn(CloudinaryService, 'updateImage')
@@ -216,7 +218,8 @@ describe('ArticlesService', () => {
 			const uploadMock = vi
 				.spyOn(CloudinaryService, 'upload')
 				.mockResolvedValue({
-					secure_url: 'https://cloudinary.com/uploaded.jpg'
+					secureUrl: 'https://cloudinary.com/uploaded.jpg',
+					publicId: 'public-id'
 				})
 
 			const createMock = vi

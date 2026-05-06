@@ -2,81 +2,112 @@ import type { Article } from '../../../../../shared/src/models/article.model.js'
 import cloudinary from './cloudinary.configuration.js'
 
 export class CloudinaryService {
+	private static readonly WIDTH = 800
+
 	static async upload(
-		fileBuffer: Buffer,
-		filename: string,
+		buffer: Buffer,
+		fileName: string,
 		folder = 'articles'
-	) {
-		return new Promise<any>((resolve, reject) => {
-			const stream = cloudinary.uploader.upload_stream(
-				{
-					folder,
-					public_id: `${Date.now()}-${filename}`,
-					resource_type: 'image',
-					transformation: [
-						{ width: 800, crop: 'limit' },
-						{ quality: 'auto' },
-						{ fetch_format: 'auto' }
-					]
-				},
-				(error, result) => {
-					if (error) return reject(error)
-					resolve(result)
-				}
-			)
-
-			stream.end(fileBuffer)
+	): Promise<{
+		secureUrl: string
+		publicId: string
+	}> {
+		const result = await CloudinaryService.uploadStream(buffer, {
+			folder,
+			public_id: `${Date.now()}-${fileName}`,
+			resource_type: 'image',
+			transformation: CloudinaryService.buildTransformations()
 		})
-	}
 
-	static async delete(publicId: string) {
-		return new Promise<any>((resolve, reject) => {
-			cloudinary.uploader.destroy(publicId, (error, result) => {
-				if (error) reject(error)
-				else resolve(result)
-			})
-		})
-	}
-
-	static extractIdOf(url: string) {
-		const cloudinaryRegex =
-			/https:\/\/res\.cloudinary\.com\/[^/]+\/image\/upload\/(?:v\d+\/)?(.+)\.(jpg|jpeg|png|gif|webp)$/
-		const match = url.match(cloudinaryRegex)
-
-		if (match?.[1]) {
-			return decodeURIComponent(match[1])
+		return {
+			secureUrl: result.secure_url,
+			publicId: result.public_id
 		}
-		return null
 	}
 
-	static async updateImage({
-		file,
-		article,
-		body
-	}: {
+	static async delete(publicId: string): Promise<void> {
+		await CloudinaryService.destroy(publicId)
+	}
+
+	static async updateImage(params: {
 		article: Article
-		file?: any
-		body: any
-	}) {
-		if (file) {
-			if (article.image) {
-				const publicId = CloudinaryService.extractIdOf(article.image)
-				if (publicId) {
-					await CloudinaryService.delete(publicId)
-				}
-			}
-
-			const uploadResult = await CloudinaryService.upload(
-				file.buffer,
-				article.title
-			)
-			body.image = uploadResult.secure_url
+		file?: {
+			buffer: Buffer
+			originalname?: string
 		}
+		body: Record<string, unknown>
+	}) {
+		const { file, article, body } = params
+
+		if (!file) {
+			return
+		}
+
+		await CloudinaryService.deletePrevious(article.image)
+
+		const image = await CloudinaryService.upload(
+			file.buffer,
+			file.originalname ?? article.title
+		)
+
+		body.image = image.secureUrl
 	}
 
-	static optimizeUrl(url: string, width = 800) {
-		if (!url.includes('/upload/')) return url
+	private static uploadStream(buffer: Buffer, options: any) {
+		return new Promise<any>((resolve, reject) => {
+			const stream = cloudinary.uploader.upload_stream(options, (err, res) =>
+				err || !res ? reject(err) : resolve(res)
+			)
 
-		return url.replace('/upload/', `/upload/f_auto,q_auto,w_${width}/`)
+			stream.end(buffer)
+		})
+	}
+
+	private static destroy(publicId: string) {
+		return new Promise<void>((resolve, reject) => {
+			cloudinary.uploader.destroy(publicId, (err) =>
+				err ? reject(err) : resolve()
+			)
+		})
+	}
+
+	private static async deletePrevious(url?: string | null) {
+		const id = CloudinaryService.extractPublicId(url)
+		if (!id) {
+			return
+		}
+
+		await CloudinaryService.delete(id)
+	}
+
+	static extractPublicId(url?: string | null): string | null {
+		if (!url) {
+			return null
+		}
+
+		const match = url.match(
+			/\/upload\/(?:v\d+\/)?(.+)\.(jpg|jpeg|png|gif|webp)$/
+		)
+
+		return match?.[1] ? decodeURIComponent(match[1]) : null
+	}
+
+	private static buildTransformations() {
+		return [
+			{ width: CloudinaryService.WIDTH, crop: 'limit' },
+			{ quality: 'auto' },
+			{ fetch_format: 'auto' }
+		]
+	}
+
+	static optimizeUrl(url: string): string {
+		if (!url.includes('/upload/')) {
+			return url
+		}
+
+		return url.replace(
+			'/upload/',
+			`/upload/f_auto,q_auto,w_${CloudinaryService.WIDTH}/`
+		)
 	}
 }

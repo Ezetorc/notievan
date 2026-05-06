@@ -1,21 +1,26 @@
 import type { UpdateUserDtoType } from '../../../shared/src/dtos/in/update-user.dto.js'
 import { Cursor } from '../../../shared/src/models/cursor.model.js'
 import { ErrorCode } from '../../../shared/src/models/error-code.model.js'
+import type { PaginatedResult } from '../../../shared/src/models/paginated-result.model.js'
 import type { UserRole } from '../../../shared/src/models/user-role.model.js'
+import type { User } from '../../../shared/src/models/user.model.js'
+import type { JWTUser } from '../auth/jwt-user.model.js'
 import { ConflictError } from '../errors/conflict.error.js'
 import { NotFoundError } from '../errors/not-found.error.js'
 import { UsersRepository } from './users.repository.js'
 
 export class UsersService {
-	static async getById(id: string) {
+	static async getById(id: string): Promise<User> {
 		const user = await UsersRepository.findById(id)
 
-		if (!user) throw new NotFoundError(ErrorCode.USER_NOT_FOUND)
+		if (!user) {
+			throw new NotFoundError(ErrorCode.USER_NOT_FOUND)
+		}
 
 		return user
 	}
 
-	static async getJwtUserById(id: string) {
+	static async getJwtUserById(id: string): Promise<JWTUser> {
 		const user = await UsersRepository.findAuthUserById(id)
 
 		if (!user) {
@@ -25,24 +30,27 @@ export class UsersService {
 		return user
 	}
 
-	static async updateRole(id: string, role: UserRole) {
+	static async updateRole(id: string, role: UserRole): Promise<User> {
 		const user = await UsersRepository.updateRole(id, role)
 
-		if (!user) throw new NotFoundError(ErrorCode.USER_NOT_FOUND)
+		if (!user) {
+			throw new NotFoundError(ErrorCode.USER_NOT_FOUND)
+		}
 
 		return user
 	}
 
-	static async getAll({ limit, cursor }: { limit: number; cursor?: string }) {
+	static async getAll({
+		limit,
+		cursor
+	}: {
+		limit: number
+		cursor?: string
+	}): Promise<PaginatedResult<User>> {
 		const decodedCursor = cursor ? Cursor.decode(cursor) : undefined
-
 		const users = await UsersRepository.findAll(limit, decodedCursor)
-
 		const lastUser = users.at(-1)
-
-		const nextCursor = lastUser
-			? new Cursor(lastUser.createdAt, lastUser.id).encode()
-			: null
+		const nextCursor = Cursor.encodedFrom(lastUser)
 
 		return {
 			data: users,
@@ -50,7 +58,7 @@ export class UsersService {
 		}
 	}
 
-	static async update(id: string, data: UpdateUserDtoType) {
+	static async update(id: string, data: UpdateUserDtoType): Promise<User> {
 		const user = await UsersService.getById(id)
 		const nameWannaBeUpdated = data.name && data.name !== user.name
 

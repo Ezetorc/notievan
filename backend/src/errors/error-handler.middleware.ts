@@ -2,7 +2,7 @@ import type { Request, Response, NextFunction } from 'express'
 import { ZodError } from 'zod'
 import { env } from '../shared/configuration/env.configuration.js'
 import { CustomError } from './custom.error.js'
-import { getErrorMessage } from './utilities/get-error-message.utility.js'
+import { ErrorCode } from '../../../shared/src/models/error-code.model.js'
 
 export function errorHandlerMiddleware() {
 	return (
@@ -21,11 +21,10 @@ export function errorHandlerMiddleware() {
 			return response.status(400).json({ error: error.issues })
 		}
 
-		const errorMessage = getErrorMessage(error)
 		const err = error as any
 
 		return response.status(500).json({
-			error: errorMessage,
+			error: ErrorCode.UNEXPECTED_ERROR,
 			...(env.showFullErrors && {
 				debug: {
 					message: err?.message,

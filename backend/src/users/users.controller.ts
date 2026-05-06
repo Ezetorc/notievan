@@ -17,22 +17,22 @@ export class UsersController {
 		}
 
 		const user = await UsersService.getById(id)
-		const sanitizedUser = new UserOut(user)
+		const userOut = new UserOut(user)
 
-		return response.json(sanitizedUser)
+		return response.json(userOut)
 	}
 
 	static async updateRole(request: Request, response: Response) {
 		const { id } = CUIDParamDto.parse(request.params)
 		const { role } = RoleParamDto.parse(request.body)
 		const user = await UsersService.updateRole(id, role)
+		const userOut = new UserOut(user)
 
-		return response.json(new UserOut(user))
+		return response.json(userOut)
 	}
 
 	static async getAll(request: Request, response: Response) {
 		const { limit, cursor } = PaginationParamsDto.parse(request.query)
-
 		const result = await UsersService.getAll({
 			limit,
 			cursor
@@ -53,7 +53,8 @@ export class UsersController {
 
 		const data = UpdateUserDto.parse(request.body)
 		const user = await UsersService.update(id, data)
+		const userOut = new UserOut(user)
 
-		return response.json(new UserOut(user))
+		return response.json(userOut)
 	}
 }

@@ -17,6 +17,9 @@
 		"enabled": true,
 		"rules": {
 			"recommended": true,
+			"style": {
+				"useBlockStatements": "error"
+			},
 			"complexity": {
 				"noStaticOnlyClass": "off"
 			},

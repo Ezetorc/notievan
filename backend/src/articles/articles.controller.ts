@@ -13,8 +13,9 @@ export class ArticlesController {
 	static async findById(request: Request, response: Response) {
 		const { id } = CUIDParamDto.parse(request.params)
 		const article = await ArticlesService.getById(id)
+		const articleOut = new ArticleOut(article, article.authorName)
 
-		return response.json(new ArticleOut(article, article.authorName))
+		return response.json(articleOut)
 	}
 
 	static async delete(request: Request, response: Response) {
@@ -39,15 +40,14 @@ export class ArticlesController {
 
 	static async create(request: Request, response: Response) {
 		const data = CreateArticleDto.parse(request.body)
-		const newArticle = await ArticlesService.create(
+		const article = await ArticlesService.create(
 			data,
 			request.user.id,
 			request.file
 		)
+		const articleOut = new ArticleOut(article, article.authorName)
 
-		return response
-			.status(201)
-			.json(new ArticleOut(newArticle, newArticle.authorName))
+		return response.status(201).json(articleOut)
 	}
 
 	static async getAll(request: Request, response: Response) {
@@ -68,9 +68,7 @@ export class ArticlesController {
 
 	static async getOwn(request: Request, response: Response) {
 		const { limit, cursor } = PaginationParamsDto.parse(request.query)
-
 		const decodedCursor = cursor ? Cursor.decode(cursor) : undefined
-
 		const { data, nextCursor } = await ArticlesService.getOwn(
 			limit,
 			request.user.id,

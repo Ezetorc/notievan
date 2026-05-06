@@ -15,4 +15,8 @@ export class Cursor {
     const decoded = JSON.parse(Buffer.from(cursor, 'base64').toString())
     return new Cursor(new Date(decoded.createdAt), decoded.id)
   }
+
+  static encodedFrom(input?: { createdAt: Date; id: string }): string | null {
+    return input ? new Cursor(input.createdAt, input.id).encode() : null
+  }
 }

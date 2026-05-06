@@ -1,7 +1,7 @@
 import jwt, { type JwtPayload } from 'jsonwebtoken'
-import { env } from '../../configuration/env.configuration.js'
-import { UnauthorizedError } from '../../../errors/unauthorized.error.js'
-import { ErrorCode } from '../../../../../shared/src/models/error-code.model.js'
+import { env } from '../configuration/env.configuration.js'
+import { UnauthorizedError } from '../../errors/unauthorized.error.js'
+import { ErrorCode } from '../../../../shared/src/models/error-code.model.js'
 
 export class JwtService {
 	static verify(input: string): JwtPayload {

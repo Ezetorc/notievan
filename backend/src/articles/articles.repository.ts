@@ -3,9 +3,12 @@ import { eq, desc, inArray, ne, and, lt, or } from 'drizzle-orm'
 import { articles } from '../database/schema/articles.schema.js'
 import { users } from '../database/schema/users.schema.js'
 import type { Cursor } from '../../../shared/src/models/cursor.model.js'
+import type { ArticleWithAuthorName } from './article-with-author-name.model.js'
+import type { Article } from '../../../shared/src/models/article.model.js'
+import type { ArticlePreviewWithAuthorName } from './article-preview-with-author-name.model.js'
 
 export class ArticlesRepository {
-	static async findById(id: string) {
+	static async findById(id: string): Promise<ArticleWithAuthorName | null> {
 		const result = await database
 			.select({
 				id: articles.id,
@@ -26,7 +29,7 @@ export class ArticlesRepository {
 		return result[0] ?? null
 	}
 
-	static async delete(id: string) {
+	static async delete(id: string): Promise<Article | null> {
 		const result = await database
 			.delete(articles)
 			.where(eq(articles.id, id))
@@ -42,12 +45,13 @@ export class ArticlesRepository {
 		content: string
 		authorId: string
 		image: string
-	}) {
+	}): Promise<ArticleWithAuthorName | null> {
 		const result = await database.insert(articles).values(data).returning()
-
 		const created = result[0]
 
-		if (!created) return null
+		if (!created) {
+			return null
+		}
 
 		return await ArticlesRepository.findById(created.id)
 	}
@@ -61,17 +65,20 @@ export class ArticlesRepository {
 			content: string
 			image: string
 		}>
-	) {
+	): Promise<boolean> {
 		const result = await database
 			.update(articles)
 			.set(data)
 			.where(eq(articles.id, id))
 			.returning()
 
-		return result[0] ?? null
+		return Boolean(result[0])
 	}
 
-	static async getAll(limit: number, cursor?: Cursor) {
+	static async getAll(
+		limit: number,
+		cursor?: Cursor
+	): Promise<ArticlePreviewWithAuthorName[]> {
 		return await database
 			.select({
 				id: articles.id,
@@ -100,7 +107,11 @@ export class ArticlesRepository {
 			.limit(limit)
 	}
 
-	static async getOwn(limit: number, userId: string, cursor?: Cursor) {
+	static async getOwn(
+		limit: number,
+		userId: string,
+		cursor?: Cursor
+	): Promise<ArticlePreviewWithAuthorName[]> {
 		return await database
 			.select({
 				id: articles.id,
@@ -132,15 +143,19 @@ export class ArticlesRepository {
 			.limit(limit)
 	}
 
-	static async getRandomIds(limit: number, omit?: string) {
-		return await database
+	static async getRandomIds(limit: number, omit?: string): Promise<string[]> {
+		const result = await database
 			.select({ id: articles.id })
 			.from(articles)
 			.where(omit ? ne(articles.id, omit) : undefined)
 			.limit(limit)
+
+		return result.map((value) => value.id)
 	}
 
-	static async getByIds(ids: string[]) {
+	static async getByIds(
+		ids: string[]
+	): Promise<ArticlePreviewWithAuthorName[]> {
 		return await database
 			.select({
 				id: articles.id,

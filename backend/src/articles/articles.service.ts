@@ -10,35 +10,39 @@ import { UnauthorizedError } from '../errors/unauthorized.error.js'
 import type { PaginatedResult } from '../../../shared/src/models/paginated-result.model.js'
 import { Cursor } from '../../../shared/src/models/cursor.model.js'
 import type { ArticlePreview } from '../../../shared/src/models/article-preview.model.js'
+import type { ArticleWithAuthorName } from './article-with-author-name.model.js'
+import type { ArticlePreviewWithAuthorName } from './article-preview-with-author-name.model.js'
 
 export class ArticlesService {
-	static async getById(id: string) {
+	static async getById(id: string): Promise<ArticleWithAuthorName> {
 		const article = await ArticlesRepository.findById(id)
 
-		if (!article) throw new NotFoundError(ErrorCode.ARTICLE_NOT_FOUND)
-
+		if (!article) {
+			throw new NotFoundError(ErrorCode.ARTICLE_NOT_FOUND)
+		}
 		return {
 			...article,
-			image: CloudinaryService.optimizeUrl(article.image, 800)
+			image: CloudinaryService.optimizeUrl(article.image)
 		}
 	}
 
-	static async exists(id: string) {
+	static async exists(id: string): Promise<boolean> {
 		const article = await ArticlesRepository.findById(id)
 
 		return Boolean(article)
 	}
 
-	static async delete(id: string, userId: string) {
+	static async delete(id: string, userId: string): Promise<boolean> {
 		const article = await ArticlesService.getById(id)
 
-		if (article.authorId !== userId)
+		if (article.authorId !== userId) {
 			throw new UnauthorizedError(ErrorCode.FORBIDDEN)
+		}
 
 		await ArticlesRepository.delete(id)
 
 		if (article.image) {
-			const publicId = CloudinaryService.extractIdOf(article.image)
+			const publicId = CloudinaryService.extractPublicId(article.image)
 
 			if (publicId) {
 				await CloudinaryService.delete(publicId)
@@ -53,7 +57,7 @@ export class ArticlesService {
 		data: UpdateArticleType,
 		userId: string,
 		file?: Express.Multer.File
-	) {
+	): Promise<boolean> {
 		const article = await ArticlesService.getById(id)
 
 		if (userId !== article.authorId) {
@@ -66,16 +70,14 @@ export class ArticlesService {
 			article
 		})
 
-		const updatedArticle = await ArticlesRepository.update(id, data)
-
-		return Boolean(updatedArticle)
+		return await ArticlesRepository.update(id, data)
 	}
 
 	static async create(
 		data: CreateArticleDtoType,
 		userId: string,
 		file?: Express.Multer.File
-	) {
+	): Promise<ArticleWithAuthorName> {
 		let image: string
 
 		if (file) {
@@ -89,7 +91,7 @@ export class ArticlesService {
 				file.originalname
 			)
 
-			image = uploadResult.secure_url
+			image = uploadResult.secureUrl
 		} else if (data.image) {
 			image = data.image
 		} else {
@@ -113,14 +115,14 @@ export class ArticlesService {
 
 		const mapped = articles.map((article) => ({
 			...article,
-			image: CloudinaryService.optimizeUrl(article.image, 600)
+			image: CloudinaryService.optimizeUrl(article.image)
 		}))
 
-		const last = articles[articles.length - 1]
+		const lastArticle = articles[articles.length - 1]
 
 		return {
 			data: mapped,
-			nextCursor: last ? new Cursor(last.createdAt, last.id).encode() : null
+			nextCursor: Cursor.encodedFrom(lastArticle)
 		}
 	}
 
@@ -133,22 +135,24 @@ export class ArticlesService {
 
 		const mapped = articles.map((article) => ({
 			...article,
-			image: CloudinaryService.optimizeUrl(article.image, 600)
+			image: CloudinaryService.optimizeUrl(article.image)
 		}))
 
-		const last = articles[articles.length - 1]
+		const lastArticle = articles[articles.length - 1]
 
 		return {
 			data: mapped,
-			nextCursor: last ? new Cursor(last.createdAt, last.id).encode() : null
+			nextCursor: Cursor.encodedFrom(lastArticle)
 		}
 	}
 
-	static async getRandom(limit: number, omitId: string) {
-		const allArticleIds = await ArticlesRepository.getRandomIds(limit, omitId)
+	static async getRandom(
+		limit: number,
+		omitId: string
+	): Promise<ArticlePreviewWithAuthorName[]> {
+		const articleIds = await ArticlesRepository.getRandomIds(limit, omitId)
 
-		const shuffledIds = allArticleIds
-			.map((a) => a.id)
+		const shuffledIds = articleIds
 			.sort(() => 0.5 - Math.random())
 			.slice(0, limit)
 
@@ -156,7 +160,7 @@ export class ArticlesService {
 
 		return articles.map((article) => ({
 			...article,
-			image: CloudinaryService.optimizeUrl(article.image, 600)
+			image: CloudinaryService.optimizeUrl(article.image)
 		}))
 	}
 }

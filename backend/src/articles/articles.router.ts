@@ -1,11 +1,7 @@
 import { Router } from 'express'
 import { ArticlesController } from './articles.controller.js'
-import multer from 'multer'
 import { authMiddleware } from '../auth/auth.middleware.js'
-const upload = multer({
-	storage: multer.memoryStorage(),
-	limits: { fileSize: 5 * 1024 * 1024 }
-})
+import { imageMiddleware } from '../shared/middlewares/image.middleware.js'
 
 export const ArticlesRouter = Router()
 
@@ -26,13 +22,13 @@ ArticlesRouter.delete(
 ArticlesRouter.patch(
 	'/:id',
 	authMiddleware('AUTHOR'),
-	upload.single('image'),
+	imageMiddleware(),
 	ArticlesController.update
 )
 
 ArticlesRouter.post(
 	'/',
 	authMiddleware('AUTHOR'),
-	upload.single('image'),
+	imageMiddleware(),
 	ArticlesController.create
 )
