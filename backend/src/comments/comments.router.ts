@@ -4,7 +4,7 @@ import { CommentsController } from './comments.controller.js'
 
 export const CommentsRouter = Router()
 
-CommentsRouter.get('/article/:id', CommentsController.getAll)
+CommentsRouter.get('/article/:id', CommentsController.getAllOfArticle)
 
 CommentsRouter.post('/', authMiddleware(), CommentsController.create)
 

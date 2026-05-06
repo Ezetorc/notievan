@@ -1,52 +1,52 @@
 {
-  "name": "@app/backend",
-  "type": "module",
-  "scripts": {
-    "build": "tsup src/index.ts --format esm --out-dir dist --minify",
-    "dev": "npm run build && node --env-file=./.env dist/index.js",
-    "lint": "npx @biomejs/biome lint --write",
-    "format": "npx @biomejs/biome format --write",
-    "test": "vitest",
-    "prepare": "husky"
-  },
-  "lint-staged": {
-    "*.{js,ts}": [
-      "eslint --fix",
-      "prettier --write"
-    ]
-  },
-  "dependencies": {
-    "@neondatabase/serverless": "^1.1.0",
-    "@paralleldrive/cuid2": "^3.3.0",
-    "bcrypt": "^6.0.0",
-    "cloudinary": "^2.8.0",
-    "cors": "^2.8.5",
-    "dotenv": "^17.4.2",
-    "drizzle-orm": "^0.45.2",
-    "express": "^5.2.1",
-    "jsonwebtoken": "^9.0.2",
-    "multer": "^2.0.2",
-    "pg": "^8.20.0",
-    "qs": "^6.15.1",
-    "resolve-from": "^5.0.0",
-    "serverless-http": "^4.0.0",
-    "sharp": "^0.34.5",
-    "zod": "^4.1.12"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "2.3.5",
-    "@types/bcrypt": "^6.0.0",
-    "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.6",
-    "@types/jsonwebtoken": "^9.0.10",
-    "@types/multer": "^2.0.0",
-    "@types/node": "^20.19.39",
-    "@types/pg": "^8.20.0",
-    "husky": "^9.1.7",
-    "lint-staged": "^17.0.2",
-    "tsup": "^8.5.1",
-    "tsx": "^4.21.0",
-    "typescript": "^5.9.3",
-    "vitest": "^4.1.5"
-  }
+	"name": "@app/backend",
+	"type": "module",
+	"scripts": {
+		"build": "tsup src/index.ts --format esm --out-dir dist --minify",
+		"dev": "npm run build && node --env-file=./.env dist/index.js",
+		"lint": "npx @biomejs/biome lint --write",
+		"format": "npx @biomejs/biome format --write",
+		"test": "vitest",
+		"prepare": "husky"
+	},
+	"lint-staged": {
+		"*.{js,ts}": [
+			"eslint --fix",
+			"prettier --write"
+		]
+	},
+	"dependencies": {
+		"@neondatabase/serverless": "^1.1.0",
+		"@paralleldrive/cuid2": "^3.3.0",
+		"bcrypt": "^6.0.0",
+		"cloudinary": "^2.8.0",
+		"cors": "^2.8.5",
+		"dotenv": "^17.4.2",
+		"drizzle-orm": "^0.45.2",
+		"express": "^5.2.1",
+		"jsonwebtoken": "^9.0.2",
+		"multer": "^2.0.2",
+		"pg": "^8.20.0",
+		"qs": "^6.15.1",
+		"resolve-from": "^5.0.0",
+		"serverless-http": "^4.0.0",
+		"sharp": "^0.34.5",
+		"zod": "^4.1.12"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.3.5",
+		"@types/bcrypt": "^6.0.0",
+		"@types/cors": "^2.8.19",
+		"@types/express": "^5.0.6",
+		"@types/jsonwebtoken": "^9.0.10",
+		"@types/multer": "^2.0.0",
+		"@types/node": "^20.19.39",
+		"@types/pg": "^8.20.0",
+		"husky": "^9.1.7",
+		"lint-staged": "^17.0.2",
+		"tsup": "^8.5.1",
+		"tsx": "^4.21.0",
+		"typescript": "^5.9.3",
+		"vitest": "^4.1.5"
+	}
 }

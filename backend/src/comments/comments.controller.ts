@@ -21,7 +21,7 @@ export class CommentsController {
 			.json(new CommentOut(newComment, newComment.authorName))
 	}
 
-	static async getAll(request: Request, response: Response) {
+	static async getAllOfArticle(request: Request, response: Response) {
 		const { id } = CUIDParamDto.parse(request.params)
 		const { limit, cursor } = PaginationParamsDto.parse(request.query)
 		const decodedCursor = cursor ? Cursor.decode(cursor) : undefined
