@@ -15,6 +15,16 @@ export class UsersService {
 		return user
 	}
 
+	static async getJwtUserById(id: string) {
+		const user = await UsersRepository.findAuthUserById(id)
+
+		if (!user) {
+			throw new NotFoundError(ErrorCode.USER_NOT_FOUND)
+		}
+
+		return user
+	}
+
 	static async updateRole(id: string, role: UserRole) {
 		const user = await UsersRepository.updateRole(id, role)
 
