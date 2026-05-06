@@ -1,7 +1,6 @@
 import { ArticlesRepository } from './articles.repository.js'
 import { CloudinaryService } from '../shared/services/cloudinary/cloudinary.service.js'
 import sharp from 'sharp'
-import type { UpdateArticleType } from '../../../shared/src/dtos/in/update-article.dto.js'
 import type { CreateArticleDtoType } from '../../../shared/src/dtos/in/create-article.dto.js'
 import { ErrorCode } from '../../../shared/src/models/error-code.model.js'
 import { NotFoundError } from '../errors/not-found.error.js'
@@ -12,6 +11,7 @@ import { Cursor } from '../../../shared/src/models/cursor.model.js'
 import type { ArticlePreview } from '../../../shared/src/models/article-preview.model.js'
 import type { ArticleWithAuthorName } from './article-with-author-name.model.js'
 import type { ArticlePreviewWithAuthorName } from './article-preview-with-author-name.model.js'
+import type { UpdateArticleDtoType } from '../../../shared/src/dtos/in/update-article.dto.js'
 
 export class ArticlesService {
 	static async getById(id: string): Promise<ArticleWithAuthorName> {
@@ -54,7 +54,7 @@ export class ArticlesService {
 
 	static async update(
 		id: string,
-		data: UpdateArticleType,
+		data: UpdateArticleDtoType,
 		userId: string,
 		file?: Express.Multer.File
 	): Promise<boolean> {
