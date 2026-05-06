@@ -41,12 +41,12 @@ export class CommentsService {
 		}
 	}
 
-	static async delete(id: string, authorId: string) {
+	static async delete(id: string, userId: string) {
 		const comment = await CommentsRepository.findById(id)
 
 		if (!comment) throw new NotFoundError(ErrorCode.COMMENT_NOT_FOUND)
 
-		if (authorId !== comment.authorId)
+		if (userId !== comment.authorId)
 			throw new UnauthorizedError(ErrorCode.FORBIDDEN)
 
 		return await CommentsRepository.delete(id)
