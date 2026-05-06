@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken'
-import { env } from '../configuration/env.configuration.js'
+import { env } from '../shared/configuration/env.configuration.js'
 import bcrypt from 'bcrypt'
 import { UsersRepository } from '../users/users.repository.js'
 import type { User } from '../../../shared/src/models/user.model.js'

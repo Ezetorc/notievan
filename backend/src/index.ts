@@ -1,6 +1,6 @@
 import express, { json as jsonMiddleware } from 'express'
 import corsMiddleware from 'cors'
-import { env } from './configuration/env.configuration.js'
+import { env } from './shared/configuration/env.configuration.js'
 import { ArticlesRouter } from './articles/articles.router.js'
 import { AuthRouter } from './auth/auth.router.js'
 import { CommentsRouter } from './comments/comments.router.js'

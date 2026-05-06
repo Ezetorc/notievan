@@ -1,5 +1,5 @@
 import jwt, { type JwtPayload } from 'jsonwebtoken'
-import { env } from '../configuration/env.configuration.js'
+import { env } from '../shared/configuration/env.configuration.js'
 import type { Request, Response, NextFunction } from 'express'
 import type { UserRole } from '../../../shared/src/models/user-role.model.js'
 import { UnauthorizedError } from '../errors/unauthorized.error.js'

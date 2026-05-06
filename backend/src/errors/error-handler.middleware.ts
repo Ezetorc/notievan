@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from 'express'
 import { ZodError } from 'zod'
-import { env } from '../configuration/env.configuration.js'
+import { env } from '../shared/configuration/env.configuration.js'
 import { CustomError } from './custom.error.js'
 import { getErrorMessage } from './utilities/get-error-message.utility.js'
 

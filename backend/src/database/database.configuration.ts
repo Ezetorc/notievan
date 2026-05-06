@@ -1,4 +1,4 @@
-import { env } from '../configuration/env.configuration.js'
+import { env } from '../shared/configuration/env.configuration.js'
 import { Pool } from 'pg'
 import { drizzle as drizzleNeon } from 'drizzle-orm/neon-http'
 import { drizzle as drizzlePg } from 'drizzle-orm/node-postgres'
