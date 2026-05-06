@@ -27,7 +27,7 @@ export class UsersController {
 		const { role } = RoleParamDto.parse(request.body)
 		const user = await UsersService.updateRole(id, role)
 
-		return response.json(user)
+		return response.json(new UserOut(user))
 	}
 
 	static async getAll(request: Request, response: Response) {
@@ -54,6 +54,6 @@ export class UsersController {
 		const data = UpdateUserDto.parse(request.body)
 		const user = await UsersService.update(id, data)
 
-		return response.json(user)
+		return response.json(new UserOut(user))
 	}
 }
