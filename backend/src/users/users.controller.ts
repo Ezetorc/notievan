@@ -9,13 +9,6 @@ import { ErrorCode } from '../../../shared/src/models/error-code.model.js'
 import { UnauthorizedError } from '../errors/unauthorized.error.js'
 
 export class UsersController {
-	static async getNameById(request: Request, response: Response) {
-		const { id } = CUIDParamDto.parse(request.params)
-		const name = await UsersService.getNameById(id)
-
-		return response.json(name)
-	}
-
 	static async getById(request: Request, response: Response) {
 		const { id } = CUIDParamDto.parse(request.params)
 

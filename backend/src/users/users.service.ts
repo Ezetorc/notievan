@@ -15,14 +15,6 @@ export class UsersService {
 		return user
 	}
 
-	static async getNameById(id: string) {
-		const name = await UsersRepository.findNameById(id)
-
-		if (!name) throw new NotFoundError(ErrorCode.USER_NOT_FOUND)
-
-		return name
-	}
-
 	static async updateRole(id: string, role: UserRole) {
 		const user = await UsersRepository.updateRole(id, role)
 
@@ -50,11 +42,13 @@ export class UsersService {
 
 	static async update(id: string, data: UpdateUserDtoType) {
 		const user = await UsersService.getById(id)
+		const nameWannaBeUpdated = data.name && data.name !== user.name
 
-		if (data.name && data.name !== user.name) {
+		if (nameWannaBeUpdated) {
 			const existingUser = await UsersRepository.findByName(data.name)
+			const nameAlreadyExists = existingUser && existingUser.id !== id
 
-			if (existingUser && existingUser.id !== id) {
+			if (nameAlreadyExists) {
 				throw new ConflictError(ErrorCode.NAME_IN_USE)
 			}
 		}

@@ -14,6 +14,4 @@ UsersRouter.patch(
 	UsersController.updateRole
 )
 
-UsersRouter.get('/:id/name', UsersController.getNameById)
-
 UsersRouter.patch('/:id', authMiddleware(), UsersController.update)
