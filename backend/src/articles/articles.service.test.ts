@@ -8,6 +8,7 @@ import { userMock } from '../users/users.mock.js'
 import { CloudinaryService } from '../shared/services/cloudinary/cloudinary.service.js'
 import type { CreateArticleDtoType } from '../../../shared/src/dtos/in/create-article.dto.js'
 import { BadRequestError } from '../errors/bad-request.error.js'
+import { ArticleImageService } from './article-image.service.js'
 
 vi.mock('sharp', () => {
 	return {
@@ -134,7 +135,7 @@ describe('ArticlesService', () => {
 				.mockResolvedValue(true)
 
 			const cloudinaryMock = vi
-				.spyOn(CloudinaryService, 'updateImage')
+				.spyOn(ArticleImageService, 'updateImage')
 				.mockResolvedValue(undefined)
 
 			const data = { title: 'Updated title' }

@@ -3,12 +3,13 @@
 	"type": "module",
 	"scripts": {
 		"build": "tsup src/index.ts --format esm --out-dir dist --minify",
-		"dev": "npm run build && node --env-file=./.env dist/index.js",
+		"dev": "tsx watch --env-file=.env src/index.ts",
 		"lint": "npx @biomejs/biome lint --write",
 		"format": "npx @biomejs/biome format --write",
 		"test": "vitest"
 	},
 	"dependencies": {
+		"@napi-rs/canvas": "^1.0.0",
 		"@neondatabase/serverless": "^1.1.0",
 		"@paralleldrive/cuid2": "^3.3.0",
 		"bcrypt": "^6.0.0",

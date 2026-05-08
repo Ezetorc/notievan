@@ -1,22 +1,22 @@
-import type { Article } from '../../../../../shared/src/models/article.model.js'
 import cloudinary from './cloudinary.configuration.js'
 
 export class CloudinaryService {
-	private static readonly WIDTH = 800
-
-	static async upload(
-		buffer: Buffer,
-		fileName: string,
-		folder = 'articles'
-	): Promise<{
+	static async upload(params: {
+		buffer: Buffer
+		fileName: string
+		folder: string
+		transformations?: unknown[]
+	}): Promise<{
 		secureUrl: string
 		publicId: string
 	}> {
+		const { buffer, fileName, folder, transformations = [] } = params
+
 		const result = await CloudinaryService.uploadStream(buffer, {
 			folder,
 			public_id: `${Date.now()}-${fileName}`,
 			resource_type: 'image',
-			transformation: CloudinaryService.buildTransformations()
+			transformation: transformations
 		})
 
 		return {
@@ -29,28 +29,30 @@ export class CloudinaryService {
 		await CloudinaryService.destroy(publicId)
 	}
 
-	static async updateImage(params: {
-		article: Article
-		file?: {
-			buffer: Buffer
-			originalname?: string
-		}
-		body: Record<string, unknown>
-	}) {
-		const { file, article, body } = params
-
-		if (!file) {
-			return
+	static extractPublicId(url?: string | null): string | null {
+		if (!url) {
+			return null
 		}
 
-		await CloudinaryService.deletePrevious(article.image)
-
-		const image = await CloudinaryService.upload(
-			file.buffer,
-			file.originalname ?? article.title
+		const match = url.match(
+			/\/upload\/(?:v\d+\/)?(.+)\.(jpg|jpeg|png|gif|webp)$/
 		)
 
-		body.image = image.secureUrl
+		return match?.[1] ? decodeURIComponent(match[1]) : null
+	}
+
+	static optimizeUrl(params: {
+		url: string
+		width?: number
+		quality?: string
+	}) {
+		const { url, width = 800, quality = 'auto' } = params
+
+		if (!url.includes('/upload/')) {
+			return url
+		}
+
+		return url.replace('/upload/', `/upload/f_auto,q_${quality},w_${width}/`)
 	}
 
 	private static uploadStream(buffer: Buffer, options: any) {
@@ -69,45 +71,5 @@ export class CloudinaryService {
 				err ? reject(err) : resolve()
 			)
 		})
-	}
-
-	private static async deletePrevious(url?: string | null) {
-		const id = CloudinaryService.extractPublicId(url)
-		if (!id) {
-			return
-		}
-
-		await CloudinaryService.delete(id)
-	}
-
-	static extractPublicId(url?: string | null): string | null {
-		if (!url) {
-			return null
-		}
-
-		const match = url.match(
-			/\/upload\/(?:v\d+\/)?(.+)\.(jpg|jpeg|png|gif|webp)$/
-		)
-
-		return match?.[1] ? decodeURIComponent(match[1]) : null
-	}
-
-	private static buildTransformations() {
-		return [
-			{ width: CloudinaryService.WIDTH, crop: 'limit' },
-			{ quality: 'auto' },
-			{ fetch_format: 'auto' }
-		]
-	}
-
-	static optimizeUrl(url: string): string {
-		if (!url.includes('/upload/')) {
-			return url
-		}
-
-		return url.replace(
-			'/upload/',
-			`/upload/f_auto,q_auto,w_${CloudinaryService.WIDTH}/`
-		)
 	}
 }

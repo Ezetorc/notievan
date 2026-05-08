@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ArticlesService } from './articles.service.js'
 import { articleMock } from './articles.mock.js'
 import { ArticlesController } from './articles.controller.js'
-import type { UpdateArticleType } from '../../../shared/src/dtos/in/update-article.dto.js'
+import type { UpdateArticleDtoType } from '../../../shared/src/dtos/in/update-article.dto.js'
 import type { CreateArticleDtoType } from '../../../shared/src/dtos/in/create-article.dto.js'
 import { ArticleOut } from '../../../shared/src/dtos/out/article-out.dto.js'
 import { ArticlePreviewOut } from '../../../shared/src/dtos/out/article-preview-out.dto.js'
@@ -69,7 +69,9 @@ describe('ArticlesController', () => {
 
 	describe('update', () => {
 		it('should update the article by id', async () => {
-			const updateArticleDto: UpdateArticleType = { title: 'Updated new title' }
+			const updateArticleDto: UpdateArticleDtoType = {
+				title: 'Updated new title'
+			}
 			const mockRequest = {
 				params: { id: articleMock.id },
 				user: { id: articleMock.authorId },

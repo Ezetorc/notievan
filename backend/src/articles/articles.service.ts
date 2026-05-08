@@ -1,10 +1,7 @@
 import { ArticlesRepository } from './articles.repository.js'
-import { CloudinaryService } from '../shared/services/cloudinary/cloudinary.service.js'
-import sharp from 'sharp'
 import type { CreateArticleDtoType } from '../../../shared/src/dtos/in/create-article.dto.js'
 import { ErrorCode } from '../../../shared/src/models/error-code.model.js'
 import { NotFoundError } from '../errors/not-found.error.js'
-import { BadRequestError } from '../errors/bad-request.error.js'
 import { UnauthorizedError } from '../errors/unauthorized.error.js'
 import type { PaginatedResult } from '../../../shared/src/models/paginated-result.model.js'
 import { Cursor } from '../../../shared/src/models/cursor.model.js'
@@ -12,6 +9,7 @@ import type { ArticlePreview } from '../../../shared/src/models/article-preview.
 import type { ArticleWithAuthorName } from './article-with-author-name.model.js'
 import type { ArticlePreviewWithAuthorName } from './article-preview-with-author-name.model.js'
 import type { UpdateArticleDtoType } from '../../../shared/src/dtos/in/update-article.dto.js'
+import { ArticleImageService } from './article-image.service.js'
 
 export class ArticlesService {
 	static async getById(id: string): Promise<ArticleWithAuthorName> {
@@ -22,7 +20,7 @@ export class ArticlesService {
 		}
 		return {
 			...article,
-			image: CloudinaryService.optimizeUrl(article.image)
+			image: ArticleImageService.optimizeUrl(article.image)
 		}
 	}
 
@@ -40,14 +38,7 @@ export class ArticlesService {
 		}
 
 		await ArticlesRepository.delete(id)
-
-		if (article.image) {
-			const publicId = CloudinaryService.extractPublicId(article.image)
-
-			if (publicId) {
-				await CloudinaryService.delete(publicId)
-			}
-		}
+		await ArticleImageService.deletePreviousImage(article)
 
 		return true
 	}
@@ -64,10 +55,10 @@ export class ArticlesService {
 			throw new UnauthorizedError(ErrorCode.FORBIDDEN)
 		}
 
-		await CloudinaryService.updateImage({
+		await ArticleImageService.updateImage({
+			article,
 			file,
-			body: data,
-			article
+			body: data
 		})
 
 		return await ArticlesRepository.update(id, data)
@@ -78,31 +69,22 @@ export class ArticlesService {
 		userId: string,
 		file?: Express.Multer.File
 	): Promise<ArticleWithAuthorName> {
-		let image: string
-
-		if (file) {
-			const optimizedBuffer = await sharp(file.buffer)
-				.resize(1200)
-				.webp({ quality: 75 })
-				.toBuffer()
-
-			const uploadResult = await CloudinaryService.upload(
-				optimizedBuffer,
-				file.originalname
-			)
-
-			image = uploadResult.secureUrl
-		} else if (data.image) {
-			image = data.image
-		} else {
-			throw new BadRequestError(ErrorCode.IMAGE_NOT_FOUND)
-		}
+		const articleImage = await ArticleImageService.uploadImage({
+			file,
+			data
+		})
 
 		const article = await ArticlesRepository.create({
 			...data,
-			image,
+			image: articleImage,
 			authorId: userId
 		})
+
+		void ArticleImageService.createPost({
+			title: data.title,
+			imageUrl: articleImage,
+			articleId: article.id
+		}).catch(console.error)
 
 		return article
 	}
@@ -115,7 +97,7 @@ export class ArticlesService {
 
 		const mapped = articles.map((article) => ({
 			...article,
-			image: CloudinaryService.optimizeUrl(article.image)
+			image: ArticleImageService.optimizeUrl(article.image)
 		}))
 
 		const lastArticle = articles[articles.length - 1]
@@ -135,7 +117,7 @@ export class ArticlesService {
 
 		const mapped = articles.map((article) => ({
 			...article,
-			image: CloudinaryService.optimizeUrl(article.image)
+			image: ArticleImageService.optimizeUrl(article.image)
 		}))
 
 		const lastArticle = articles[articles.length - 1]
@@ -160,7 +142,7 @@ export class ArticlesService {
 
 		return articles.map((article) => ({
 			...article,
-			image: CloudinaryService.optimizeUrl(article.image)
+			image: ArticleImageService.optimizeUrl(article.image)
 		}))
 	}
 }
