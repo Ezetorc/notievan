@@ -1,11 +1,5 @@
 import { env } from '../configuration/env.configuration.js'
 
-type InstagramApiResponse<T> = T & {
-	error?: {
-		message: string
-	}
-}
-
 export class InstagramService {
 	private static readonly BASE_URL =
 		`https://graph.facebook.com/v25.0/${env.instagram.businessAccountId}`
@@ -14,24 +8,52 @@ export class InstagramService {
 		endpoint: string,
 		body: Record<string, unknown>
 	): Promise<T> {
+		const payload = {
+			...body,
+			access_token: env.instagram.accessToken
+		}
+
+		console.log('[Instagram] Request:', {
+			endpoint,
+			body: {
+				...body,
+				access_token: '[HIDDEN]'
+			}
+		})
+
 		const response = await fetch(`${InstagramService.BASE_URL}${endpoint}`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({
-				...body,
-				access_token: env.instagram.accessToken
-			})
+			body: JSON.stringify(payload)
 		})
 
-		const data = (await response.json()) as InstagramApiResponse<T>
+		const text = await response.text()
 
-		if (!response.ok) {
-			throw new Error(data.error?.message ?? 'Instagram API error')
+		console.log('[Instagram] Raw response:', text)
+
+		let data: any
+
+		try {
+			data = JSON.parse(text)
+		} catch {
+			throw new Error(`Invalid JSON response: ${text}`)
 		}
 
-		return data
+		if (!response.ok) {
+			console.error('[Instagram] Error:', {
+				status: response.status,
+				statusText: response.statusText,
+				data
+			})
+
+			throw new Error(JSON.stringify(data, null, 2))
+		}
+
+		console.log('[Instagram] Success:', data)
+
+		return data as T
 	}
 
 	private static async createMedia(params: {
@@ -42,6 +64,7 @@ export class InstagramService {
 	}> {
 		return await InstagramService.request('/media', {
 			image_url: params.imageUrl,
+
 			caption: params.caption
 		})
 	}
@@ -55,10 +78,19 @@ export class InstagramService {
 	}
 
 	static async createPost(params: { imageUrl: string; caption: string }) {
+		console.log('[Instagram] Creating media...')
+
 		const media = await InstagramService.createMedia({
 			imageUrl: params.imageUrl,
+
 			caption: params.caption
 		})
+
+		console.log('[Instagram] Media created:', media)
+
+		await new Promise((resolve) => setTimeout(resolve, 5000))
+
+		console.log('[Instagram] Publishing media...')
 
 		return await InstagramService.publishMedia(media.id)
 	}
