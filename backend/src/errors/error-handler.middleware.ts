@@ -29,7 +29,10 @@ export function errorHandlerMiddleware() {
 			name: err?.name
 		}
 
-		console.error('[ErrorHandlerMiddleware] Error: ', full_information)
+		console.error(
+			'[ErrorHandlerMiddleware] Error captured (full information): ',
+			full_information
+		)
 
 		return response.status(500).json({
 			error: ErrorCode.UNEXPECTED_ERROR,

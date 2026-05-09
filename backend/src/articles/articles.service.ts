@@ -80,11 +80,11 @@ export class ArticlesService {
 			authorId: userId
 		})
 
-		void ArticleImageService.createPost({
+		await ArticleImageService.createPost({
 			title: data.title,
 			imageUrl: articleImage,
 			articleId: article.id
-		}).catch(console.error)
+		})
 
 		return article
 	}
