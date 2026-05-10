@@ -4,160 +4,147 @@ import { BadRequestError } from '../errors/bad-request.error.js'
 import { CloudinaryService } from '../shared/services/cloudinary/cloudinary.service.js'
 import { ErrorCode } from '../../../shared/src/models/error-code.model.js'
 import type { CreateArticleDtoType } from '../../../shared/src/dtos/in/create-article.dto.js'
-import { InstagramService } from '../shared/services/instagram.service.js'
-import { env } from '../shared/configuration/env.configuration.js'
-import { TemplatedService } from '../shared/services/templated.service.js'
+import { ImageService } from '../shared/services/image.service.js'
+import Handlebars from 'handlebars'
+import fileSystem from 'node:fs/promises'
+import path from 'node:path'
+import sanitizeHtml from 'sanitize-html';
 
 export class ArticleImageService {
-	private static readonly IMAGE_WIDTH = 800
-	private static readonly TEMPLATED_TEMPLATE_ID =
-		'11759b87-a51b-4127-a4b7-18c2bedec2c5'
+  private static readonly IMAGE_WIDTH = 800
+  private static readonly ARTICLES_FOLDER = 'articles'
+  private static readonly INSTAGRAM_POSTS_FOLDER = 'instagram/posts'
+  private static readonly ARTICLE_POST_TEMPLATE_PATH: string[] = [
+    'src',
+    'articles',
+    'article-post.template.hbs'
+  ]
 
-	static async generate({
-		title,
-		imageUrl
-	}: {
-		title: string
-		imageUrl?: string
-	}): Promise<string> {
-		const result = await TemplatedService.upload({
-			templateId: ArticleImageService.TEMPLATED_TEMPLATE_ID,
-			layers: {
-				title: {
-					text: title
-				},
-				image: {
-					image_url: imageUrl
-				}
-			},
-			format: 'jpg'
-		})
+  static async uploadPostImage({
+    title,
+    imageUrl
+  }: {
+    title: string
+    imageUrl?: string
+  }): Promise<string> {
+    const templatePath = path.join(
+      process.cwd(),
+      ...ArticleImageService.ARTICLE_POST_TEMPLATE_PATH
+    )
+    const template = await fileSystem.readFile(templatePath, 'utf-8')
+    const compiled = Handlebars.compile(template)
+    const html = compiled({
+      title,
+      imageUrl
+    })
+    const sanitizedHtml = sanitizeHtml(html)
 
-		return result.render_url
-	}
+    const buffer = await new ImageService().generate({
+      width: 1080,
+      height: 1350,
+      html: sanitizedHtml
+    })
 
-	static optimizeUrl(url: string): string {
-		if (!url) {
-			return undefined
-		}
+    const postImageUrl = await CloudinaryService.upload({
+      buffer,
+      folder: ArticleImageService.INSTAGRAM_POSTS_FOLDER,
+      fileName: `${Date.now()}-${title}.jpg`
+    })
 
-		return CloudinaryService.optimizeUrl({
-			url,
-			width: ArticleImageService.IMAGE_WIDTH,
-			quality: '75'
-		})
-	}
+    return postImageUrl.secureUrl
+  }
 
-	static async updateImage(params: {
-		article: Article
-		file?: {
-			buffer: Buffer
-			originalname?: string
-		}
-		body: Record<string, unknown>
-	}) {
-		const { article, file, body } = params
+  static optimizeUrl(url: string): string {
+    if (!url) {
+      return undefined
+    }
 
-		if (!file) {
-			return
-		}
+    return CloudinaryService.optimizeUrl({
+      url,
+      width: ArticleImageService.IMAGE_WIDTH,
+      quality: '75'
+    })
+  }
 
-		const previousPublicId = CloudinaryService.extractPublicId(article.image)
+  static async updateArticleImage(params: {
+    article: Article
+    file?: {
+      buffer: Buffer
+      originalname?: string
+    }
+    body: Record<string, unknown>
+  }): Promise<void> {
+    const { article, file, body } = params
 
-		if (previousPublicId) {
-			await CloudinaryService.delete(previousPublicId)
-		}
+    if (!file) {
+      return
+    }
 
-		const image = await CloudinaryService.upload({
-			buffer: file.buffer,
-			fileName: file.originalname ?? article.title,
-			folder: 'articles',
-			transformations: [
-				{
-					width: 800,
-					crop: 'limit'
-				},
-				{
-					quality: 'auto'
-				},
-				{
-					fetch_format: 'auto'
-				}
-			]
-		})
+    const previousPublicId = CloudinaryService.extractPublicId(article.image)
 
-		body.image = image.secureUrl
-	}
+    if (previousPublicId) {
+      await CloudinaryService.delete(previousPublicId)
+    }
 
-	static async uploadImage({
-		file,
-		data
-	}: {
-		file?: Express.Multer.File
-		data: CreateArticleDtoType
-	}) {
-		let image: string
+    const image = await CloudinaryService.upload({
+      buffer: file.buffer,
+      fileName: file.originalname ?? article.title,
+      folder: ArticleImageService.ARTICLES_FOLDER,
+      transformations: [
+        {
+          width: 800,
+          crop: 'limit'
+        },
+        {
+          quality: 'auto'
+        },
+        {
+          fetch_format: 'auto'
+        }
+      ]
+    })
 
-		if (file) {
-			const optimizedBuffer = await sharp(file.buffer)
-				.resize(1200)
-				.webp({ quality: 75 })
-				.toBuffer()
+    body.image = image.secureUrl
+  }
 
-			const uploadResult = await CloudinaryService.upload({
-				buffer: optimizedBuffer,
-				fileName: file.originalname,
-				folder: 'articles'
-			})
+  static async uploadArticleImage({
+    file,
+    data
+  }: {
+    file?: Express.Multer.File
+    data: CreateArticleDtoType
+  }): Promise<string> {
+    let image: string
 
-			image = uploadResult.secureUrl
-		} else if (data.image) {
-			image = data.image
-		} else {
-			throw new BadRequestError(ErrorCode.IMAGE_NOT_FOUND)
-		}
+    if (file) {
+      const optimizedBuffer = await sharp(file.buffer)
+        .resize(1200)
+        .webp({ quality: 75 })
+        .toBuffer()
 
-		return image
-	}
+      const uploadResult = await CloudinaryService.upload({
+        buffer: optimizedBuffer,
+        fileName: file.originalname,
+        folder: ArticleImageService.ARTICLES_FOLDER
+      })
 
-	static async deletePreviousImage(article: Article) {
-		if (article.image) {
-			const publicId = CloudinaryService.extractPublicId(article.image)
+      image = uploadResult.secureUrl
+    } else if (data.image) {
+      image = data.image
+    } else {
+      throw new BadRequestError(ErrorCode.IMAGE_NOT_FOUND)
+    }
 
-			if (publicId) {
-				await CloudinaryService.delete(publicId)
-			}
-		}
-	}
+    return image
+  }
 
-	static async createPost({
-		title,
-		imageUrl,
-		articleId
-	}: {
-		title: string
-		imageUrl?: string
-		articleId: string
-	}): Promise<void> {
-		if (env.nodeEnv !== 'production') {
-			return
-		}
+  static async deleteArticleImage(article: Article): Promise<void> {
+    if (article.image) {
+      const publicId = CloudinaryService.extractPublicId(article.image)
 
-		const postImage = await ArticleImageService.generate({
-			title,
-			imageUrl
-		})
-
-		await InstagramService.createPost({
-			imageUrl: postImage,
-			caption: `⭐ NUEVO ARTÍCULO
-
-    ${title}
-
-    👉 Leer completo:
-    https://notievan.vercel.app/articulos/${articleId}
-
-    #NotiEvan #Noticias`
-		})
-	}
+      if (publicId) {
+        await CloudinaryService.delete(publicId)
+      }
+    }
+  }
 }

@@ -9,7 +9,10 @@ import { ErrorCode } from '../../../shared/src/models/error-code.model.js'
 import { UnauthorizedError } from '../errors/unauthorized.error.js'
 
 export class UsersController {
-	static async getById(request: Request, response: Response) {
+	static async getById(
+		request: Request,
+		response: Response
+	): Promise<Response> {
 		const { id } = CUIDParamDto.parse(request.params)
 
 		if (request.user.id !== id) {
@@ -22,7 +25,10 @@ export class UsersController {
 		return response.json(userOut)
 	}
 
-	static async updateRole(request: Request, response: Response) {
+	static async updateRole(
+		request: Request,
+		response: Response
+	): Promise<Response> {
 		const { id } = CUIDParamDto.parse(request.params)
 		const { role } = RoleParamDto.parse(request.body)
 		const user = await UsersService.updateRole(id, role)
@@ -31,7 +37,7 @@ export class UsersController {
 		return response.json(userOut)
 	}
 
-	static async getAll(request: Request, response: Response) {
+	static async getAll(request: Request, response: Response): Promise<Response> {
 		const { limit, cursor } = PaginationParamsDto.parse(request.query)
 		const result = await UsersService.getAll({
 			limit,
@@ -44,7 +50,7 @@ export class UsersController {
 		})
 	}
 
-	static async update(request: Request, response: Response) {
+	static async update(request: Request, response: Response): Promise<Response> {
 		const { id } = CUIDParamDto.parse(request.params)
 
 		if (request.user.id !== id) {

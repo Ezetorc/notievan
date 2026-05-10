@@ -1,3 +1,4 @@
+import type { UploadApiResponse } from 'cloudinary'
 import cloudinary from './cloudinary.configuration.js'
 
 export class CloudinaryService {
@@ -45,7 +46,7 @@ export class CloudinaryService {
 		url: string
 		width?: number
 		quality?: string
-	}) {
+	}): string {
 		const { url, width = 800, quality = 'auto' } = params
 
 		if (!url.includes('/upload/')) {
@@ -55,8 +56,11 @@ export class CloudinaryService {
 		return url.replace('/upload/', `/upload/f_auto,q_${quality},w_${width}/`)
 	}
 
-	private static uploadStream(buffer: Buffer, options: any) {
-		return new Promise<any>((resolve, reject) => {
+	private static uploadStream(
+		buffer: Buffer,
+		options: any
+	): Promise<UploadApiResponse> {
+		return new Promise<UploadApiResponse>((resolve, reject) => {
 			const stream = cloudinary.uploader.upload_stream(options, (err, res) =>
 				err || !res ? reject(err) : resolve(res)
 			)

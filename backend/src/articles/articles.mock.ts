@@ -1,7 +1,7 @@
-import type { Article } from '../../../shared/src/models/article.model.js'
 import { userMock } from '../users/users.mock.js'
+import type { ArticleWithAuthorName } from './article-with-author-name.model.js'
 
-export const articleMock: Article & { authorName: string } = {
+export const articleMock: ArticleWithAuthorName = {
 	authorId: userMock.id,
 	authorName: 'Juan Perez',
 	createdAt: new Date('2024-03-15T10:30:00Z'),

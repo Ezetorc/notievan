@@ -7,7 +7,7 @@ import { CommentOut } from '../../../shared/src/dtos/out/comment-out.dto.js'
 import { Cursor } from '../../../shared/src/models/cursor.model.js'
 
 export class CommentsController {
-	static async create(request: Request, response: Response) {
+	static async create(request: Request, response: Response): Promise<Response> {
 		const { content, articleId } = CreateCommentDto.parse(request.body)
 		const comment = await CommentsService.create(
 			content,
@@ -19,7 +19,10 @@ export class CommentsController {
 		return response.status(201).json(commentOut)
 	}
 
-	static async getAllOfArticle(request: Request, response: Response) {
+	static async getAllOfArticle(
+		request: Request,
+		response: Response
+	): Promise<Response> {
 		const { id } = CUIDParamDto.parse(request.params)
 		const { limit, cursor } = PaginationParamsDto.parse(request.query)
 		const decodedCursor = cursor ? Cursor.decode(cursor) : undefined
@@ -35,7 +38,7 @@ export class CommentsController {
 		})
 	}
 
-	static async delete(request: Request, response: Response) {
+	static async delete(request: Request, response: Response): Promise<Response> {
 		const userId = request.user.id
 		const { id } = CUIDParamDto.parse(request.params)
 		const success = await CommentsService.delete(id, userId)

@@ -10,7 +10,7 @@ export function usePaginatedAccountArticles({
 	const query = useInfiniteQuery({
 		queryKey: QueryKeys.Articles.Multiple.Account(limit),
 
-		queryFn: async ({ pageParam }: { pageParam: string | undefined }) => {
+		queryFn: async ({ pageParam }: { pageParam?: string }) => {
 			return ArticlesService.getOwn({
 				cursor: pageParam,
 				limit

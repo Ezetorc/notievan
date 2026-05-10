@@ -1,4 +1,3 @@
-import type { Comment } from '../../../shared/src/models/comment.model.js'
 import { Cursor } from '../../../shared/src/models/cursor.model.js'
 import { ErrorCode } from '../../../shared/src/models/error-code.model.js'
 import type { PaginatedResult } from '../../../shared/src/models/paginated-result.model.js'
@@ -33,7 +32,7 @@ export class CommentsService {
 		articleId: string,
 		limit: number,
 		cursor?: Cursor
-	): Promise<PaginatedResult<Comment & { authorName: string }>> {
+	): Promise<PaginatedResult<CommentWithAuthorName>> {
 		const comments = await CommentsRepository.getAllOfArticle(
 			articleId,
 			limit,

@@ -25,8 +25,6 @@ const envSchema = z.object({
 		.string()
 		.min(1, 'INSTAGRAM_ACCESS_TOKEN is required'),
 
-	TEMPLATED_API_KEY: z.string().min(1, 'TEMPLATED_API_KEY is required'),
-
 	CLOUDINARY_CLOUD_NAME: z.string().min(1, 'CLOUDINARY_CLOUD_NAME is required'),
 
 	CLOUDINARY_API_KEY: z.string().min(1, 'CLOUDINARY_API_KEY is required'),
@@ -55,8 +53,7 @@ const {
 	JWT_SECRET,
 	CLOUDINARY_API_KEY,
 	CLOUDINARY_API_SECRET,
-	CLOUDINARY_CLOUD_NAME,
-	TEMPLATED_API_KEY
+	CLOUDINARY_CLOUD_NAME
 } = parsed.data
 
 export const env = {
@@ -77,8 +74,5 @@ export const env = {
 		cloudName: CLOUDINARY_CLOUD_NAME,
 		apiKey: CLOUDINARY_API_KEY,
 		apiSecret: CLOUDINARY_API_SECRET
-	},
-	templated: {
-		apiKey: TEMPLATED_API_KEY
 	}
 }

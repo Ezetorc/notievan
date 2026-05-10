@@ -1,4 +1,3 @@
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { lazy, Suspense, useEffect } from 'react'
 import { Route, Switch } from 'wouter'
 import { Header } from './components/Header'
@@ -79,7 +78,6 @@ export default function App() {
 					/>
 					<Route component={LazyNotFoundPage}></Route>
 				</Switch>
-				<ReactQueryDevtools />
 			</main>
 		</Suspense>
 	)

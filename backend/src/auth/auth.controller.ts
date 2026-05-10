@@ -6,7 +6,7 @@ import { SignUpDto } from '../../../shared/src/dtos/in/sign-up.dto.js'
 import { SignInDto } from '../../../shared/src/dtos/in/sign-in.dto.js'
 
 export class AuthController {
-	static async signUp(request: Request, response: Response) {
+	static async signUp(request: Request, response: Response): Promise<Response> {
 		const { email, password, name } = SignUpDto.parse(request.body)
 		const { user, token } = await AuthService.signUp(name, email, password)
 		const userOut = new UserOut(user)
@@ -14,7 +14,7 @@ export class AuthController {
 		return response.status(201).json({ user: userOut, token })
 	}
 
-	static async signIn(request: Request, response: Response) {
+	static async signIn(request: Request, response: Response): Promise<Response> {
 		const { email, password } = SignInDto.parse(request.body)
 		const { user, token } = await AuthService.signIn(email, password)
 		const userOut = new UserOut(user)
@@ -22,7 +22,10 @@ export class AuthController {
 		return response.json({ user: userOut, token })
 	}
 
-	static async getSelf(request: Request, response: Response) {
+	static async getSelf(
+		request: Request,
+		response: Response
+	): Promise<Response> {
 		const user = await UsersService.getById(request.user.id)
 		const userOut = new UserOut(user)
 

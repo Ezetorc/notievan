@@ -5,11 +5,12 @@ import { NotFoundError } from '../errors/not-found.error.js'
 import { UnauthorizedError } from '../errors/unauthorized.error.js'
 import type { PaginatedResult } from '../../../shared/src/models/paginated-result.model.js'
 import { Cursor } from '../../../shared/src/models/cursor.model.js'
-import type { ArticlePreview } from '../../../shared/src/models/article-preview.model.js'
 import type { ArticleWithAuthorName } from './article-with-author-name.model.js'
 import type { ArticlePreviewWithAuthorName } from './article-preview-with-author-name.model.js'
 import type { UpdateArticleDtoType } from '../../../shared/src/dtos/in/update-article.dto.js'
 import { ArticleImageService } from './article-image.service.js'
+import { InstagramService } from '../shared/services/instagram.service.js'
+import { env } from '../shared/configuration/env.configuration.js'
 
 export class ArticlesService {
 	static async getById(id: string): Promise<ArticleWithAuthorName> {
@@ -22,6 +23,37 @@ export class ArticlesService {
 			...article,
 			image: ArticleImageService.optimizeUrl(article.image)
 		}
+	}
+
+	static async createPost({
+		title,
+		imageUrl,
+		articleId
+	}: {
+		title: string
+		imageUrl?: string
+		articleId: string
+	}): Promise<void> {
+		if (env.nodeEnv !== 'production') {
+			return
+		}
+
+		const postImageUrl = await ArticleImageService.uploadPostImage({
+			title,
+			imageUrl
+		})
+
+		await InstagramService.createPost({
+			imageUrl: postImageUrl,
+			caption: `⭐ NUEVO ARTÍCULO
+
+     ${title}
+
+     👉 Leer completo:
+     https://notievan.vercel.app/articulos/${articleId}
+
+     #NotiEvan #Noticias`
+		})
 	}
 
 	static async exists(id: string): Promise<boolean> {
@@ -38,7 +70,7 @@ export class ArticlesService {
 		}
 
 		await ArticlesRepository.delete(id)
-		await ArticleImageService.deletePreviousImage(article)
+		await ArticleImageService.deleteArticleImage(article)
 
 		return true
 	}
@@ -55,7 +87,7 @@ export class ArticlesService {
 			throw new UnauthorizedError(ErrorCode.FORBIDDEN)
 		}
 
-		await ArticleImageService.updateImage({
+		await ArticleImageService.updateArticleImage({
 			article,
 			file,
 			body: data
@@ -69,7 +101,7 @@ export class ArticlesService {
 		userId: string,
 		file?: Express.Multer.File
 	): Promise<ArticleWithAuthorName> {
-		const articleImage = await ArticleImageService.uploadImage({
+		const articleImage = await ArticleImageService.uploadArticleImage({
 			file,
 			data
 		})
@@ -80,7 +112,7 @@ export class ArticlesService {
 			authorId: userId
 		})
 
-		await ArticleImageService.createPost({
+		await ArticlesService.createPost({
 			title: data.title,
 			imageUrl: articleImage,
 			articleId: article.id
@@ -92,7 +124,7 @@ export class ArticlesService {
 	static async getAll(
 		limit: number,
 		cursor?: Cursor
-	): Promise<PaginatedResult<ArticlePreview & { authorName: string }>> {
+	): Promise<PaginatedResult<ArticlePreviewWithAuthorName>> {
 		const articles = await ArticlesRepository.getAll(limit, cursor)
 
 		const mapped = articles.map((article) => ({
@@ -112,7 +144,7 @@ export class ArticlesService {
 		limit: number,
 		userId: string,
 		cursor?: Cursor
-	): Promise<PaginatedResult<ArticlePreview & { authorName: string }>> {
+	): Promise<PaginatedResult<ArticlePreviewWithAuthorName>> {
 		const articles = await ArticlesRepository.getOwn(limit, userId, cursor)
 
 		const mapped = articles.map((article) => ({

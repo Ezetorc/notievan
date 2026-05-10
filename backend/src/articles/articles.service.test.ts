@@ -135,7 +135,7 @@ describe('ArticlesService', () => {
 				.mockResolvedValue(true)
 
 			const cloudinaryMock = vi
-				.spyOn(ArticleImageService, 'updateImage')
+				.spyOn(ArticleImageService, 'updateArticleImage')
 				.mockResolvedValue(undefined)
 
 			const data = { title: 'Updated title' }

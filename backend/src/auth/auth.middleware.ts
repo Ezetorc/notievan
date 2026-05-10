@@ -1,4 +1,4 @@
-import type { Request, Response, NextFunction } from 'express'
+import type { Request, Response, NextFunction, RequestHandler } from 'express'
 import type { UserRole } from '../../../shared/src/models/user-role.model.js'
 import { UnauthorizedError } from '../errors/unauthorized.error.js'
 import { ForbiddenError } from '../errors/forbidden.error.js'
@@ -7,7 +7,7 @@ import { JwtService } from '../shared/services/jwt.service.js'
 import { extractTokenFromRequest } from './utilities/extract-token-from-request.utility.js'
 import { UsersService } from '../users/users.service.js'
 
-export function authMiddleware(...requiredRoles: UserRole[]) {
+export function authMiddleware(...requiredRoles: UserRole[]): RequestHandler {
 	return async (request: Request, _response: Response, next: NextFunction) => {
 		const token = extractTokenFromRequest(request)
 		const payload = JwtService.validate(token)

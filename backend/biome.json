@@ -36,6 +36,19 @@
 			"trailingCommas": "none"
 		}
 	},
+	"html": {
+		"formatter": {
+			"enabled": true,
+			"indentStyle": "tab",
+			"indentWidth": 1,
+			"attributePosition": "auto",
+			"bracketSameLine": true,
+			"lineWidth": 100
+		},
+		"parser": {
+			"interpolation": true
+		}
+	},
 	"assist": {
 		"enabled": true,
 		"actions": {

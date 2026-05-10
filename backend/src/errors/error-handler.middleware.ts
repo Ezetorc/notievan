@@ -1,10 +1,15 @@
-import type { Request, Response, NextFunction } from 'express'
+import type {
+	Request,
+	Response,
+	NextFunction,
+	ErrorRequestHandler
+} from 'express'
 import { ZodError } from 'zod'
 import { env } from '../shared/configuration/env.configuration.js'
 import { CustomError } from './custom.error.js'
 import { ErrorCode } from '../../../shared/src/models/error-code.model.js'
 
-export function errorHandlerMiddleware() {
+export function errorHandlerMiddleware(): ErrorRequestHandler {
 	return (
 		error: unknown,
 		_request: Request,

@@ -10,7 +10,10 @@ import { ArticlePreviewOut } from '../../../shared/src/dtos/out/article-preview-
 import { Cursor } from '../../../shared/src/models/cursor.model.js'
 
 export class ArticlesController {
-	static async findById(request: Request, response: Response) {
+	static async findById(
+		request: Request,
+		response: Response
+	): Promise<Response> {
 		const { id } = CUIDParamDto.parse(request.params)
 		const article = await ArticlesService.getById(id)
 		const articleOut = new ArticleOut(article, article.authorName)
@@ -18,14 +21,14 @@ export class ArticlesController {
 		return response.json(articleOut)
 	}
 
-	static async delete(request: Request, response: Response) {
+	static async delete(request: Request, response: Response): Promise<Response> {
 		const { id } = CUIDParamDto.parse(request.params)
 		const success = await ArticlesService.delete(id, request.user.id)
 
 		return response.json(success)
 	}
 
-	static async update(request: Request, response: Response) {
+	static async update(request: Request, response: Response): Promise<Response> {
 		const { id } = CUIDParamDto.parse(request.params)
 		const data = UpdateArticleDto.parse(request.body)
 		const success = await ArticlesService.update(
@@ -38,7 +41,7 @@ export class ArticlesController {
 		return response.json(success)
 	}
 
-	static async create(request: Request, response: Response) {
+	static async create(request: Request, response: Response): Promise<Response> {
 		const data = CreateArticleDto.parse(request.body)
 		const article = await ArticlesService.create(
 			data,
@@ -50,7 +53,7 @@ export class ArticlesController {
 		return response.status(201).json(articleOut)
 	}
 
-	static async getAll(request: Request, response: Response) {
+	static async getAll(request: Request, response: Response): Promise<Response> {
 		const { limit, cursor } = PaginationParamsDto.parse(request.query)
 		const decodedCursor = cursor ? Cursor.decode(cursor) : undefined
 		const { data, nextCursor } = await ArticlesService.getAll(
@@ -66,7 +69,7 @@ export class ArticlesController {
 		})
 	}
 
-	static async getOwn(request: Request, response: Response) {
+	static async getOwn(request: Request, response: Response): Promise<Response> {
 		const { limit, cursor } = PaginationParamsDto.parse(request.query)
 		const decodedCursor = cursor ? Cursor.decode(cursor) : undefined
 		const { data, nextCursor } = await ArticlesService.getOwn(
@@ -83,7 +86,10 @@ export class ArticlesController {
 		})
 	}
 
-	static async getRandom(request: Request, response: Response) {
+	static async getRandom(
+		request: Request,
+		response: Response
+	): Promise<Response> {
 		const { omit } = OmitIdParamDto.parse(request.query)
 		const { limit } = PaginationParamsDto.parse(request.query)
 		const articles = await ArticlesService.getRandom(limit, omit)

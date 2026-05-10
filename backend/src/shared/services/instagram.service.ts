@@ -62,9 +62,8 @@ export class InstagramService {
 	}): Promise<{
 		id: string
 	}> {
-		return await InstagramService.request('/media', {
+		return await InstagramService.request<{ id: string }>('/media', {
 			image_url: params.imageUrl,
-
 			caption: params.caption
 		})
 	}
@@ -72,25 +71,25 @@ export class InstagramService {
 	private static async publishMedia(creationId: string): Promise<{
 		id: string
 	}> {
-		return await InstagramService.request('/media_publish', {
+		return await InstagramService.request<{
+			id: string
+		}>('/media_publish', {
 			creation_id: creationId
 		})
 	}
 
-	static async createPost(params: { imageUrl: string; caption: string }) {
-		console.log('[Instagram] Creating media...')
-
+	static async createPost({
+		imageUrl,
+		caption
+	}: {
+		imageUrl: string
+		caption: string
+	}) {
 		const media = await InstagramService.createMedia({
-			imageUrl: params.imageUrl,
+			imageUrl,
 
-			caption: params.caption
+			caption
 		})
-
-		console.log('[Instagram] Media created:', media)
-
-		await new Promise((resolve) => setTimeout(resolve, 5000))
-
-		console.log('[Instagram] Publishing media...')
 
 		return await InstagramService.publishMedia(media.id)
 	}
