@@ -2,7 +2,7 @@
 	"name": "@app/backend",
 	"type": "module",
 	"scripts": {
-		"build": "tsup src/index.ts --format esm --out-dir dist --minify",
+		"build": "tsup src/index.ts --format esm --out-dir dist --minify && cpy 'src/**/*.hbs' dist",
 		"dev": "tsx watch --env-file=.env src/index.ts",
 		"lint": "npx @biomejs/biome lint --write",
 		"format": "npx @biomejs/biome format --write",
@@ -38,6 +38,7 @@
 		"@types/node": "^20.19.39",
 		"@types/pg": "^8.20.0",
 		"@types/sanitize-html": "^2.16.1",
+		"cpy-cli": "^7.0.0",
 		"tsup": "^8.5.1",
 		"tsx": "^4.21.0",
 		"typescript": "^5.9.3",
