@@ -1,21 +1,22 @@
 import { env } from '../configuration/env.configuration.js'
 
 export class InstagramService {
-	private static readonly BASE_URL =
-		`https://graph.facebook.com/v25.0/${env.instagram.businessAccountId}`
+	private static readonly BASE_URL = 'https://graph.facebook.com/v25.0'
 
 	private static async request<T>({
 		endpoint,
 		method = 'POST',
 		body,
-		query
+		query,
+		baseUrl = InstagramService.accountBaseUrl
 	}: {
 		endpoint: string
 		method?: 'GET' | 'POST'
 		body?: Record<string, unknown>
 		query?: Record<string, unknown>
+		baseUrl?: string
 	}): Promise<T> {
-		const url = new URL(`${InstagramService.BASE_URL}${endpoint}`)
+		const url = new URL(`${baseUrl}${endpoint}`)
 
 		url.searchParams.set('access_token', env.instagram.accessToken)
 
@@ -104,6 +105,7 @@ export class InstagramService {
 			const response = await InstagramService.request<{
 				status_code: string
 			}>({
+				baseUrl: InstagramService.BASE_URL,
 				endpoint: `/${creationId}`,
 				method: 'GET',
 				query: {
@@ -147,5 +149,9 @@ export class InstagramService {
 		await InstagramService.waitUntilMediaReady(media.id)
 
 		return await InstagramService.publishMedia(media.id)
+	}
+
+	private static get accountBaseUrl(): string {
+		return `${InstagramService.BASE_URL}/${env.instagram.businessAccountId}`
 	}
 }
