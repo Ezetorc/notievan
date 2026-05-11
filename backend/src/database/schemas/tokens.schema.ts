@@ -1,8 +1,8 @@
-import { pgTable, text } from 'drizzle-orm/pg-core'
+import { pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 
 export const tokens = pgTable('token', {
 	name: text('name').primaryKey(),
 	value: text('value').notNull(),
-	expiresAt: text('expiresAt').notNull(),
-	refreshedAt: text('refreshedAt').notNull()
+	expiresIn: timestamp('expiresIn').notNull(),
+	refreshedAt: timestamp('refreshedAt').defaultNow().notNull()
 })

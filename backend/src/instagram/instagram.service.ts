@@ -173,7 +173,7 @@ export class InstagramService {
 
 		await TokensService.update(InstagramService.ACCESS_TOKEN_NAME, {
 			value: data.access_token,
-			expiresAt: new Date(Date.now() + data.expires_in * 1000).toISOString()
+			expiresAt: new Date(data.expires_in).toISOString()
 		})
 	}
 }

@@ -1,6 +1,6 @@
 {
-	"id": "7ff5bb71-30a4-4d24-a294-78c440dd5ea0",
-	"prevId": "04d66cd0-19bf-4f7c-9b48-2b63516dac17",
+	"id": "b1f1cfb8-9fa0-45d6-8382-13513a5b7771",
+	"prevId": "0b955754-9b12-43de-b804-d321dc173d14",
 	"version": "7",
 	"dialect": "postgresql",
 	"tables": {
@@ -126,17 +126,18 @@
 					"primaryKey": false,
 					"notNull": true
 				},
-				"expiresAt": {
-					"name": "expiresAt",
-					"type": "text",
+				"expiresIn": {
+					"name": "expiresIn",
+					"type": "timestamp",
 					"primaryKey": false,
 					"notNull": true
 				},
 				"refreshedAt": {
 					"name": "refreshedAt",
-					"type": "text",
+					"type": "timestamp",
 					"primaryKey": false,
-					"notNull": true
+					"notNull": true,
+					"default": "now()"
 				}
 			},
 			"indexes": {},
