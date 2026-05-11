@@ -3,7 +3,7 @@ import { UsersRepository } from './users.repository.js'
 import { userMock } from './users.mock.js'
 import { UsersService } from './users.service.js'
 import { NotFoundError } from '../errors/not-found.error.js'
-import { userRole } from '../database/schema/user-role.schema.js'
+import { userRole } from '../database/schemas/user-role.schema.js'
 
 describe('UsersService', () => {
 	beforeEach(() => {

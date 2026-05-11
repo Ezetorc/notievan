@@ -21,10 +21,6 @@ const envSchema = z.object({
 		.string()
 		.min(1, 'INSTAGRAM_BUSINESS_ACCOUNT_ID is required'),
 
-	INSTAGRAM_ACCESS_TOKEN: z
-		.string()
-		.min(1, 'INSTAGRAM_ACCESS_TOKEN is required'),
-
 	CLOUDINARY_CLOUD_NAME: z.string().min(1, 'CLOUDINARY_CLOUD_NAME is required'),
 
 	CLOUDINARY_API_KEY: z.string().min(1, 'CLOUDINARY_API_KEY is required'),
@@ -48,7 +44,6 @@ const {
 	DATABASE_URL,
 	SHOW_FULL_ERRORS,
 	INSTAGRAM_BUSINESS_ACCOUNT_ID,
-	INSTAGRAM_ACCESS_TOKEN,
 	JWT_EXPIRES_IN,
 	JWT_SECRET,
 	CLOUDINARY_API_KEY,
@@ -62,8 +57,7 @@ export const env = {
 	databaseUrl: DATABASE_URL,
 	showFullErrors: SHOW_FULL_ERRORS,
 	instagram: {
-		businessAccountId: INSTAGRAM_BUSINESS_ACCOUNT_ID,
-		accessToken: INSTAGRAM_ACCESS_TOKEN
+		businessAccountId: INSTAGRAM_BUSINESS_ACCOUNT_ID
 	},
 	jwt: {
 		secret: JWT_SECRET,

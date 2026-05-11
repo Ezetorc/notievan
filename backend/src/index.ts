@@ -6,6 +6,7 @@ import { AuthRouter } from './auth/auth.router.js'
 import { CommentsRouter } from './comments/comments.router.js'
 import { errorHandlerMiddleware } from './errors/error-handler.middleware.js'
 import { UsersRouter } from './users/users.router.js'
+import { InstagramRouter } from './instagram/instagram.router.js'
 
 const app = express()
 
@@ -15,6 +16,7 @@ app.use('/auth', AuthRouter)
 app.use('/users', UsersRouter)
 app.use('/articles', ArticlesRouter)
 app.use('/comments', CommentsRouter)
+app.use('/instagram', InstagramRouter)
 app.use(errorHandlerMiddleware())
 
 app.listen(env.port)

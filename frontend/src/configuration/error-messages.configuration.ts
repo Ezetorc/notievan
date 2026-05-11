@@ -64,6 +64,7 @@ export const backendMessages: Record<ErrorCode, string> = {
 	ARTICLE_NOT_FOUND: 'Artículo no encontrado',
 	IMAGE_NOT_FOUND: 'Imágen no encontrada',
 
-	FORBIDDEN: 'No tienes permiso para realizar esta acción',
+  FORBIDDEN: 'No tienes permiso para realizar esta acción',
+  INSTAGRAM_ERROR: 'Error al obtener datos de Instagram',
 	UNEXPECTED_ERROR: 'Ocurrió un error inesperado'
 }

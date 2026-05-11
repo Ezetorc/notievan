@@ -1,7 +1,7 @@
 import type { UserRole } from '../../../shared/src/models/user-role.model.js'
 import { database } from '../database/database.configuration.js'
 import { eq, desc, and, lt, or } from 'drizzle-orm'
-import { users } from '../database/schema/users.schema.js'
+import { users } from '../database/schemas/users.schema.js'
 import type { Cursor } from '../../../shared/src/models/cursor.model.js'
 import type { User } from '../../../shared/src/models/user.model.js'
 import type { JWTUser } from '../auth/jwt-user.model.js'

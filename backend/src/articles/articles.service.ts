@@ -9,7 +9,7 @@ import type { ArticleWithAuthorName } from './article-with-author-name.model.js'
 import type { ArticlePreviewWithAuthorName } from './article-preview-with-author-name.model.js'
 import type { UpdateArticleDtoType } from '../../../shared/src/dtos/in/update-article.dto.js'
 import { ArticleImageService } from './article-image.service.js'
-import { InstagramService } from '../shared/services/instagram.service.js'
+import { InstagramService } from '../instagram/instagram.service.js'
 import { env } from '../shared/configuration/env.configuration.js'
 
 export class ArticlesService {
