@@ -5,15 +5,11 @@ import { CloudinaryService } from '../shared/services/cloudinary/cloudinary.serv
 import { ErrorCode } from '../../../shared/src/models/error-code.model.js'
 import type { CreateArticleDtoType } from '../../../shared/src/dtos/in/create-article.dto.js'
 import { ImageService } from '../shared/services/image.service.js'
-import Handlebars from 'handlebars'
-import fileSystem from 'node:fs/promises'
-import path from 'node:path'
 
 export class ArticleImageService {
 	private static readonly IMAGE_WIDTH = 800
 	private static readonly ARTICLES_FOLDER = 'articles'
 	private static readonly INSTAGRAM_POSTS_FOLDER = 'instagram/posts'
-	private static readonly ARTICLE_POST_TEMPLATE = 'article-post.template.hbs'
 
 	static async uploadPostImage({
 		title,
@@ -22,19 +18,7 @@ export class ArticleImageService {
 		title: string
 		imageUrl?: string
 	}): Promise<string> {
-		const templatePath = path.join(
-			path.dirname(new URL(import.meta.url).pathname),
-			ArticleImageService.ARTICLE_POST_TEMPLATE
-		)
-		const template = await fileSystem.readFile(templatePath, 'utf-8')
-		const compiled = Handlebars.compile(template)
-		const safeTitle = ArticleImageService.sanitizeTitle(title)
-		const safeImageUrl = ArticleImageService.sanitizeImageUrl(imageUrl)
-
-		const html = compiled({
-			title: safeTitle,
-			imageUrl: safeImageUrl
-		})
+		const html = ArticleImageService.getPostTemplate(title, imageUrl)
 
 		const buffer = await ImageService.generate({
 			width: 1080,
@@ -166,5 +150,104 @@ export class ArticleImageService {
 		} catch {
 			return undefined
 		}
+	}
+
+	static getPostTemplate(title: string, imageUrl: string): string {
+		const safeTitle = ArticleImageService.sanitizeTitle(title)
+		const safeImageUrl = ArticleImageService.sanitizeImageUrl(imageUrl)
+
+		return `<html>
+
+    <body>
+        <div class="canvas">
+            <h2>NUEVO</h2>
+
+            <img src="${safeImageUrl}"
+                class="article-image" />
+
+            <h1>${safeTitle}</h1>
+
+            <div class="footer">
+                <h2>ARTÍCULO</h2>
+                <h3>@noti.evan</h3>
+            </div>
+        </div>
+
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&family=Racing+Sans+One&display=swap');
+
+            body {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background: #222;
+                text-align: center;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            .footer {
+                margin-top: auto;
+            }
+
+            h1 {
+                color: #E10F00;
+                font-size: 80px;
+                margin-top: 16px;
+                font-weight: 300;
+                line-height: 100px;
+                transform: rotateZ(-3deg);
+                font-family: "Lexend", serif;
+            }
+
+            h2 {
+                font-size: 148px;
+                font-weight: bold;
+                color: #134abf;
+                font-family: "Racing Sans One", serif;
+            }
+
+            h3 {
+                color: #134abf;
+                font-size: 48px;
+                font-weight: 300;
+                font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif
+            }
+
+            .article-image {
+                width: 850px;
+                height: 500px;
+                object-fit: cover;
+                border-color: white;
+                border-width: 28px;
+                border-style: solid;
+                border-radius: 8px;
+                box-shadow: 10px 10px 40px #0005;
+                transform: rotateZ(-3deg);
+            }
+
+            .canvas {
+                width: 1080px;
+                height: 1350px;
+                position: relative;
+                overflow: hidden;
+                padding: 84px;
+                align-items: center;
+                display: flex;
+                flex-direction: column;
+
+                background: linear-gradient(336deg,
+                        rgba(255, 255, 255, 1) 20%,
+                        rgba(212, 120, 120, 1) 100%);
+            }
+        </style>
+    </body>
+
+    </html>
+`
 	}
 }
