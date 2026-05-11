@@ -1,8 +1,14 @@
 {
-	"functions": {
-		"api/**/*.ts": {
-			"memory": 1024,
-			"maxDuration": 10
-		}
-	}
+  "functions": {
+    "api/**/*.ts": {
+      "memory": 1024,
+      "maxDuration": 10
+    }
+  },
+  "crons": [
+    {
+      "path": "/internal/instagram/refresh-token",
+      "schedule": "0 0 */45 * *"
+    }
+  ]
 }
