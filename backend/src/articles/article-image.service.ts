@@ -8,12 +8,12 @@ import { ImageService } from '../shared/services/image.service.js'
 import Handlebars from 'handlebars'
 import fileSystem from 'node:fs/promises'
 import path from 'node:path'
-import sanitizeHtml from 'sanitize-html'
 
 export class ArticleImageService {
 	private static readonly IMAGE_WIDTH = 800
 	private static readonly ARTICLES_FOLDER = 'articles'
 	private static readonly INSTAGRAM_POSTS_FOLDER = 'instagram/posts'
+	private static readonly ARTICLE_POST_TEMPLATE = 'article-post.template.hbs'
 
 	static async uploadPostImage({
 		title,
@@ -24,20 +24,22 @@ export class ArticleImageService {
 	}): Promise<string> {
 		const templatePath = path.join(
 			path.dirname(new URL(import.meta.url).pathname),
-			'article-post.template.hbs'
+			ArticleImageService.ARTICLE_POST_TEMPLATE
 		)
 		const template = await fileSystem.readFile(templatePath, 'utf-8')
 		const compiled = Handlebars.compile(template)
-		const html = compiled({
-			title,
-			imageUrl
-		})
-		const sanitizedHtml = sanitizeHtml(html)
+		const safeTitle = ArticleImageService.sanitizeTitle(title)
+		const safeImageUrl = ArticleImageService.sanitizeImageUrl(imageUrl)
 
-		const buffer = await new ImageService().generate({
+		const html = compiled({
+			title: safeTitle,
+			imageUrl: safeImageUrl
+		})
+
+		const buffer = await ImageService.generate({
 			width: 1080,
 			height: 1350,
-			html: sanitizedHtml
+			html
 		})
 
 		const postImageUrl = await CloudinaryService.upload({
@@ -140,6 +142,29 @@ export class ArticleImageService {
 			if (publicId) {
 				await CloudinaryService.delete(publicId)
 			}
+		}
+	}
+
+	static sanitizeTitle(title: string): string {
+		return title.trim().replace(/\s+/g, ' ').slice(0, 120)
+	}
+
+	static sanitizeImageUrl(url?: string): string | undefined {
+		if (!url) {
+			return undefined
+		}
+
+		try {
+			const parsed = new URL(url)
+			const allowedProtocols = ['http:', 'https:']
+
+			if (!allowedProtocols.includes(parsed.protocol)) {
+				return undefined
+			}
+
+			return parsed.toString()
+		} catch {
+			return undefined
 		}
 	}
 }

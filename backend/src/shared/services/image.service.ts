@@ -3,33 +3,50 @@ import chromium from '@sparticuz/chromium'
 import { env } from '../configuration/env.configuration.js'
 
 export class ImageService {
-	private browserInstance: Browser = null
+	private static browserInstance: Browser | null = null
+	private static browserPromise: Promise<Browser> | null = null
 
-	async getBrowser(): Promise<Browser> {
-		if (this.browserInstance) {
-			return this.browserInstance
-		}
-
+	private static async launchBrowser(): Promise<Browser> {
 		if (env.nodeEnv === 'production') {
-			this.browserInstance = await playwright.launch({
+			return playwright.launch({
 				args: chromium.args,
 				executablePath: await chromium.executablePath(),
 				headless: true
 			})
-
-			return this.browserInstance
 		}
 
 		const { chromium: localChromium } = await import('playwright')
 
-		this.browserInstance = await localChromium.launch({
+		return localChromium.launch({
 			headless: true
 		})
-
-		return this.browserInstance
 	}
 
-	async generate({
+	static async getBrowser(): Promise<Browser> {
+		// Browser ya inicializado
+		if (ImageService.browserInstance) {
+			return ImageService.browserInstance
+		}
+
+		// Ya hay una inicialización en progreso
+		if (ImageService.browserPromise) {
+			return ImageService.browserPromise
+		}
+
+		// Crear lock
+		ImageService.browserPromise = ImageService.launchBrowser()
+
+		try {
+			ImageService.browserInstance = await ImageService.browserPromise
+
+			return ImageService.browserInstance
+		} finally {
+			// Limpiar lock aunque falle
+			ImageService.browserPromise = null
+		}
+	}
+
+	static async generate({
 		width,
 		height,
 		html
@@ -38,7 +55,7 @@ export class ImageService {
 		height: number
 		html: string
 	}): Promise<Buffer> {
-		const browser = await this.getBrowser()
+		const browser = await ImageService.getBrowser()
 
 		const page = await browser.newPage({
 			viewport: {
@@ -48,16 +65,18 @@ export class ImageService {
 			deviceScaleFactor: 2
 		})
 
-		await page.setContent(html, {
-			waitUntil: 'networkidle'
-		})
+		try {
+			await page.setContent(html, {
+				waitUntil: 'networkidle'
+			})
 
-		const buffer = await page.screenshot({
-			type: 'jpeg'
-		})
+			const buffer = await page.screenshot({
+				type: 'jpeg'
+			})
 
-		await page.close()
-
-		return buffer
+			return buffer
+		} finally {
+			await page.close()
+		}
 	}
 }
