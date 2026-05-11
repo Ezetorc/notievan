@@ -4,29 +4,39 @@ export class InstagramService {
 	private static readonly BASE_URL =
 		`https://graph.facebook.com/v25.0/${env.instagram.businessAccountId}`
 
-	private static async request<T>(
-		endpoint: string,
-		body: Record<string, unknown>
-	): Promise<T> {
-		const payload = {
-			...body,
-			access_token: env.instagram.accessToken
+	private static async request<T>({
+		endpoint,
+		method = 'POST',
+		body,
+		query
+	}: {
+		endpoint: string
+		method?: 'GET' | 'POST'
+		body?: Record<string, unknown>
+		query?: Record<string, unknown>
+	}): Promise<T> {
+		const url = new URL(`${InstagramService.BASE_URL}${endpoint}`)
+
+		url.searchParams.set('access_token', env.instagram.accessToken)
+
+		if (query) {
+			for (const [key, value] of Object.entries(query)) {
+				url.searchParams.set(key, String(value))
+			}
 		}
 
 		console.log('[Instagram] Request:', {
-			endpoint,
-			body: {
-				...body,
-				access_token: '[HIDDEN]'
-			}
+			method,
+			url: url.toString(),
+			body
 		})
 
-		const response = await fetch(`${InstagramService.BASE_URL}${endpoint}`, {
-			method: 'POST',
+		const response = await fetch(url.toString(), {
+			method,
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify(payload)
+			body: method === 'POST' ? JSON.stringify(body ?? {}) : undefined
 		})
 
 		const text = await response.text()
@@ -62,9 +72,13 @@ export class InstagramService {
 	}): Promise<{
 		id: string
 	}> {
-		return await InstagramService.request<{ id: string }>('/media', {
-			image_url: params.imageUrl,
-			caption: params.caption
+		return await InstagramService.request<{ id: string }>({
+			endpoint: '/media',
+			method: 'POST',
+			body: {
+				image_url: params.imageUrl,
+				caption: params.caption
+			}
 		})
 	}
 
@@ -73,9 +87,49 @@ export class InstagramService {
 	}> {
 		return await InstagramService.request<{
 			id: string
-		}>('/media_publish', {
-			creation_id: creationId
+		}>({
+			endpoint: '/media_publish',
+			method: 'POST',
+			body: {
+				creation_id: creationId
+			}
 		})
+	}
+
+	private static async waitUntilMediaReady(creationId: string): Promise<void> {
+		const maxAttempts = 10
+		const delayMs = 3000
+
+		for (let attempt = 0; attempt < maxAttempts; attempt++) {
+			const response = await InstagramService.request<{
+				status_code: string
+			}>({
+				endpoint: `/${creationId}`,
+				method: 'GET',
+				query: {
+					fields: 'status_code'
+				}
+			})
+
+			console.log('[Instagram] Media status:', response.status_code)
+
+			if (response.status_code === 'FINISHED') {
+				return
+			}
+
+			if (
+				response.status_code === 'ERROR' ||
+				response.status_code === 'EXPIRED'
+			) {
+				throw new Error(
+					`Instagram media processing failed: ${response.status_code}`
+				)
+			}
+
+			await new Promise((resolve) => setTimeout(resolve, delayMs))
+		}
+
+		throw new Error('Instagram media processing timeout')
 	}
 
 	static async createPost({
@@ -87,9 +141,10 @@ export class InstagramService {
 	}) {
 		const media = await InstagramService.createMedia({
 			imageUrl,
-
 			caption
 		})
+
+		await InstagramService.waitUntilMediaReady(media.id)
 
 		return await InstagramService.publishMedia(media.id)
 	}
