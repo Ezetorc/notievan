@@ -6,6 +6,6 @@ export const InstagramRouter = Router()
 
 InstagramRouter.post(
 	'/refresh-access-token',
-	authMiddleware('MANAGER'),
+	authMiddleware('ADMIN'),
 	InstagramController.refreshAccessToken
 )

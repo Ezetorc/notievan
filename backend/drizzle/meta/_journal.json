@@ -1,20 +1,27 @@
 {
-	"version": "7",
-	"dialect": "postgresql",
-	"entries": [
-		{
-			"idx": 0,
-			"version": "7",
-			"when": 1778534356742,
-			"tag": "0000_wise_exiles",
-			"breakpoints": true
-		},
-		{
-			"idx": 1,
-			"version": "7",
-			"when": 1778535469765,
-			"tag": "0001_overjoyed_sabretooth",
-			"breakpoints": true
-		}
-	]
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1778534356742,
+      "tag": "0000_wise_exiles",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1778535469765,
+      "tag": "0001_overjoyed_sabretooth",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1778536989514,
+      "tag": "0002_wandering_joystick",
+      "breakpoints": true
+    }
+  ]
 }

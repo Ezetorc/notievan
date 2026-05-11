@@ -7,7 +7,7 @@
   },
   "crons": [
     {
-      "path": "/internal/instagram/refresh-token",
+      "path": "/instagram/refresh-access-token",
       "schedule": "0 0 */45 * *"
     }
   ]
