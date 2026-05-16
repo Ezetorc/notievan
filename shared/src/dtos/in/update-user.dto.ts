@@ -1,11 +1,14 @@
-import * as z from 'zod'
+import { string, object, enum as zodEnum, type infer as Infer } from "zod"
+import { userRoles } from '../../models/user-role.model.js'
 
-export const UpdateUserDto = z.object({
-	name: z
-		.string()
-		.trim()
-		.min(3)
-		.max(50)
+export const UpdateUserDto = object({
+  name: string()
+    .trim()
+    .min(3)
+    .max(50)
+    .optional(),
+
+  role: zodEnum(userRoles).optional(),
 })
 
-export type UpdateUserDtoType = z.infer<typeof UpdateUserDto>
+export type UpdateUserDtoType = Infer<typeof UpdateUserDto>

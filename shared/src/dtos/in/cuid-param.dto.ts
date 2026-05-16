@@ -1,8 +1,8 @@
-import * as z from 'zod'
+import { string, object } from 'zod'
 
-export const CUIDParamDto = z.object({
-	id: z
-		.string()
-		.trim()
-		.regex(/^[a-z0-9]+$/i)
+
+export const CUIDParamDto = object({
+  id: string()
+    .trim()
+    .regex(/^[a-z0-9]+$/i)
 })

@@ -1,12 +1,11 @@
-import * as z from 'zod'
+import { object, string, type infer as Infer } from 'zod'
 
-export const CreateCommentDto = z.object({
-	content: z
-		.string()
-		.trim()
-		.min(1)
-		.max(255),
-	articleId: z.string().trim()
+export const CreateCommentDto = object({
+  content: string()
+    .trim()
+    .min(1)
+    .max(255),
+  articleId: string().trim()
 })
 
-export type CreateCommentDtoType = z.infer<typeof CreateCommentDto>
+export type CreateCommentDtoType = Infer<typeof CreateCommentDto>

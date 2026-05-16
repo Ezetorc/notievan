@@ -80,16 +80,6 @@ export class UsersRepository {
 			.limit(limit)
 	}
 
-	static async updateRole(id: string, role: UserRole): Promise<User | null> {
-		const result = await database
-			.update(users)
-			.set({ role })
-			.where(eq(users.id, id))
-			.returning()
-
-		return result[0] ?? null
-	}
-
 	static async update(
 		id: string,
 		data: Partial<{

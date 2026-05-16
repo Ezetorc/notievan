@@ -1,16 +1,14 @@
-import * as z from 'zod'
+import { string, email, object, type infer as Infer } from 'zod'
 
-export const SignInDto = z.object({
-	email: z
-		.email()
-		.trim()
-		.min(6)
-		.max(100),
-	password: z
-		.string()
-		.trim()
-		.min(6)
-		.max(30)
+export const SignInDto = object({
+  email: email()
+    .trim()
+    .min(6)
+    .max(100),
+  password: string()
+    .trim()
+    .min(6)
+    .max(30)
 })
 
-export type SignInDtoType = z.infer<typeof SignInDto>
+export type SignInDtoType = Infer<typeof SignInDto>

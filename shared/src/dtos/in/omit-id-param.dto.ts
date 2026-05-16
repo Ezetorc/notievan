@@ -1,8 +1,8 @@
-import * as z from 'zod'
+import { string, object } from 'zod'
 
-export const OmitIdParamDto = z.object({
-	omit: z
-		.string()
-		.trim()
-		.regex(/^[a-z0-9]+$/i)
+
+export const OmitIdParamDto = object({
+  omit: string()
+    .trim()
+    .regex(/^[a-z0-9]+$/i)
 })

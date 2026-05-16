@@ -6,6 +6,7 @@ import type { UserRole } from '../../../shared/src/models/user-role.model.js'
 import type { User } from '../../../shared/src/models/user.model.js'
 import type { JWTUser } from '../auth/jwt-user.model.js'
 import { ConflictError } from '../errors/conflict.error.js'
+import { ForbiddenError } from '../errors/forbidden.error.js'
 import { NotFoundError } from '../errors/not-found.error.js'
 import { UsersRepository } from './users.repository.js'
 
@@ -22,16 +23,6 @@ export class UsersService {
 
 	static async getJwtUserById(id: string): Promise<JWTUser> {
 		const user = await UsersRepository.findAuthUserById(id)
-
-		if (!user) {
-			throw new NotFoundError(ErrorCode.USER_NOT_FOUND)
-		}
-
-		return user
-	}
-
-	static async updateRole(id: string, role: UserRole): Promise<User> {
-		const user = await UsersRepository.updateRole(id, role)
 
 		if (!user) {
 			throw new NotFoundError(ErrorCode.USER_NOT_FOUND)
@@ -58,7 +49,11 @@ export class UsersService {
 		}
 	}
 
-	static async update(id: string, data: UpdateUserDtoType): Promise<User> {
+	static async update(
+		id: string,
+		data: UpdateUserDtoType,
+		role: UserRole
+	): Promise<User> {
 		const user = await UsersService.getById(id)
 		const nameWannaBeUpdated = data.name && data.name !== user.name
 
@@ -68,6 +63,14 @@ export class UsersService {
 
 			if (nameAlreadyExists) {
 				throw new ConflictError(ErrorCode.NAME_IN_USE)
+			}
+		}
+
+		const roleWannaBeUpdated = data.role && data.role !== user.role
+
+		if (roleWannaBeUpdated) {
+			if (role !== 'ADMIN') {
+				throw new ForbiddenError(ErrorCode.FORBIDDEN)
 			}
 		}
 

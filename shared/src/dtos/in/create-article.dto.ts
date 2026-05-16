@@ -1,27 +1,23 @@
-import * as z from 'zod'
+import { object, string, type infer as Infer } from 'zod'
 
-export const CreateArticleDto = z.object({
-	title: z
-		.string()
+export const CreateArticleDto = object({
+	title: string()
 		.trim()
 		.min(1)
 		.max(50),
-	subtitle: z
-		.string()
+	subtitle: string()
 		.trim()
 		.min(1)
 		.max(50),
-	description: z
-		.string()
+	description: string()
 		.trim()
 		.min(1)
 		.max(50),
-	content: z
-		.string()
+	content: string()
 		.trim()
 		.min(1)
 		.max(5000),
-	image: z.string().optional()
+	image: string()
 })
 
-export type CreateArticleDtoType = z.infer<typeof CreateArticleDto>
+export type CreateArticleDtoType = Infer<typeof CreateArticleDto>

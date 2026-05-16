@@ -4,7 +4,6 @@ import { UsersService } from './users.service.js'
 import { UsersController } from './users.controller.js'
 import { UserOut } from '../../../shared/src/dtos/out/user-out.dto.js'
 import { UnauthorizedError } from '../errors/unauthorized.error.js'
-import { userRoles } from '../../../shared/src/models/user-role.model.js'
 
 describe('UsersController', () => {
 	beforeEach(() => {
@@ -46,7 +45,7 @@ describe('UsersController', () => {
 		it('should update a user', async () => {
 			const mockRequest = {
 				params: { id: userMock.id },
-				user: { id: userMock.id },
+				user: { id: userMock.id, role: "ADMIN" },
 				body: { name: 'New Name' }
 			} as any
 			const mockResponse = { json: vi.fn() } as any
@@ -57,7 +56,8 @@ describe('UsersController', () => {
 
 			expect(UsersService.update).toHaveBeenCalledWith(
 				userMock.id,
-				mockRequest.body
+        mockRequest.body,
+        mockRequest.user.role
 			)
 			expect(mockResponse.json).toHaveBeenCalledWith(new UserOut(userMock))
 		})
@@ -75,27 +75,6 @@ describe('UsersController', () => {
 			await expect(
 				UsersController.update(mockRequest, mockResponse)
 			).rejects.toBeInstanceOf(UnauthorizedError)
-		})
-	})
-
-	describe('updateRole', () => {
-		it('should update a user role', async () => {
-			const mockRequest = {
-				params: { id: userMock.id },
-				user: { id: userMock.id },
-				body: { role: userRoles[1] }
-			} as any
-			const mockResponse = { json: vi.fn() } as any
-
-			vi.spyOn(UsersService, 'updateRole').mockResolvedValue(userMock)
-
-			await UsersController.updateRole(mockRequest, mockResponse)
-
-			expect(UsersService.updateRole).toHaveBeenCalledWith(
-				userMock.id,
-				mockRequest.body.role
-			)
-			expect(mockResponse.json).toHaveBeenCalledWith(new UserOut(userMock))
 		})
 	})
 

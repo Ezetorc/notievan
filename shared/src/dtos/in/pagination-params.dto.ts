@@ -1,10 +1,10 @@
-import * as z from 'zod'
+import { number, object, string, preprocess } from 'zod'
 
-export const PaginationParamsDto = z.object({
-  limit: z.preprocess(
+export const PaginationParamsDto = object({
+  limit: preprocess(
     (val) => (val !== undefined ? Number(val) : undefined),
-    z.number().min(1).max(50).optional()
+    number().min(1).max(50).optional()
   ).default(4),
 
-  cursor: z.string().optional()
+  cursor: string().optional()
 })

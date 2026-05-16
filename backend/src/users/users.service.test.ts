@@ -3,7 +3,6 @@ import { UsersRepository } from './users.repository.js'
 import { userMock } from './users.mock.js'
 import { UsersService } from './users.service.js'
 import { NotFoundError } from '../errors/not-found.error.js'
-import { userRole } from '../database/schemas/user-role.schema.js'
 
 describe('UsersService', () => {
 	beforeEach(() => {
@@ -32,24 +31,6 @@ describe('UsersService', () => {
 		})
 	})
 
-	describe('updateRole', () => {
-		it('should update the role of an user', async () => {
-			vi.spyOn(UsersRepository, 'updateRole').mockResolvedValue(userMock)
-
-			const result = await UsersService.updateRole(userMock.id, userRole[1])
-
-			expect(result).toEqual(userMock)
-		})
-
-		it('should throw NotFoundError if user is not found', async () => {
-			vi.spyOn(UsersRepository, 'updateRole').mockResolvedValue(null)
-
-			await expect(
-				UsersService.updateRole(userMock.id, userRole[1])
-			).rejects.toBeInstanceOf(NotFoundError)
-		})
-	})
-
 	describe('getAll', () => {
 		it('should return all users', async () => {
 			vi.spyOn(UsersRepository, 'findAll').mockResolvedValue([userMock])
@@ -67,7 +48,7 @@ describe('UsersService', () => {
 
 			const result = await UsersService.update(userMock.id, {
 				name: 'John Carter'
-			})
+			}, "ADMIN")
 
 			expect(result).toEqual(userMock)
 		})
@@ -76,7 +57,7 @@ describe('UsersService', () => {
 			vi.spyOn(UsersRepository, 'findById').mockResolvedValue(null)
 
 			await expect(
-				UsersService.update(userMock.id, { name: 'John Carter' })
+				UsersService.update(userMock.id, { name: 'John Carter' }, "ADMIN")
 			).rejects.toBeInstanceOf(NotFoundError)
 		})
 	})

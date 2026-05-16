@@ -4,23 +4,19 @@ Frontend 🌐 for NotiEvan 📰, a school newspaper 🏫 to browse and manage ar
 
 ## 🛠️ Tech Stack
 
-- **Framework** ⚛️: React + TypeScript
+- **Framework** ⚛️: SvelteKit
 - **Build tool** ⚡: Vite
 - **Styling** 🎨: TailwindCSS
-- **Routing** 🧭: Wouter
-- **Data fetching/caching** 📦: @tanstack/react-query
-- **State management** 🧠: Zustand
-- **Markdown** ✍️: Marked + EasyMDE, sanitized via DOMPurify 🛡️
 
 ## 📋 Prerequisites
 
 - Node.js 🟢 (LTS recommended)
-- npm 📦
+- pnpm 📦
 
 ## 📥 Installation
 
 ```bash
-npm install
+pnpm install
 ```
 
 ## 🔐 Environment Variables
@@ -35,15 +31,15 @@ The app reads this via `import.meta.env.VITE_PUBLIC_API_URL` ⚙️ (see `src/co
 
 ## 📜 Scripts
 
-- `npm run dev` ▶️ — start the dev server
-- `npm run build` 🏗️ — type-check and build for production
-- `npm run lint` 🔍 — run Biome linting
-- `npm run format` 🧼 — run Biome formatting
+- `pnpm run dev` ▶️ — start the dev server
+- `pnpm run build` 🏗️ — type-check and build for production
+- `pnpm run lint` 🔍 — run Biome linting
+- `pnpm run format` 🧼 — run Biome formatting
 
 ## 🚀 Run (development)
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 Then open the printed URL 🌐 from Vite ⚡ (typically `http://localhost:5173`).
@@ -51,5 +47,5 @@ Then open the printed URL 🌐 from Vite ⚡ (typically `http://localhost:5173`)
 ## 📦 Build
 
 ```bash
-npm run build
+pnpm run build
 ```
