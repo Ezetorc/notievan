@@ -1,12 +1,12 @@
-# Política de Privacidad — NotiEvan
+# Privacy Policy — NotiEvan
 
-NotiEvan utiliza la API de Instagram y Meta para permitir la publicación automatizada de contenido en cuentas autorizadas por el usuario.
+NotiEvan uses the Instagram and Meta APIs to enable automated content publishing on Instagram accounts authorized by the user.
 
-La aplicación puede acceder a información básica de la cuenta de Instagram, publicaciones y permisos necesarios para publicar contenido.
+The application may access basic Instagram account information, posts, and the permissions required to publish content.
 
-No compartimos información personal con terceros.
+We do not share personal information with third parties.
 
-Los datos obtenidos mediante Meta e Instagram se utilizan únicamente para el funcionamiento de la aplicación.
+Data obtained through Meta and Instagram is used solely for the operation of the application.
 
-Si tienes preguntas sobre esta política, puedes contactarnos en:
+If you have any questions about this policy, you can contact us at:
 [ezetorc@gmail.com](mailto:ezetorc@gmail.com)
