@@ -4,6 +4,7 @@
 	import Header from '$lib/components/Header.svelte';
 	import { Modals } from 'svelte-modals';
 	import { userStore } from '$lib/stores/user.store';
+	import { navigating } from '$app/state';
 
 	let { children, data } = $props();
 
@@ -43,5 +44,10 @@
 	</Modals>
 </div>
 
+{#if navigating.complete}
+	<div class="fixed top-0 left-0 z-9999 h-1 w-full animate-pulse bg-brand-red"></div>
+{/if}
+
 <Header user={$userStore ?? data.user} />
+
 {@render children()}
