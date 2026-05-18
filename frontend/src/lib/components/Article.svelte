@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { ArticlePreviewOut } from 'shared/dtos/out/article-preview-out.dto';
 	import { isRecent } from '$lib/utilities/is-recent.utility';
-	import { resolve } from '$app/paths';
+	import { ROUTES } from '$lib/configuration/routes.configuration';
 
 	interface Props {
 		article: ArticlePreviewOut;
@@ -11,7 +11,7 @@
 </script>
 
 <a
-	href={resolve(`/articles/${article.id}`, {})}
+	href={ROUTES.Article(article.id)}
 	class="group mx-auto block w-full max-w-100 cursor-pointer overflow-hidden transition-transform hover:-translate-y-2"
 >
 	<div class="relative aspect-video w-full overflow-hidden rounded-sm bg-gray-100">

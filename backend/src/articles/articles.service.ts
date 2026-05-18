@@ -50,7 +50,7 @@ export class ArticlesService {
      ${title}
 
      👉 Leer completo:
-     https://notievan.vercel.app/articulos/${articleId}
+     https://notievan.vercel.app/articles/${articleId}
 
      #NotiEvan #Noticias`
 		})

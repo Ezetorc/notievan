@@ -7,12 +7,12 @@
 	import type { PageData } from './$types';
 	import CreateCommentModal from './CreateCommentModal.svelte';
 	import { CommentOut } from 'shared/dtos/out/comment-out.dto';
-	import { resolve } from '$app/paths';
 	import { goto } from '$app/navigation';
 	import { SvelteURLSearchParams } from 'svelte/reactivity';
 	import type { PaginatedResult } from 'shared/models/paginated-result.model';
 	import { userStore } from '$lib/stores/user.store';
 	import { ServerApiService } from '$lib/services/server-api.service';
+	import { ROUTES } from '$lib/configuration/routes.configuration';
 
 	const { data }: { data: PageData } = $props();
 
@@ -61,7 +61,7 @@
 				onCommentCreated
 			});
 		} else {
-			goto(resolve('/sign-in', {}));
+			goto(ROUTES.SignIn);
 		}
 	}
 </script>

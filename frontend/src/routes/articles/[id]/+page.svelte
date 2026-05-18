@@ -6,9 +6,9 @@
 	import { modals, type ModalProps } from 'svelte-modals';
 	import DeleteArticleModal from './DeleteArticleModal.svelte';
 	import { userStore } from '$lib/stores/user.store';
-	import { resolve } from '$app/paths';
 	import { marked } from 'marked';
 	import DOMPurify from 'dompurify';
+	import { ROUTES } from '$lib/configuration/routes.configuration';
 
 	const { data }: { data: PageData } = $props();
 	const article = $derived(data.article);
@@ -20,9 +20,8 @@
 	<article class="mb-50" id="article-section">
 		{#if isAuthor}
 			<div class="mt-5 space-x-5 text-2xl">
-				<a
-					href={resolve(`/articles/${article.id}/edit`, {})}
-					class="transition-transform hover:-translate-y-1">Editar</a
+				<a href={ROUTES.EditArticle(article.id)} class="transition-transform hover:-translate-y-1"
+					>Editar</a
 				>
 
 				<button

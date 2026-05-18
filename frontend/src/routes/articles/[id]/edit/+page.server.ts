@@ -6,17 +6,18 @@ import { UpdateArticleDto } from 'shared/dtos/in/update-article.dto';
 import { COOKIES } from '$lib/configuration/cookies.configuration';
 import { parseFormError } from '$lib/utilities/parse-form-error.utility';
 import { ARTICLE_WRITER_ROLES } from 'shared/configuration/article-writer-roles.configuration';
+import { ROUTES } from '$lib/configuration/routes.configuration';
 
 export const load: PageServerLoad = async ({ params, locals }) => {
 	if (!ARTICLE_WRITER_ROLES.includes(locals.user?.role)) {
-		throw redirect(302, '/sign-in');
+		throw redirect(302, ROUTES.SignIn);
 	}
 
 	const { id } = params;
 	const article = await ServerApiService.get<ArticleOut>({ url: `/articles/${id}` });
 
 	if (article.author.id !== locals.user?.id) {
-		throw redirect(302, '/');
+		throw redirect(302, ROUTES.Home);
 	}
 
 	return {

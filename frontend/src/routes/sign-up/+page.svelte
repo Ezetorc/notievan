@@ -6,6 +6,7 @@
 	import Hero from '$lib/components/Hero.svelte';
 	import Input from '$lib/components/Input.svelte';
 	import Page from '$lib/components/Page.svelte';
+	import { ROUTES } from '$lib/configuration/routes.configuration.js';
 
 	const { form } = $props();
 </script>
@@ -21,7 +22,7 @@
 					await update();
 
 					if (result.type === 'success') {
-						goto('/account');
+						goto(ROUTES.Account);
 					}
 				};
 			}}
@@ -57,7 +58,9 @@
 
 			<p class="text-[18px] text-gray-600">
 				¿Ya tenés cuenta?
-				<a href="/sign-in" class="cursor-pointer underline hover:text-gray-900">Iniciá sesión</a>
+				<a href={ROUTES.SignIn} class="cursor-pointer underline hover:text-gray-900"
+					>Iniciá sesión</a
+				>
 			</p>
 
 			<Button type="submit" class="w-full">Crear cuenta</Button>

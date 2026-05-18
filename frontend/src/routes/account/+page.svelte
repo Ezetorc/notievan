@@ -13,7 +13,7 @@
 	import { userStore } from '$lib/stores/user.store';
 	import { ClientApiService } from '$lib/services/client-api.service';
 	import { goto } from '$app/navigation';
-	import { resolve } from '$app/paths';
+	import { ROUTES } from '$lib/configuration/routes.configuration';
 
 	let { data }: { data: PageData } = $props();
 
@@ -38,7 +38,7 @@
 			url: '/auth/logout'
 		});
 
-		goto(resolve('/sign-in', {}));
+		goto(ROUTES.SignIn);
 	}
 </script>
 

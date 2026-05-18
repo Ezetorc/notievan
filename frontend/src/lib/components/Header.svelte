@@ -3,8 +3,8 @@
 	import HeaderLink from './HeaderLink.svelte';
 	import InstagramIcon from './icons/InstagramIcon.svelte';
 	import { ARTICLE_WRITER_ROLES } from 'shared/configuration/article-writer-roles.configuration';
-	import { resolve } from '$app/paths';
 	import type { UserOut } from 'shared/dtos/out/user-out.dto';
+	import { ROUTES } from '$lib/configuration/routes.configuration';
 
 	const { user }: { user: UserOut | null } = $props();
 </script>
@@ -17,22 +17,22 @@
 		class="flex w-full max-w-317.5 min-w-[320px] items-center justify-between gap-x-1.25 text-2xl text-white mobile:px-4 tablet:px-10 desktop:px-0"
 	>
 		<nav class="flex items-center mobile:gap-x-3 desktop:gap-x-10" id="header-buttons">
-			<HeaderLink href={resolve('/', {})}>
+			<HeaderLink href={ROUTES.Home}>
 				<img class="aspect-square max-w-13" alt="Logo de NotiEvan" src={notievanLogoImage} />
 			</HeaderLink>
 
 			{#if user}
-				<HeaderLink href={resolve('/account', {})}>Cuenta</HeaderLink>
+				<HeaderLink href={ROUTES.Account}>Cuenta</HeaderLink>
 
 				{#if ARTICLE_WRITER_ROLES.includes(user.role)}
-					<HeaderLink href={resolve('/articles/new', {})}>Crear</HeaderLink>
+					<HeaderLink href={ROUTES.CreateArticle}>Crear</HeaderLink>
 				{/if}
 
 				{#if user.role === 'ADMIN'}
-					<HeaderLink href={resolve('/dashboard/users', {})}>Usuarios</HeaderLink>
+					<HeaderLink href={ROUTES.Users}>Usuarios</HeaderLink>
 				{/if}
 			{:else}
-				<HeaderLink href={resolve('/sign-up', {})}>Ingresar</HeaderLink>
+				<HeaderLink href={ROUTES.SignIn}>Ingresar</HeaderLink>
 			{/if}
 		</nav>
 

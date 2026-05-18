@@ -8,6 +8,7 @@
 	import ErrorMessage from '$lib/components/ErrorMessage.svelte';
 	import { goto } from '$app/navigation';
 	import MarkdownEditor from '$lib/components/MarkdownEditor.svelte';
+	import { ROUTES } from '$lib/configuration/routes.configuration';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
@@ -26,7 +27,7 @@
 				await update();
 
 				if (result.type === 'success') {
-					goto(`/articles/${data.article.id}`);
+					goto(ROUTES.Article(result.data?.id as string));
 				}
 			};
 		}}

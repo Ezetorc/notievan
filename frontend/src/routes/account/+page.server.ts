@@ -5,10 +5,11 @@ import type { PageServerLoad } from '../$types';
 import { COOKIES } from '$lib/configuration/cookies.configuration';
 import { redirect } from '@sveltejs/kit';
 import type { UserOut } from 'shared/dtos/out/user-out.dto';
+import { ROUTES } from '$lib/configuration/routes.configuration';
 
 export const load: PageServerLoad = async ({ cookies, locals }) => {
 	if (!locals.user) {
-		throw redirect(302, '/sign-in');
+		throw redirect(302, ROUTES.SignIn);
 	}
 
 	const search = new URLSearchParams();

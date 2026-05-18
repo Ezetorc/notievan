@@ -6,10 +6,11 @@ import { COOKIES } from '$lib/configuration/cookies.configuration';
 import { parseFormError } from '$lib/utilities/parse-form-error.utility';
 import { redirect, type ServerLoad } from '@sveltejs/kit';
 import { ARTICLE_WRITER_ROLES } from 'shared/configuration/article-writer-roles.configuration';
+import { ROUTES } from '$lib/configuration/routes.configuration';
 
 export const load: ServerLoad = async ({ locals }) => {
 	if (!ARTICLE_WRITER_ROLES.includes(locals.user?.role)) {
-		throw redirect(302, '/sign-in');
+		throw redirect(302, ROUTES.SignIn);
 	}
 };
 

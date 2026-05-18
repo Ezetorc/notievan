@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { resolve } from '$app/paths';
 	import Button from '$lib/components/Button.svelte';
 	import ErrorMessage from '$lib/components/ErrorMessage.svelte';
 	import Modal from '$lib/components/Modal.svelte';
+	import { ROUTES } from '$lib/configuration/routes.configuration';
 	import { ClientApiService } from '$lib/services/client-api.service';
 
 	const {
@@ -22,7 +22,7 @@
 			const success = await ClientApiService.delete<boolean>({ url: `/articles/${articleId}` });
 
 			if (success) {
-				goto(resolve('/', {}));
+				goto(ROUTES.Home);
 				close();
 			} else {
 				error = 'Error al eliminar artículo';

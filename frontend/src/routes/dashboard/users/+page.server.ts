@@ -4,10 +4,11 @@ import { ServerApiService } from '$lib/services/server-api.service';
 import type { PaginatedResult } from 'shared/models/paginated-result.model';
 import type { UserOut } from 'shared/dtos/out/user-out.dto';
 import { COOKIES } from '$lib/configuration/cookies.configuration';
+import { ROUTES } from '$lib/configuration/routes.configuration';
 
 export const load: PageServerLoad = async ({ locals, cookies }) => {
 	if (locals.user?.role != 'ADMIN') {
-		throw redirect(302, '/');
+		throw redirect(302, ROUTES.Home);
 	}
 
 	const users = await ServerApiService.get<PaginatedResult<UserOut>>({
