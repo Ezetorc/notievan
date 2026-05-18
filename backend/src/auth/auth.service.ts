@@ -1,11 +1,11 @@
-import jwt from 'jsonwebtoken'
-import { env } from '../shared/configuration/env.configuration.js'
 import bcrypt from 'bcrypt'
-import { UsersRepository } from '../users/users.repository.js'
-import type { User } from '../../../shared/src/models/user.model.js'
+import jwt from 'jsonwebtoken'
 import { ErrorCode } from '../../../shared/src/models/error-code.model.js'
-import { UnauthorizedError } from '../errors/unauthorized.error.js'
+import type { User } from '../../../shared/src/models/user.model.js'
 import { ConflictError } from '../errors/conflict.error.js'
+import { UnauthorizedError } from '../errors/unauthorized.error.js'
+import { env } from '../shared/configuration/env.configuration.js'
+import { UsersRepository } from '../users/users.repository.js'
 
 export class AuthService {
 	static async getAuthorizationToken(user: User): Promise<string> {

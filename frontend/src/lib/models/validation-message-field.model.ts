@@ -5,4 +5,4 @@ export type ValidationMessageField =
 	| 'content'
 	| 'email'
 	| 'password'
-	| 'image';
+	| 'image'

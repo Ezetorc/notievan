@@ -1,8 +1,8 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { UsersRepository } from './users.repository.js'
-import { userMock } from './users.mock.js'
-import { UsersService } from './users.service.js'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { NotFoundError } from '../errors/not-found.error.js'
+import { userMock } from './users.mock.js'
+import { UsersRepository } from './users.repository.js'
+import { UsersService } from './users.service.js'
 
 describe('UsersService', () => {
 	beforeEach(() => {
@@ -46,9 +46,13 @@ describe('UsersService', () => {
 			vi.spyOn(UsersRepository, 'update').mockResolvedValue(userMock)
 			vi.spyOn(UsersService, 'getById').mockResolvedValue(userMock)
 
-			const result = await UsersService.update(userMock.id, {
-				name: 'John Carter'
-			}, "ADMIN")
+			const result = await UsersService.update(
+				userMock.id,
+				{
+					name: 'John Carter'
+				},
+				'ADMIN'
+			)
 
 			expect(result).toEqual(userMock)
 		})
@@ -57,7 +61,7 @@ describe('UsersService', () => {
 			vi.spyOn(UsersRepository, 'findById').mockResolvedValue(null)
 
 			await expect(
-				UsersService.update(userMock.id, { name: 'John Carter' }, "ADMIN")
+				UsersService.update(userMock.id, { name: 'John Carter' }, 'ADMIN')
 			).rejects.toBeInstanceOf(NotFoundError)
 		})
 	})

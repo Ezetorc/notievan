@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { ArticlePreviewOut } from 'shared/dtos/out/article-preview-out.dto';
-	import Article from './Article.svelte';
+import type { ArticlePreviewOut } from 'shared/dtos/out/article-preview-out.dto'
+import Article from './Article.svelte'
 
-	const { articles }: { articles: ArticlePreviewOut[] } = $props();
+const { articles }: { articles: ArticlePreviewOut[] } = $props()
 </script>
 
 <section

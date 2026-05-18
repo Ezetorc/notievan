@@ -1,9 +1,9 @@
 import { createId } from '@paralleldrive/cuid2'
-import { pgTable, text, timestamp } from 'drizzle-orm/pg-core'
-import { userRole } from './user-role.schema.js'
 import { relations } from 'drizzle-orm'
+import { pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 import { articles } from './articles.schema.js'
 import { comments } from './comments.schema.js'
+import { userRole } from './user-role.schema.js'
 
 export const users = pgTable('user', {
 	id: text('id')

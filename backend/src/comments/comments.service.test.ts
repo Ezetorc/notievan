@@ -1,11 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ArticlesService } from '../articles/articles.service.js'
-import { CommentsRepository } from './comments.repository.js'
-import { commentMock } from './comments.mock.js'
-import { CommentsService } from './comments.service.js'
-import { userMock } from '../users/users.mock.js'
 import { NotFoundError } from '../errors/not-found.error.js'
 import { UnauthorizedError } from '../errors/unauthorized.error.js'
+import { userMock } from '../users/users.mock.js'
+import { commentMock } from './comments.mock.js'
+import { CommentsRepository } from './comments.repository.js'
+import { CommentsService } from './comments.service.js'
 
 describe('CommentsService', () => {
 	beforeEach(() => {

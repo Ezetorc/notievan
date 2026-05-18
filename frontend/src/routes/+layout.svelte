@@ -1,16 +1,16 @@
 <script lang="ts">
-	import './layout.css';
-	import favicon from '$lib/assets/favicon.webp';
-	import Header from '$lib/components/Header.svelte';
-	import { Modals } from 'svelte-modals';
-	import { userStore } from '$lib/stores/user.store';
-	import { navigating } from '$app/state';
+import './layout.css'
+import { Modals } from 'svelte-modals'
+import { navigating } from '$app/state'
+import favicon from '$lib/assets/favicon.webp'
+import Header from '$lib/components/Header.svelte'
+import { userStore } from '$lib/stores/user.store'
 
-	let { children, data } = $props();
+let { children, data } = $props()
 
-	$effect(() => {
-		userStore.set(data.user);
-	});
+$effect(() => {
+	userStore.set(data.user)
+})
 </script>
 
 <svelte:head>

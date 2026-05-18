@@ -1,12 +1,12 @@
-import express, { json as jsonMiddleware } from 'express'
 import corsMiddleware from 'cors'
-import { env } from './shared/configuration/env.configuration.js'
+import express, { json as jsonMiddleware } from 'express'
 import { ArticlesRouter } from './articles/articles.router.js'
 import { AuthRouter } from './auth/auth.router.js'
 import { CommentsRouter } from './comments/comments.router.js'
 import { errorHandlerMiddleware } from './errors/error-handler.middleware.js'
-import { UsersRouter } from './users/users.router.js'
 import { InstagramRouter } from './instagram/instagram.router.js'
+import { env } from './shared/configuration/env.configuration.js'
+import { UsersRouter } from './users/users.router.js'
 
 const app = express()
 
@@ -20,3 +20,5 @@ app.use('/instagram', InstagramRouter)
 app.use(errorHandlerMiddleware())
 
 app.listen(env.port)
+
+console.log('Server is running on port', env.port)

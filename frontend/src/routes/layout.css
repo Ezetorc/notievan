@@ -1,13 +1,13 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @font-face {
-	font-family: 'Bebas-Neue';
-	src: url('/src/lib/assets/fonts/bebas-neue.woff2') format('woff2');
+	font-family: "Bebas-Neue";
+	src: url("/src/lib/assets/fonts/bebas-neue.woff2") format("woff2");
 }
 
 @font-face {
-	font-family: 'Quicksand';
-	src: url('/src/lib/assets/fonts/quicksand.woff2') format('woff2');
+	font-family: "Quicksand";
+	src: url("/src/lib/assets/fonts/quicksand.woff2") format("woff2");
 }
 
 @keyframes pulse {
@@ -25,8 +25,8 @@
 }
 
 @theme {
-	--font-title: 'Bebas-Neue', sans-serif;
-	--font-text: 'Quicksand', sans-serif;
+	--font-title: "Bebas-Neue", sans-serif;
+	--font-text: "Quicksand", sans-serif;
 
 	--color-brand-blue: #134abf;
 	--color-brand-blue-light: #60a5fa;

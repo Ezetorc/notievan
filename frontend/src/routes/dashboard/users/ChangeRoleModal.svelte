@@ -1,61 +1,61 @@
 <script lang="ts">
-	import Button from '$lib/components/Button.svelte';
-	import ErrorMessage from '$lib/components/ErrorMessage.svelte';
-	import Modal from '$lib/components/Modal.svelte';
-	import type { $ZodIssue } from 'zod/v4/core';
-	import type { UserOut } from 'shared/dtos/out/user-out.dto';
-	import { enhance } from '$app/forms';
-	import { UpdateUserDto } from 'shared/dtos/in/update-user.dto';
-	import { ClientApiService } from '$lib/services/client-api.service';
-	import type { UserRole } from 'shared/models/user-role.model';
-	import { ZodError } from 'zod';
+import { UpdateUserDto } from 'shared/dtos/in/update-user.dto'
+import type { UserOut } from 'shared/dtos/out/user-out.dto'
+import type { UserRole } from 'shared/models/user-role.model'
+import { ZodError } from 'zod'
+import type { $ZodIssue } from 'zod/v4/core'
+import { enhance } from '$app/forms'
+import Button from '$lib/components/Button.svelte'
+import ErrorMessage from '$lib/components/ErrorMessage.svelte'
+import Modal from '$lib/components/Modal.svelte'
+import { ClientApiService } from '$lib/services/client-api.service'
 
-	const {
-		isOpen,
-		close,
-		user,
-		onRoleChange
-	}: {
-		close: () => void;
-		isOpen: boolean;
-		user: UserOut;
-		onRoleChange: (userId: string, newRole: UserRole) => void;
-	} = $props();
-	let error = $state<string | $ZodIssue | undefined>();
+const {
+	isOpen,
+	close,
+	user,
+	onRoleChange
+}: {
+	close: () => void
+	isOpen: boolean
+	user: UserOut
+	onRoleChange: (userId: string, newRole: UserRole) => void
+} = $props()
+let error = $state<string | $ZodIssue | undefined>()
 
-	async function onSubmit(event: SubmitEvent) {
-		event.preventDefault();
-		const formData = new FormData(event.target as HTMLFormElement);
-		const role = formData.get('role') as UserRole;
+async function onSubmit(event: SubmitEvent) {
+	event.preventDefault()
+	const formData = new FormData(event.target as HTMLFormElement)
+	const role = formData.get('role') as UserRole
 
-		if (user.role === role) {
-			error = 'El rol no puede ser igual al actual';
-			return;
-		}
-
-		try {
-			const result = UpdateUserDto.parse({ role });
-			const success = await ClientApiService.patch<boolean>({
-				url: `/users/${user.id}`,
-				body: result
-			});
-
-			if (success) {
-				onRoleChange(user.id, role);
-				close();
-			} else {
-				error = 'Error al cambiar el rol';
-			}
-		} catch (err) {
-			console.error('[ChangeRoleModal]', err);
-
-			if (err instanceof ZodError) {
-				error = err.issues[0];
-			}
-
-			error = 'Error al cambiar el rol';
-		}
+	if (user.role === role) {
+		error = 'El rol no puede ser igual al actual'
+		return
 	}
+
+	try {
+		const result = UpdateUserDto.parse({ role })
+		const success = await ClientApiService.patch<boolean>({
+			url: `/users/${user.id}`,
+			body: result
+		})
+
+		if (success) {
+			onRoleChange(user.id, role)
+			close()
+		} else {
+			error = 'Error al cambiar el rol'
+		}
+	} catch (err) {
+		console.error('[ChangeRoleModal]', err)
+
+		if (err instanceof ZodError) {
+			error = err.issues[0]
+		}
+
+		error = 'Error al cambiar el rol'
+	}
+}
 </script>
 
 {#if isOpen}

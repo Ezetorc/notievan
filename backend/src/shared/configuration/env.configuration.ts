@@ -1,9 +1,5 @@
 import { z } from 'zod'
 
-if (process.env.NODE_ENV !== 'production') {
-	process.loadEnvFile()
-}
-
 const envSchema = z.object({
 	NODE_ENV: z.string().default('development'),
 

@@ -1,5 +1,5 @@
-import { database } from '../database/database.configuration.js'
 import { eq } from 'drizzle-orm'
+import { database } from '../database/database.configuration.js'
 import { tokens } from '../database/schemas/tokens.schema.js'
 import type { Token } from './token.model.js'
 

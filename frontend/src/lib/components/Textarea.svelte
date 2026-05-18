@@ -1,13 +1,13 @@
 <script lang="ts">
-	import type { Snippet } from 'svelte';
-	import type { HTMLTextareaAttributes } from 'svelte/elements';
+import type { Snippet } from 'svelte'
+import type { HTMLTextareaAttributes } from 'svelte/elements'
 
-	interface Props extends HTMLTextareaAttributes {
-		name: string;
-		children: Snippet;
-	}
+interface Props extends HTMLTextareaAttributes {
+	name: string
+	children: Snippet
+}
 
-	const { name, children, ...rest }: Props = $props();
+const { name, children, ...rest }: Props = $props()
 </script>
 
 <div>

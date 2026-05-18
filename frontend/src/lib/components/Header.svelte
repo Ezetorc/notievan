@@ -1,12 +1,12 @@
 <script lang="ts">
-	import notievanLogoImage from '../assets/images/notievan-logo.webp';
-	import HeaderLink from './HeaderLink.svelte';
-	import InstagramIcon from './icons/InstagramIcon.svelte';
-	import { ARTICLE_WRITER_ROLES } from 'shared/configuration/article-writer-roles.configuration';
-	import type { UserOut } from 'shared/dtos/out/user-out.dto';
-	import { ROUTES } from '$lib/configuration/routes.configuration';
+import { ARTICLE_WRITER_ROLES } from 'shared/configuration/article-writer-roles.configuration'
+import type { UserOut } from 'shared/dtos/out/user-out.dto'
+import { ROUTES } from '$lib/configuration/routes.configuration'
+import notievanLogoImage from '../assets/images/notievan-logo.webp'
+import HeaderLink from './HeaderLink.svelte'
+import InstagramIcon from './icons/InstagramIcon.svelte'
 
-	const { user }: { user: UserOut | null } = $props();
+const { user }: { user: UserOut | null } = $props()
 </script>
 
 <header

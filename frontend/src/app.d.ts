@@ -6,9 +6,9 @@ declare global {
 		// interface PageState {}
 		// interface Platform {}
 		interface Locals {
-			user: UserOut | null;
+			user: UserOut | null
 		}
 	}
 }
 
-export {};
+export {}

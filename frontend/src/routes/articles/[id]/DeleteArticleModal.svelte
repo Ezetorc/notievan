@@ -1,38 +1,40 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	import Button from '$lib/components/Button.svelte';
-	import ErrorMessage from '$lib/components/ErrorMessage.svelte';
-	import Modal from '$lib/components/Modal.svelte';
-	import { ROUTES } from '$lib/configuration/routes.configuration';
-	import { ClientApiService } from '$lib/services/client-api.service';
+import { goto } from '$app/navigation'
+import Button from '$lib/components/Button.svelte'
+import ErrorMessage from '$lib/components/ErrorMessage.svelte'
+import Modal from '$lib/components/Modal.svelte'
+import { ROUTES } from '$lib/configuration/routes.configuration'
+import { ClientApiService } from '$lib/services/client-api.service'
 
-	const {
-		isOpen,
-		close,
-		articleId
-	}: {
-		articleId: string;
-		close: () => void;
-		isOpen: boolean;
-	} = $props();
-	let error = $state<string | undefined>();
+const {
+	isOpen,
+	close,
+	articleId
+}: {
+	articleId: string
+	close: () => void
+	isOpen: boolean
+} = $props()
+let error = $state<string | undefined>()
 
-	async function onDelete() {
-		try {
-			const success = await ClientApiService.delete<boolean>({ url: `/articles/${articleId}` });
+async function onDelete() {
+	try {
+		const success = await ClientApiService.delete<boolean>({
+			url: `/articles/${articleId}`
+		})
 
-			if (success) {
-				goto(ROUTES.Home);
-				close();
-			} else {
-				error = 'Error al eliminar artículo';
-			}
-		} catch (err) {
-			console.error('[DeleteArticleModal]', err);
-
-			error = 'Error al eliminar artículo';
+		if (success) {
+			goto(ROUTES.Home)
+			close()
+		} else {
+			error = 'Error al eliminar artículo'
 		}
+	} catch (err) {
+		console.error('[DeleteArticleModal]', err)
+
+		error = 'Error al eliminar artículo'
 	}
+}
 </script>
 
 {#if isOpen}

@@ -1,8 +1,8 @@
 import { Router } from 'express'
-import { ArticlesController } from './articles.controller.js'
+import { ARTICLE_WRITER_ROLES } from '../../../shared/src/configuration/article-writer-roles.configuration.js'
 import { authMiddleware } from '../auth/auth.middleware.js'
 import { imageMiddleware } from '../shared/middlewares/image.middleware.js'
-import { ARTICLE_WRITER_ROLES } from '../../../shared/src/configuration/article-writer-roles.configuration.js'
+import { ArticlesController } from './articles.controller.js'
 
 export const ArticlesRouter = Router()
 

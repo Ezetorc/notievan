@@ -1,14 +1,13 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { ArticlesService } from './articles.service.js'
-import { ArticlesRepository } from './articles.repository.js'
-import { articleMock } from './articles.mock.js'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import type { CreateArticleDtoType } from '../../../shared/src/dtos/in/create-article.dto.js'
 import { NotFoundError } from '../errors/not-found.error.js'
 import { UnauthorizedError } from '../errors/unauthorized.error.js'
-import { userMock } from '../users/users.mock.js'
 import { CloudinaryService } from '../shared/services/cloudinary/cloudinary.service.js'
-import type { CreateArticleDtoType } from '../../../shared/src/dtos/in/create-article.dto.js'
-import { BadRequestError } from '../errors/bad-request.error.js'
+import { userMock } from '../users/users.mock.js'
 import { ArticleImageService } from './article-image.service.js'
+import { articleMock } from './articles.mock.js'
+import { ArticlesRepository } from './articles.repository.js'
+import { ArticlesService } from './articles.service.js'
 
 vi.mock('sharp', () => {
 	return {
@@ -208,7 +207,8 @@ describe('ArticlesService', () => {
 				title: 'New article',
 				content: 'Content',
 				description: 'Description',
-				subtitle: 'Subtitle'
+				subtitle: 'Subtitle',
+				image: 'image url'
 			}
 
 			const file = {
@@ -234,19 +234,6 @@ describe('ArticlesService', () => {
 
 			expect(uploadMock).toHaveBeenCalled()
 			expect(createMock).toHaveBeenCalled()
-		})
-
-		it('should throw BadRequestError if no image and no file', async () => {
-			const data: CreateArticleDtoType = {
-				title: 'New article',
-				content: 'Content',
-				description: 'Description',
-				subtitle: 'Subtitle'
-			}
-
-			await expect(
-				ArticlesService.create(data, userMock.id)
-			).rejects.toBeInstanceOf(BadRequestError)
 		})
 	})
 })

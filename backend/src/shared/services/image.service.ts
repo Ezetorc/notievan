@@ -1,5 +1,5 @@
-import { chromium as playwright, type Browser } from 'playwright-core'
 import chromium from '@sparticuz/chromium'
+import { type Browser, chromium as playwright } from 'playwright-core'
 import { env } from '../configuration/env.configuration.js'
 
 export class ImageService {

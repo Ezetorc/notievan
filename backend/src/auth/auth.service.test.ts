@@ -1,10 +1,8 @@
-import { beforeEach, vi, describe, expect, it } from 'vitest'
-import { AuthService } from './auth.service.js'
+import bcrypt from 'bcrypt'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { userMock } from '../users/users.mock.js'
 import { UsersRepository } from '../users/users.repository.js'
-import bcrypt from 'bcrypt'
-
-vi.mock('bcrypt')
+import { AuthService } from './auth.service.js'
 
 describe('ArticlesService', () => {
 	beforeEach(() => {

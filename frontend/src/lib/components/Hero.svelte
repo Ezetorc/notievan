@@ -1,10 +1,10 @@
 <script lang="ts">
-	interface Props {
-		title: string;
-		description: string;
-	}
+interface Props {
+	title: string
+	description: string
+}
 
-	const { title, description }: Props = $props();
+const { title, description }: Props = $props()
 </script>
 
 <section

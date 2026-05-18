@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { userMock } from './users.mock.js'
-import { UsersService } from './users.service.js'
-import { UsersController } from './users.controller.js'
 import { UserOut } from '../../../shared/src/dtos/out/user-out.dto.js'
 import { UnauthorizedError } from '../errors/unauthorized.error.js'
+import { UsersController } from './users.controller.js'
+import { userMock } from './users.mock.js'
+import { UsersService } from './users.service.js'
 
 describe('UsersController', () => {
 	beforeEach(() => {
@@ -45,7 +45,7 @@ describe('UsersController', () => {
 		it('should update a user', async () => {
 			const mockRequest = {
 				params: { id: userMock.id },
-				user: { id: userMock.id, role: "ADMIN" },
+				user: { id: userMock.id, role: 'ADMIN' },
 				body: { name: 'New Name' }
 			} as any
 			const mockResponse = { json: vi.fn() } as any
@@ -56,8 +56,8 @@ describe('UsersController', () => {
 
 			expect(UsersService.update).toHaveBeenCalledWith(
 				userMock.id,
-        mockRequest.body,
-        mockRequest.user.role
+				mockRequest.body,
+				mockRequest.user.role
 			)
 			expect(mockResponse.json).toHaveBeenCalledWith(new UserOut(userMock))
 		})

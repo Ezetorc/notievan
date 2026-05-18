@@ -6,7 +6,7 @@ Backend for **NotiEvan**, a school newspaper to publish and manage articles abou
 
 # 🧰 Tech Stack
 
-* **Runtime**: Node.js + Express
+* **Runtime**: Bun + Express
 * **Database**: PostgreSQL
 * **ORM**: Drizzle ORM
 * **Auth**: JWT (HS256)
@@ -18,8 +18,7 @@ Backend for **NotiEvan**, a school newspaper to publish and manage articles abou
 
 ## Prerequisites
 
-* Node.js (LTS recommended)
-* npm
+* Bun
 * PostgreSQL database (e.g. Neon)
 
 ---
@@ -27,7 +26,7 @@ Backend for **NotiEvan**, a school newspaper to publish and manage articles abou
 ## Installation
 
 ```bash
-npm install
+bun install
 ```
 
 ---
@@ -55,7 +54,7 @@ CLOUDINARY_API_SECRET=your_api_secret
 ## Run server (in development mode)
 
 ```bash
-npm run dev
+bun run dev
 ```
 
 By default, server will be listening in port 3000:

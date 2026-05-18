@@ -1,10 +1,10 @@
-import { AuthService } from './auth.service.js'
 import type { Request, Response } from 'express'
-import { UsersService } from '../users/users.service.js'
-import { UserOut } from '../../../shared/src/dtos/out/user-out.dto.js'
-import { SignUpDto } from '../../../shared/src/dtos/in/sign-up.dto.js'
 import { SignInDto } from '../../../shared/src/dtos/in/sign-in.dto.js'
+import { SignUpDto } from '../../../shared/src/dtos/in/sign-up.dto.js'
+import { UserOut } from '../../../shared/src/dtos/out/user-out.dto.js'
 import type { Session } from '../../../shared/src/models/session.model.js'
+import { UsersService } from '../users/users.service.js'
+import { AuthService } from './auth.service.js'
 
 export class AuthController {
 	static async signUp(request: Request, response: Response): Promise<Response> {

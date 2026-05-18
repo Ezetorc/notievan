@@ -1,45 +1,45 @@
 <script lang="ts">
-	import Button from '$lib/components/Button.svelte';
-	import Field from '$lib/components/Field.svelte';
-	import FieldsGroup from '$lib/components/FieldsGroup.svelte';
-	import Hero from '$lib/components/Hero.svelte';
-	import type { PageData } from './$types';
-	import { modals } from 'svelte-modals';
-	import type { ModalProps } from 'svelte-modals';
-	import ChangeNameModal from './ChangeNameModal.svelte';
-	import Page from '$lib/components/Page.svelte';
-	import { UserOut } from 'shared/dtos/out/user-out.dto';
-	import AccountArticles from './AccountArticles.svelte';
-	import { userStore } from '$lib/stores/user.store';
-	import { ClientApiService } from '$lib/services/client-api.service';
-	import { goto } from '$app/navigation';
-	import { ROUTES } from '$lib/configuration/routes.configuration';
+import { UserOut } from 'shared/dtos/out/user-out.dto'
+import type { ModalProps } from 'svelte-modals'
+import { modals } from 'svelte-modals'
+import { goto } from '$app/navigation'
+import Button from '$lib/components/Button.svelte'
+import Field from '$lib/components/Field.svelte'
+import FieldsGroup from '$lib/components/FieldsGroup.svelte'
+import Hero from '$lib/components/Hero.svelte'
+import Page from '$lib/components/Page.svelte'
+import { ROUTES } from '$lib/configuration/routes.configuration'
+import { ClientApiService } from '$lib/services/client-api.service'
+import { userStore } from '$lib/stores/user.store'
+import type { PageData } from './$types'
+import AccountArticles from './AccountArticles.svelte'
+import ChangeNameModal from './ChangeNameModal.svelte'
 
-	let { data }: { data: PageData } = $props();
+let { data }: { data: PageData } = $props()
 
-	$effect(() => {
-		userStore.set(data.user);
-	});
+$effect(() => {
+	userStore.set(data.user)
+})
 
-	const user = $derived($userStore ?? data.user);
+const user = $derived($userStore ?? data.user)
 
-	function makeDateDisplayable(date: string): string {
-		return new Date(date).toLocaleDateString('es-AR', {
-			year: 'numeric',
-			month: 'long',
-			day: 'numeric'
-		});
-	}
+function makeDateDisplayable(date: string): string {
+	return new Date(date).toLocaleDateString('es-AR', {
+		year: 'numeric',
+		month: 'long',
+		day: 'numeric'
+	})
+}
 
-	async function logout() {
-		userStore.set(null);
+async function logout() {
+	userStore.set(null)
 
-		await ClientApiService.post<void>({
-			url: '/auth/logout'
-		});
+	await ClientApiService.post<void>({
+		url: '/auth/logout'
+	})
 
-		goto(ROUTES.SignIn);
-	}
+	goto(ROUTES.SignIn)
+}
 </script>
 
 <Page>

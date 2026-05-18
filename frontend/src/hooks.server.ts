@@ -1,26 +1,26 @@
-import { COOKIES } from '$lib/configuration/cookies.configuration';
-import { ServerApiService } from '$lib/services/server-api.service';
-import type { UserOut } from 'shared/dtos/out/user-out.dto';
+import type { UserOut } from 'shared/dtos/out/user-out.dto'
+import { COOKIES } from '$lib/configuration/cookies.configuration'
+import { ServerApiService } from '$lib/services/server-api.service'
 
 export async function handle({ event, resolve }) {
-	const token = event.cookies.get(COOKIES.AccessToken.name);
+	const token = event.cookies.get(COOKIES.AccessToken.name)
 
-	event.locals.user = null;
+	event.locals.user = null
 
 	if (token) {
 		try {
 			const user = await ServerApiService.get<UserOut>({
 				url: '/auth',
 				token
-			});
+			})
 
-			event.locals.user = user;
+			event.locals.user = user
 		} catch {
 			event.cookies.delete(COOKIES.AccessToken.name, {
 				path: '/'
-			});
+			})
 		}
 	}
 
-	return resolve(event);
+	return resolve(event)
 }

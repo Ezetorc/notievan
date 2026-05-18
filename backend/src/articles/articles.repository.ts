@@ -1,11 +1,11 @@
+import { and, desc, eq, inArray, lt, ne, or } from 'drizzle-orm'
+import type { Article } from '../../../shared/src/models/article.model.js'
+import type { Cursor } from '../../../shared/src/models/cursor.model.js'
 import { database } from '../database/database.configuration.js'
-import { eq, desc, inArray, ne, and, lt, or } from 'drizzle-orm'
 import { articles } from '../database/schemas/articles.schema.js'
 import { users } from '../database/schemas/users.schema.js'
-import type { Cursor } from '../../../shared/src/models/cursor.model.js'
-import type { ArticleWithAuthorName } from './article-with-author-name.model.js'
-import type { Article } from '../../../shared/src/models/article.model.js'
 import type { ArticlePreviewWithAuthorName } from './article-preview-with-author-name.model.js'
+import type { ArticleWithAuthorName } from './article-with-author-name.model.js'
 
 export class ArticlesRepository {
 	static async findById(id: string): Promise<ArticleWithAuthorName | null> {

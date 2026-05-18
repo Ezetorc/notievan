@@ -1,8 +1,8 @@
-import { env } from '../shared/configuration/env.configuration.js'
-import { Pool } from 'pg'
+import { neon } from '@neondatabase/serverless'
 import { drizzle as drizzleNeon } from 'drizzle-orm/neon-http'
 import { drizzle as drizzlePg } from 'drizzle-orm/node-postgres'
-import { neon } from '@neondatabase/serverless'
+import { Pool } from 'pg'
+import { env } from '../shared/configuration/env.configuration.js'
 
 const isLocal = env.databaseUrl.includes('localhost')
 

@@ -1,40 +1,41 @@
 <script lang="ts">
-	import type { CommentOut } from 'shared/dtos/out/comment-out.dto';
-	import { modals, type ModalProps } from 'svelte-modals';
-	import { SvelteDate } from 'svelte/reactivity';
-	import DeleteCommentModal from '../../routes/articles/[id]/DeleteCommentModal.svelte';
-	import { userStore } from '$lib/stores/user.store';
+import type { CommentOut } from 'shared/dtos/out/comment-out.dto'
+import { SvelteDate } from 'svelte/reactivity'
+import { type ModalProps, modals } from 'svelte-modals'
+import { userStore } from '$lib/stores/user.store'
+import DeleteCommentModal from '../../routes/articles/[id]/DeleteCommentModal.svelte'
 
-	const {
-		comment,
-		onCommentDeleted
-	}: { comment: CommentOut; onCommentDeleted: (commentId: string) => void } = $props();
-	const isAuthor = $derived($userStore?.id === comment.author.id);
+const {
+	comment,
+	onCommentDeleted
+}: { comment: CommentOut; onCommentDeleted: (commentId: string) => void } =
+	$props()
+const isAuthor = $derived($userStore?.id === comment.author.id)
 
-	function getDisplayableDate(isoString: string): string {
-		const date = new Date(isoString);
-		const now = new Date();
-		const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-		const yesterday = new SvelteDate(today);
+function getDisplayableDate(isoString: string): string {
+	const date = new Date(isoString)
+	const now = new Date()
+	const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+	const yesterday = new SvelteDate(today)
 
-		yesterday.setDate(yesterday.getDate() - 1);
+	yesterday.setDate(yesterday.getDate() - 1)
 
-		const target = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+	const target = new Date(date.getFullYear(), date.getMonth(), date.getDate())
 
-		if (target.getTime() === today.getTime()) {
-			return 'Hoy';
-		}
-
-		if (target.getTime() === yesterday.getTime()) {
-			return 'Ayer';
-		}
-
-		return date.toLocaleDateString('es-AR', {
-			day: '2-digit',
-			month: '2-digit',
-			year: '2-digit'
-		});
+	if (target.getTime() === today.getTime()) {
+		return 'Hoy'
 	}
+
+	if (target.getTime() === yesterday.getTime()) {
+		return 'Ayer'
+	}
+
+	return date.toLocaleDateString('es-AR', {
+		day: '2-digit',
+		month: '2-digit',
+		year: '2-digit'
+	})
+}
 </script>
 
 <article class="space-y-2 overflow-hidden mobile:w-full tablet:w-[70%]">

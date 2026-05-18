@@ -1,13 +1,13 @@
 <script lang="ts">
-	import type { ArticlePreviewOut } from 'shared/dtos/out/article-preview-out.dto';
-	import { isRecent } from '$lib/utilities/is-recent.utility';
-	import { ROUTES } from '$lib/configuration/routes.configuration';
+import type { ArticlePreviewOut } from 'shared/dtos/out/article-preview-out.dto'
+import { ROUTES } from '$lib/configuration/routes.configuration'
+import { isRecent } from '$lib/utilities/is-recent.utility'
 
-	interface Props {
-		article: ArticlePreviewOut;
-	}
+interface Props {
+	article: ArticlePreviewOut
+}
 
-	const { article }: Props = $props();
+const { article }: Props = $props()
 </script>
 
 <a

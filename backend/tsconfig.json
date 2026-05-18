@@ -3,18 +3,13 @@
 		"target": "ESNext",
 		"module": "NodeNext",
 		"moduleResolution": "NodeNext",
-
 		"strict": false,
 		"verbatimModuleSyntax": true,
 		"skipLibCheck": true,
-
-		"types": ["node"],
-
+		"types": ["bun", "node"],
 		"outDir": "./dist",
 		"rootDir": ".."
 	},
-
 	"include": ["src", "../shared"],
-
 	"exclude": ["node_modules", "dist"]
 }

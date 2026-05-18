@@ -1,5 +1,5 @@
 <script lang="ts">
-	const { name, value }: { name: string; value: string } = $props();
+const { name, value }: { name: string; value: string } = $props()
 </script>
 
 <li class="flex flex-col gap-y-2">

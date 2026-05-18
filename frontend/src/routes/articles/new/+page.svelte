@@ -1,20 +1,19 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
-	import Button from '$lib/components/Button.svelte';
-	import Input from '$lib/components/Input.svelte';
-	import Page from '$lib/components/Page.svelte';
-	import ImageInput from '$lib/components/ImageInput.svelte';
-	import ErrorMessage from '$lib/components/ErrorMessage.svelte';
+import { enhance } from '$app/forms'
+import { goto } from '$app/navigation'
+import Button from '$lib/components/Button.svelte'
+import ErrorMessage from '$lib/components/ErrorMessage.svelte'
+import ImageInput from '$lib/components/ImageInput.svelte'
+import Input from '$lib/components/Input.svelte'
+import MarkdownEditor from '$lib/components/MarkdownEditor.svelte'
+import Page from '$lib/components/Page.svelte'
+import { ROUTES } from '$lib/configuration/routes.configuration'
+import type { ActionData } from './$types'
 
-	import type { ActionData } from './$types';
-	import { goto } from '$app/navigation';
-	import MarkdownEditor from '$lib/components/MarkdownEditor.svelte';
-	import { ROUTES } from '$lib/configuration/routes.configuration';
+let { form }: { form: ActionData } = $props()
 
-	let { form }: { form: ActionData } = $props();
-
-	let content = $state('');
-	let image = $state<File | string>('');
+let content = $state('')
+let image = $state<File | string>('')
 </script>
 
 <Page>

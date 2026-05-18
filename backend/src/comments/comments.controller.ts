@@ -2,9 +2,9 @@ import type { Request, Response } from 'express'
 import { CreateCommentDto } from '../../../shared/src/dtos/in/create-comment.dto.js'
 import { CUIDParamDto } from '../../../shared/src/dtos/in/cuid-param.dto.js'
 import { PaginationParamsDto } from '../../../shared/src/dtos/in/pagination-params.dto.js'
-import { CommentsService } from './comments.service.js'
 import { CommentOut } from '../../../shared/src/dtos/out/comment-out.dto.js'
 import { Cursor } from '../../../shared/src/models/cursor.model.js'
+import { CommentsService } from './comments.service.js'
 
 export class CommentsController {
 	static async create(request: Request, response: Response): Promise<Response> {

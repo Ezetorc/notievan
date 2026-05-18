@@ -2,17 +2,17 @@ export function observe(element: HTMLElement, onIntersect: () => void) {
 	const observer = new IntersectionObserver(
 		(entries) => {
 			if (entries[0].isIntersecting) {
-				onIntersect();
+				onIntersect()
 			}
 		},
 		{
 			threshold: 1.0
 		}
-	);
+	)
 
-	observer.observe(element);
+	observer.observe(element)
 
 	return () => {
-		observer.disconnect();
-	};
+		observer.disconnect()
+	}
 }

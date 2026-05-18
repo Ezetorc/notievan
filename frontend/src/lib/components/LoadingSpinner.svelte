@@ -1,5 +1,5 @@
 <script lang="ts">
-	let { attach }: { attach: (element: HTMLElement) => void } = $props();
+let { attach }: { attach: (element: HTMLElement) => void } = $props()
 </script>
 
 <div

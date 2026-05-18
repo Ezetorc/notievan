@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { CommentOut } from '../../../shared/src/dtos/out/comment-out.dto.js'
+import { CommentsController } from './comments.controller.js'
 import { commentMock } from './comments.mock.js'
 import { CommentsService } from './comments.service.js'
-import { CommentsController } from './comments.controller.js'
-import { CommentOut } from '../../../shared/src/dtos/out/comment-out.dto.js'
 
 describe('CommentsController', () => {
 	beforeEach(() => {

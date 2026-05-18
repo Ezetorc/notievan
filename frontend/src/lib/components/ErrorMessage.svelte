@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { isErrorCode } from '$lib/utilities/is-error-code.utility';
-	import { isZodIssue } from '$lib/utilities/is-zod-issue.utility';
-	import { parseErrorCode } from '$lib/utilities/parse-error-code.utility';
-	import { parseZodIssue } from '$lib/utilities/parse-zod-issue.utility';
-	import type { $ZodIssue } from 'zod/v4/core';
+import type { $ZodIssue } from 'zod/v4/core'
+import { isErrorCode } from '$lib/utilities/is-error-code.utility'
+import { isZodIssue } from '$lib/utilities/is-zod-issue.utility'
+import { parseErrorCode } from '$lib/utilities/parse-error-code.utility'
+import { parseZodIssue } from '$lib/utilities/parse-zod-issue.utility'
 
-	const { value }: { value?: string | $ZodIssue } = $props();
+const { value }: { value?: string | $ZodIssue } = $props()
 </script>
 
 {#if isZodIssue(value)}

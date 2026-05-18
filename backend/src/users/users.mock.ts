@@ -1,5 +1,5 @@
-import { userRoles } from '../../../shared/src/models/user-role.model.js'
 import type { User } from '../../../shared/src/models/user.model.js'
+import { userRoles } from '../../../shared/src/models/user-role.model.js'
 
 export const userMock: User = {
 	createdAt: new Date('2024-02-10T08:45:00Z'),

@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { AuthService } from './auth.service.js'
-import { userMock } from '../users/users.mock.js'
-import { AuthController } from './auth.controller.js'
 import { UserOut } from '../../../shared/src/dtos/out/user-out.dto.js'
+import { userMock } from '../users/users.mock.js'
 import { UsersService } from '../users/users.service.js'
+import { AuthController } from './auth.controller.js'
+import { AuthService } from './auth.service.js'
 
 describe('AuthController', () => {
 	beforeEach(() => {

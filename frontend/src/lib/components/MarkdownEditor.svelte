@@ -1,18 +1,19 @@
 <script lang="ts">
-	import DOMPurify from 'dompurify';
-	import { Carta, MarkdownEditor } from 'carta-md';
-	import 'carta-md/default.css';
+import { Carta, MarkdownEditor } from 'carta-md'
+import DOMPurify from 'dompurify'
+import 'carta-md/default.css'
 
-	interface Props {
-		value?: string;
-		placeholder?: string;
-	}
+interface Props {
+	value?: string
+	placeholder?: string
+}
 
-	let { value = $bindable(''), placeholder = 'Write something...' }: Props = $props();
+let { value = $bindable(''), placeholder = 'Write something...' }: Props =
+	$props()
 
-	let carta = new Carta({
-		sanitizer: DOMPurify.sanitize
-	});
+let carta = new Carta({
+	sanitizer: DOMPurify.sanitize
+})
 </script>
 
 <MarkdownEditor {carta} bind:value {placeholder} mode="tabs" scroll="sync" />

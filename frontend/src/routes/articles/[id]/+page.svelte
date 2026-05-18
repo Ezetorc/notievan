@@ -1,19 +1,21 @@
 <script lang="ts">
-	import Article from '$lib/components/Article.svelte';
-	import Page from '$lib/components/Page.svelte';
-	import type { PageData } from './$types';
-	import ArticleComments from './ArticleComments.svelte';
-	import { modals, type ModalProps } from 'svelte-modals';
-	import DeleteArticleModal from './DeleteArticleModal.svelte';
-	import { userStore } from '$lib/stores/user.store';
-	import { marked } from 'marked';
-	import DOMPurify from 'dompurify';
-	import { ROUTES } from '$lib/configuration/routes.configuration';
+import DOMPurify from 'dompurify'
+import { marked } from 'marked'
+import { type ModalProps, modals } from 'svelte-modals'
+import Article from '$lib/components/Article.svelte'
+import Page from '$lib/components/Page.svelte'
+import { ROUTES } from '$lib/configuration/routes.configuration'
+import { userStore } from '$lib/stores/user.store'
+import type { PageData } from './$types'
+import ArticleComments from './ArticleComments.svelte'
+import DeleteArticleModal from './DeleteArticleModal.svelte'
 
-	const { data }: { data: PageData } = $props();
-	const article = $derived(data.article);
-	const isAuthor = $derived($userStore?.id === article.author.id);
-	const html = $derived(DOMPurify.sanitize(marked.parse(article.content) as string));
+const { data }: { data: PageData } = $props()
+const article = $derived(data.article)
+const isAuthor = $derived($userStore?.id === article.author.id)
+const html = $derived(
+	DOMPurify.sanitize(marked.parse(article.content) as string)
+)
 </script>
 
 <Page>

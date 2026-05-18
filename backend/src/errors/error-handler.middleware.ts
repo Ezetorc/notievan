@@ -1,13 +1,13 @@
 import type {
-	Request,
-	Response,
+	ErrorRequestHandler,
 	NextFunction,
-	ErrorRequestHandler
+	Request,
+	Response
 } from 'express'
 import { ZodError } from 'zod'
+import { ErrorCode } from '../../../shared/src/models/error-code.model.js'
 import { env } from '../shared/configuration/env.configuration.js'
 import { CustomError } from './custom.error.js'
-import { ErrorCode } from '../../../shared/src/models/error-code.model.js'
 
 export function errorHandlerMiddleware(): ErrorRequestHandler {
 	return (

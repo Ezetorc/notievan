@@ -1,15 +1,15 @@
 <script lang="ts">
-	import type { Snippet } from 'svelte';
+import type { Snippet } from 'svelte'
 
-	interface Props {
-		href: HTMLAnchorElement['href'];
-		target?: HTMLAnchorElement['target'];
-		ariaLabel?: HTMLAnchorElement['ariaLabel'];
-		class?: string;
-		children: Snippet;
-	}
+interface Props {
+	href: HTMLAnchorElement['href']
+	target?: HTMLAnchorElement['target']
+	ariaLabel?: HTMLAnchorElement['ariaLabel']
+	class?: string
+	children: Snippet
+}
 
-	const { href, target, ariaLabel, class: className, children }: Props = $props();
+const { href, target, ariaLabel, class: className, children }: Props = $props()
 </script>
 
 <a

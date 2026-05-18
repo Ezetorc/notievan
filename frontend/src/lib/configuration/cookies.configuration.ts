@@ -1,9 +1,12 @@
-import type { SerializeOptions } from 'cookie';
+import type { SerializeOptions } from 'cookie'
 
-type CookieId = 'AccessToken';
+type CookieId = 'AccessToken'
 
 export const COOKIES: {
-	[key in CookieId]: { name: string; options: SerializeOptions & { path: string } };
+	[key in CookieId]: {
+		name: string
+		options: SerializeOptions & { path: string }
+	}
 } = {
 	AccessToken: {
 		name: 'access_token',
@@ -15,4 +18,4 @@ export const COOKIES: {
 			maxAge: 60 * 60 * 24 * 30
 		}
 	}
-};
+}

@@ -2,12 +2,7 @@
   "name": "@app/shared",
   "version": "1.0.0",
   "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
   "dependencies": {
     "zod": "^4.3.6"
-  },
-  "scripts": {
-    "build": "tsc"
   }
 }

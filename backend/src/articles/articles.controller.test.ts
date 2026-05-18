@@ -1,11 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { ArticlesService } from './articles.service.js'
-import { articleMock } from './articles.mock.js'
-import { ArticlesController } from './articles.controller.js'
-import type { UpdateArticleDtoType } from '../../../shared/src/dtos/in/update-article.dto.js'
 import type { CreateArticleDtoType } from '../../../shared/src/dtos/in/create-article.dto.js'
+import type { UpdateArticleDtoType } from '../../../shared/src/dtos/in/update-article.dto.js'
 import { ArticleOut } from '../../../shared/src/dtos/out/article-out.dto.js'
 import { ArticlePreviewOut } from '../../../shared/src/dtos/out/article-preview-out.dto.js'
+import { ArticlesController } from './articles.controller.js'
+import { articleMock } from './articles.mock.js'
+import { ArticlesService } from './articles.service.js'
 
 describe('ArticlesController', () => {
 	beforeEach(() => {

@@ -1,55 +1,55 @@
 <script lang="ts">
-	import Button from '$lib/components/Button.svelte';
-	import ErrorMessage from '$lib/components/ErrorMessage.svelte';
-	import Modal from '$lib/components/Modal.svelte';
-	import type { $ZodIssue } from 'zod/v4/core';
-	import { ZodError } from 'zod';
-	import Textarea from '$lib/components/Textarea.svelte';
-	import { CreateCommentDto } from 'shared/dtos/in/create-comment.dto';
-	import { CommentOut } from 'shared/dtos/out/comment-out.dto';
-	import { ClientApiService } from '$lib/services/client-api.service';
+import { CreateCommentDto } from 'shared/dtos/in/create-comment.dto'
+import type { CommentOut } from 'shared/dtos/out/comment-out.dto'
+import { ZodError } from 'zod'
+import type { $ZodIssue } from 'zod/v4/core'
+import Button from '$lib/components/Button.svelte'
+import ErrorMessage from '$lib/components/ErrorMessage.svelte'
+import Modal from '$lib/components/Modal.svelte'
+import Textarea from '$lib/components/Textarea.svelte'
+import { ClientApiService } from '$lib/services/client-api.service'
 
-	const {
-		isOpen,
-		close,
-		articleId,
-		onCommentCreated
-	}: {
-		articleId: string;
-		close: () => void;
-		isOpen: boolean;
-		onCommentCreated: (comment: CommentOut) => void;
-	} = $props();
-	let error = $state<string | $ZodIssue | undefined>();
+const {
+	isOpen,
+	close,
+	articleId,
+	onCommentCreated
+}: {
+	articleId: string
+	close: () => void
+	isOpen: boolean
+	onCommentCreated: (comment: CommentOut) => void
+} = $props()
+let error = $state<string | $ZodIssue | undefined>()
 
-	async function onSubmit(event: SubmitEvent) {
-		event.preventDefault();
-		const formData = new FormData(event.target as HTMLFormElement);
-		const content = formData.get('content') as string;
+async function onSubmit(event: SubmitEvent) {
+	event.preventDefault()
+	const formData = new FormData(event.target as HTMLFormElement)
+	const content = formData.get('content') as string
 
-		try {
-			const result = CreateCommentDto.parse({ content, articleId });
-			const newComment = await ClientApiService.post<CommentOut>({
-				url: '/comments',
-				body: result
-			});
+	try {
+		const result = CreateCommentDto.parse({ content, articleId })
+		const newComment = await ClientApiService.post<CommentOut>({
+			url: '/comments',
+			body: result
+		})
 
-			if (newComment) {
-				onCommentCreated(newComment);
-				close();
-			} else {
-				error = 'Error al comentar artículo';
-			}
-		} catch (err) {
-			console.error('[CreateCommentModal]', err);
-
-			if (err instanceof ZodError) {
-				error = err.issues[0];
-			}
-
-			error = 'Error al comentar artículo';
+		if (newComment) {
+			onCommentCreated(newComment)
+			close()
+		} else {
+			error = 'Error al comentar artículo'
 		}
+	} catch (err) {
+		console.error('[CreateCommentModal]', err)
+
+		if (err instanceof ZodError) {
+			error = err.issues[0]
+		}
+
+		error = 'Error al comentar artículo'
 	}
+}
 </script>
 
 {#if isOpen}

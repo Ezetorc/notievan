@@ -1,4 +1,4 @@
-import type { ValidationMessageField } from '$lib/models/validation-message-field.model';
+import type { ValidationMessageField } from '$lib/models/validation-message-field.model'
 
 export const VALIDATION_MESSAGES: Record<
 	ValidationMessageField,
@@ -41,4 +41,4 @@ export const VALIDATION_MESSAGES: Record<
 		invalid_type: 'La imagen no es válida',
 		too_small: 'Debes subir una imagen'
 	}
-};
+}

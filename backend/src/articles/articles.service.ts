@@ -1,16 +1,16 @@
-import { ArticlesRepository } from './articles.repository.js'
 import type { CreateArticleDtoType } from '../../../shared/src/dtos/in/create-article.dto.js'
+import type { UpdateArticleDtoType } from '../../../shared/src/dtos/in/update-article.dto.js'
+import { Cursor } from '../../../shared/src/models/cursor.model.js'
 import { ErrorCode } from '../../../shared/src/models/error-code.model.js'
+import type { PaginatedResult } from '../../../shared/src/models/paginated-result.model.js'
 import { NotFoundError } from '../errors/not-found.error.js'
 import { UnauthorizedError } from '../errors/unauthorized.error.js'
-import type { PaginatedResult } from '../../../shared/src/models/paginated-result.model.js'
-import { Cursor } from '../../../shared/src/models/cursor.model.js'
-import type { ArticleWithAuthorName } from './article-with-author-name.model.js'
-import type { ArticlePreviewWithAuthorName } from './article-preview-with-author-name.model.js'
-import type { UpdateArticleDtoType } from '../../../shared/src/dtos/in/update-article.dto.js'
-import { ArticleImageService } from './article-image.service.js'
 import { InstagramService } from '../instagram/instagram.service.js'
 import { env } from '../shared/configuration/env.configuration.js'
+import { ArticleImageService } from './article-image.service.js'
+import type { ArticlePreviewWithAuthorName } from './article-preview-with-author-name.model.js'
+import type { ArticleWithAuthorName } from './article-with-author-name.model.js'
+import { ArticlesRepository } from './articles.repository.js'
 
 export class ArticlesService {
 	static async getById(id: string): Promise<ArticleWithAuthorName> {

@@ -1,45 +1,47 @@
 <script lang="ts">
-	import Article from '$lib/components/Article.svelte';
-	import Articles from '$lib/components/Articles.svelte';
-	import Hero from '$lib/components/Hero.svelte';
-	import LoadingSpinner from '$lib/components/LoadingSpinner.svelte';
-	import Page from '$lib/components/Page.svelte';
-	import { observe } from '$lib/utilities/observe.utility.js';
-	import type { PaginatedResult } from 'shared/models/paginated-result.model';
-	import type { PageData } from './$types';
-	import type { ArticlePreviewOut } from 'shared/dtos/out/article-preview-out.dto';
-	import { SvelteURLSearchParams } from 'svelte/reactivity';
-	import { ServerApiService } from '$lib/services/server-api.service';
+import type { ArticlePreviewOut } from 'shared/dtos/out/article-preview-out.dto'
+import type { PaginatedResult } from 'shared/models/paginated-result.model'
+import { SvelteURLSearchParams } from 'svelte/reactivity'
+import Article from '$lib/components/Article.svelte'
+import Articles from '$lib/components/Articles.svelte'
+import Hero from '$lib/components/Hero.svelte'
+import LoadingSpinner from '$lib/components/LoadingSpinner.svelte'
+import Page from '$lib/components/Page.svelte'
+import { ServerApiService } from '$lib/services/server-api.service'
+import { observe } from '$lib/utilities/observe.utility.js'
+import type { PageData } from './$types'
 
-	const { data }: { data: PageData } = $props();
+const { data }: { data: PageData } = $props()
 
-	let articles = $derived(data.initialArticles);
-	let cursor = $derived<string | null>(data.initialCursor);
-	let loading = $state(false);
-	let hasMore = $derived(Boolean(cursor));
+let articles = $derived(data.initialArticles)
+let cursor = $derived<string | null>(data.initialCursor)
+let loading = $state(false)
+let hasMore = $derived(Boolean(cursor))
 
-	async function loadMore() {
-		if (!hasMore || loading) return;
+async function loadMore() {
+	if (!hasMore || loading) return
 
-		loading = true;
+	loading = true
 
-		const search = new SvelteURLSearchParams();
+	const search = new SvelteURLSearchParams()
 
-		if (cursor) {
-			search.set('cursor', cursor);
-		}
-
-		search.set('limit', '4');
-
-		const response = await ServerApiService.get<PaginatedResult<ArticlePreviewOut>>({
-			url: `/articles?${search}`
-		});
-
-		articles = [...articles, ...response.data];
-		cursor = response.nextCursor;
-		hasMore = Boolean(cursor);
-		loading = false;
+	if (cursor) {
+		search.set('cursor', cursor)
 	}
+
+	search.set('limit', '4')
+
+	const response = await ServerApiService.get<
+		PaginatedResult<ArticlePreviewOut>
+	>({
+		url: `/articles?${search}`
+	})
+
+	articles = [...articles, ...response.data]
+	cursor = response.nextCursor
+	hasMore = Boolean(cursor)
+	loading = false
+}
 </script>
 
 <Page>

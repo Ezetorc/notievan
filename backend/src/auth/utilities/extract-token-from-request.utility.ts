@@ -1,6 +1,6 @@
 import type { Request } from 'express'
-import { UnauthorizedError } from '../../errors/unauthorized.error.js'
 import { ErrorCode } from '../../../../shared/src/models/error-code.model.js'
+import { UnauthorizedError } from '../../errors/unauthorized.error.js'
 
 export function extractTokenFromRequest(request: Request): string {
 	const header = request.headers.authorization ?? request.headers.Authorization

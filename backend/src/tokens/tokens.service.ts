@@ -1,7 +1,7 @@
-import { TokensRepository } from './tokens.repository.js'
-import type { Token } from './token.model.js'
-import { NotFoundError } from '../errors/not-found.error.js'
 import { ErrorCode } from '../../../shared/src/models/error-code.model.js'
+import { NotFoundError } from '../errors/not-found.error.js'
+import type { Token } from './token.model.js'
+import { TokensRepository } from './tokens.repository.js'
 
 export class TokensService {
 	static async getByName(name: string): Promise<Token> {

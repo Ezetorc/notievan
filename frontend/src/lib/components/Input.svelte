@@ -1,14 +1,14 @@
 <script lang="ts">
-	import type { Snippet } from 'svelte';
-	import type { HTMLInputAttributes } from 'svelte/elements';
+import type { Snippet } from 'svelte'
+import type { HTMLInputAttributes } from 'svelte/elements'
 
-	interface Props extends HTMLInputAttributes {
-		name: string;
-		children: Snippet;
-		class?: string;
-	}
+interface Props extends HTMLInputAttributes {
+	name: string
+	children: Snippet
+	class?: string
+}
 
-	const { name, children, class: extraClass = '', ...rest }: Props = $props();
+const { name, children, class: extraClass = '', ...rest }: Props = $props()
 </script>
 
 <div>

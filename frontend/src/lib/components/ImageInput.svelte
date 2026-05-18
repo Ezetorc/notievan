@@ -1,72 +1,72 @@
 <script lang="ts">
-	import Button from './Button.svelte';
-	import compressFile, { type Options } from 'browser-image-compression';
+import compressFile, { type Options } from 'browser-image-compression'
+import Button from './Button.svelte'
 
-	interface Props {
-		maxSizeMB?: Options['maxSizeMB'];
-		maxWidthOrHeight?: Options['maxWidthOrHeight'];
-		fileType?: Options['fileType'];
-		oninput: (image: File | string) => void;
-		value?: string;
+interface Props {
+	maxSizeMB?: Options['maxSizeMB']
+	maxWidthOrHeight?: Options['maxWidthOrHeight']
+	fileType?: Options['fileType']
+	oninput: (image: File | string) => void
+	value?: string
+}
+
+const {
+	maxSizeMB = 0.3,
+	maxWidthOrHeight = 1200,
+	fileType = 'image/webp',
+	oninput,
+	value: initialValue = ''
+}: Props = $props()
+
+let imageMode = $state<'url' | 'file'>('url')
+let preview = $state<string>('')
+let loading = $state<boolean>(false)
+
+$effect(() => {
+	if (initialValue) {
+		preview = initialValue
+		imageMode = 'url'
+	}
+})
+
+async function onSelectFile(event: Event) {
+	const target = event.target as HTMLInputElement
+	const selectedFile = target.files?.[0]
+
+	if (!selectedFile) {
+		return
 	}
 
-	const {
-		maxSizeMB = 0.3,
-		maxWidthOrHeight = 1200,
-		fileType = 'image/webp',
-		oninput,
-		value: initialValue = ''
-	}: Props = $props();
+	loading = true
 
-	let imageMode = $state<'url' | 'file'>('url');
-	let preview = $state<string>('');
-	let loading = $state<boolean>(false);
+	try {
+		const compressedFile = await compressFile(selectedFile, {
+			maxSizeMB,
+			maxWidthOrHeight,
+			useWebWorker: true,
+			fileType
+		})
+		const previewUrl = URL.createObjectURL(compressedFile)
+		preview = previewUrl
 
-	$effect(() => {
-		if (initialValue) {
-			preview = initialValue;
-			imageMode = 'url';
-		}
-	});
+		const file = new File([compressedFile], 'image.webp', {
+			type: 'image/webp'
+		})
 
-	async function onSelectFile(event: Event) {
-		const target = event.target as HTMLInputElement;
-		const selectedFile = target.files?.[0];
-
-		if (!selectedFile) {
-			return;
-		}
-
-		loading = true;
-
-		try {
-			const compressedFile = await compressFile(selectedFile, {
-				maxSizeMB,
-				maxWidthOrHeight,
-				useWebWorker: true,
-				fileType
-			});
-			const previewUrl = URL.createObjectURL(compressedFile);
-			preview = previewUrl;
-
-			const file = new File([compressedFile], 'image.webp', {
-				type: 'image/webp'
-			});
-
-			oninput(file);
-		} catch (err) {
-			console.error('Error al procesar imagen', err);
-		} finally {
-			loading = false;
-		}
+		oninput(file)
+	} catch (err) {
+		console.error('Error al procesar imagen', err)
+	} finally {
+		loading = false
 	}
+}
 
-	function onSelectUrl(event: Event) {
-		const target = event.target as HTMLInputElement;
-		preview = target.value;
+function onSelectUrl(event: Event) {
+	const target = event.target as HTMLInputElement
+	preview = target.value
 
-		oninput(target.value);
-	}
+	oninput(target.value)
+}
 </script>
 
 <div class="flex w-75 flex-col gap-y-2">

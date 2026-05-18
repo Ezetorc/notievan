@@ -1,10 +1,10 @@
+import { and, desc, eq, lt, or } from 'drizzle-orm'
+import type { Comment } from '../../../shared/src/models/comment.model.js'
+import type { Cursor } from '../../../shared/src/models/cursor.model.js'
 import { database } from '../database/database.configuration.js'
-import { eq, desc, and, lt, or } from 'drizzle-orm'
 import { comments } from '../database/schemas/comments.schema.js'
 import { users } from '../database/schemas/users.schema.js'
-import type { Cursor } from '../../../shared/src/models/cursor.model.js'
 import type { CommentWithAuthorName } from './comment-with-author-name.model.js'
-import type { Comment } from '../../../shared/src/models/comment.model.js'
 
 export class CommentsRepository {
 	static async create(data: {

@@ -1,14 +1,14 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
-	import { goto } from '$app/navigation';
-	import Button from '$lib/components/Button.svelte';
-	import ErrorMessage from '$lib/components/ErrorMessage.svelte';
-	import Hero from '$lib/components/Hero.svelte';
-	import Input from '$lib/components/Input.svelte';
-	import Page from '$lib/components/Page.svelte';
-	import { ROUTES } from '$lib/configuration/routes.configuration.js';
+import { enhance } from '$app/forms'
+import { goto } from '$app/navigation'
+import Button from '$lib/components/Button.svelte'
+import ErrorMessage from '$lib/components/ErrorMessage.svelte'
+import Hero from '$lib/components/Hero.svelte'
+import Input from '$lib/components/Input.svelte'
+import Page from '$lib/components/Page.svelte'
+import { ROUTES } from '$lib/configuration/routes.configuration.js'
 
-	const { form } = $props();
+const { form } = $props()
 </script>
 
 <Page>

@@ -1,11 +1,11 @@
 import type { Request, Response } from 'express'
-import { UsersService } from './users.service.js'
-import { UserOut } from '../../../shared/src/dtos/out/user-out.dto.js'
 import { CUIDParamDto } from '../../../shared/src/dtos/in/cuid-param.dto.js'
 import { PaginationParamsDto } from '../../../shared/src/dtos/in/pagination-params.dto.js'
 import { UpdateUserDto } from '../../../shared/src/dtos/in/update-user.dto.js'
+import { UserOut } from '../../../shared/src/dtos/out/user-out.dto.js'
 import { ErrorCode } from '../../../shared/src/models/error-code.model.js'
 import { UnauthorizedError } from '../errors/unauthorized.error.js'
+import { UsersService } from './users.service.js'
 
 export class UsersController {
 	static async getById(

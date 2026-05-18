@@ -1,4 +1,4 @@
-import type { ErrorCode } from 'shared/models/error-code.model';
+import type { ErrorCode } from 'shared/models/error-code.model'
 
 export const ERROR_MESSAGES: Record<ErrorCode, string> = {
 	EMAIL_IN_USE: 'El email ya está en uso',
@@ -14,4 +14,4 @@ export const ERROR_MESSAGES: Record<ErrorCode, string> = {
 	FORBIDDEN: 'No tienes permiso para realizar esta acción',
 	INSTAGRAM_ERROR: 'Error al obtener datos de Instagram',
 	UNEXPECTED_ERROR: 'Ocurrió un error inesperado'
-};
+}
