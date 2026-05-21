@@ -1,5 +1,5 @@
 <script lang="ts">
-import DOMPurify from 'isomorphic-dompurify'
+import DOMPurify from 'dompurify'
 import { marked } from 'marked'
 import { type ModalProps, modals } from 'svelte-modals'
 import type { PageData } from './$types'

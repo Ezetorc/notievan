@@ -23,17 +23,6 @@ Built to keep students and teachers connected without needing 37 WhatsApp groups
 - Authentication and role-based access.
 - Friendly and secure environment for everyone 🛡️
 
-### Project structure
-src/lib/
-  server/
-  client/
-  shared/
-  features/
-    <feature>/
-      components/
-      server/
-      types/
-      schemas/
-      utils/
+---
 
-Only routes-related files inside routes
+## Getting Started
