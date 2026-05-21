@@ -5,12 +5,6 @@
 			"destination": "/index.html"
 		}
 	],
-	"functions": {
-		"api/**/*.ts": {
-			"memory": 1024,
-			"maxDuration": 10
-		}
-	},
 	"crons": [
 		{
 			"path": "/api/instagram/refresh-access-token",
