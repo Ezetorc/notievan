@@ -1,5 +1,4 @@
 import { error } from '@sveltejs/kit'
-import { env } from 'process'
 import { Cursor } from 'server/models/cursor.model'
 import { ImageService } from 'server/services/image.service'
 import { InstagramService } from 'server/services/instagram.service'
@@ -11,6 +10,7 @@ import type { ArticleWithAuthorName } from '../models/article-with-author-name.m
 import { ArticleImageService } from './article-image.service'
 import type { UpdateArticleSchema } from 'articles/schemas/update-article.schema'
 import type { CreateArticleSchema } from 'articles/schemas/create-article.schema'
+import { env } from 'server/configuration/env.configuration'
 
 export class ArticlesService {
 	static async getById(id: string): Promise<ArticleWithAuthorName> {
