@@ -52,6 +52,7 @@
 		"cookie": "^1.1.1",
 		"dompurify": "^3.4.5",
 		"drizzle-orm": "^0.45.2",
+		"isomorphic-dompurify": "^3.14.0",
 		"jsonwebtoken": "^9.0.3",
 		"jwt-decode": "^4.0.0",
 		"marked": "^18.0.3",

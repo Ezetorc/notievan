@@ -6,6 +6,7 @@ interface Props extends Omit<HTMLButtonAttributes, 'onclick'> {
 	children: Snippet
 	class?: string
 	variant?: 'default' | 'danger' | 'unselected'
+	loading?: boolean
 	onclick?: (event: MouseEvent) => void | Promise<void>
 }
 
@@ -16,10 +17,11 @@ const {
 	onclick,
 	disabled,
 	type,
+	loading = false,
 	...rest
 }: Props = $props()
 
-let loading = $state(false)
+let isLoading = $derived(loading)
 
 const variants = {
 	default: 'bg-brand-orange text-white hover:bg-gray-800',
@@ -29,19 +31,19 @@ const variants = {
 }
 
 async function handleClick(event: MouseEvent) {
-	if (!onclick || loading) {
+	if (!onclick || isLoading) {
 		return
 	}
 
 	const result = onclick(event)
 
 	if (result instanceof Promise) {
-		loading = true
+		isLoading = true
 
 		try {
 			await result
 		} finally {
-			loading = false
+			isLoading = false
 		}
 	}
 }
@@ -50,13 +52,13 @@ async function handleClick(event: MouseEvent) {
 <button
 	{...rest}
 	type={type ?? 'button'}
-	disabled={disabled || loading}
+	disabled={disabled || isLoading}
 	onclick={handleClick}
 	class={`w-fit cursor-pointer rounded-sm px-3 py-3 text-3xl transition-all
 		hover:-translate-y-1 disabled:cursor-not-allowed disabled:opacity-60
 		${variants[variant]} ${extraClass}`}
 >
-	{#if loading}
+	{#if isLoading}
 		Cargando...
 	{:else}
 		{@render children()}

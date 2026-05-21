@@ -1,33 +1,20 @@
 <script lang="ts">
-import DOMPurify from 'dompurify'
-import { marked } from 'marked'
 import { type ModalProps, modals } from 'svelte-modals'
 import type { PageData } from './$types'
 import Article from 'articles/client/components/Article.svelte'
 import type { ArticleOut } from 'articles/models/article-out.model'
 import ArticleComments from 'comments/client/components/ArticleComments.svelte'
 import { ROUTES } from 'shared/configuration/routes.configuration'
-import { userStore } from 'users/client/stores/user.store'
 import DeleteArticleModal from 'articles/client/components/DeleteArticleModal.svelte'
 import Page from 'client/components/Page.svelte'
-import { browser } from '$app/environment'
 
 const { data }: { data: PageData } = $props()
 const article = $derived<ArticleOut>(data.article)
-const isAuthor = $derived<boolean>($userStore?.id === article.author.id)
-
-let html = $state()
-
-$effect(() => {
-	if (!browser) return
-
-	html = DOMPurify.sanitize(marked.parse(article.content, { async: false }))
-})
 </script>
 
 <Page>
     <article class="mb-50" id="article-section">
-        {#if isAuthor}
+        {#if data.isOwner}
             <div class="mt-5 space-x-5 text-2xl">
                 <a
                     href={ROUTES.EditArticle(article.id)}
@@ -66,7 +53,7 @@ $effect(() => {
                 <article
                     class="prose prose-lg prose-slate space-y-6 text-2xl leading-relaxed text-pretty wrap-break-word text-gray-800"
                 >
-                    {@html html}
+                    {@html data.contentHtml}
                 </article>
 
                 <ArticleComments {...data} />

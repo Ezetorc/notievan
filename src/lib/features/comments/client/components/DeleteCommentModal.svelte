@@ -41,11 +41,11 @@ async function onDelete() {
     <Modal
         {close}
         name="¿Querés borrar este comentario?"
-        class="mobile:w-[90vw] tablet:w-[40vw]"
+        class="mobile:w-[98vw] tablet:w-[40vw]"
     >
         <ErrorMessage value={error} />
 
-        <div class="space-x-6">
+        <div class="space-x-6 space-y-6">
             <Button variant="danger" onclick={onDelete}>Eliminar</Button>
             <Button onclick={close}>Cancelar</Button>
         </div>

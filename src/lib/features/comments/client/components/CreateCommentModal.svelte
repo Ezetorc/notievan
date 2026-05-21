@@ -21,6 +21,7 @@ const {
 	onCommentCreated: (comment: CommentOut) => void
 } = $props()
 let error = $state<string | $ZodIssue | undefined>()
+let loading = $state(false)
 
 async function onSubmit(event: SubmitEvent) {
 	event.preventDefault()
@@ -28,6 +29,7 @@ async function onSubmit(event: SubmitEvent) {
 	const content = formData.get('content') as string
 
 	try {
+		loading = true
 		const result = CreateCommentSchema.parse({ content, articleId })
 		const newComment = await HttpService.post<CommentOut>({
 			url: '/api/comments',
@@ -49,6 +51,8 @@ async function onSubmit(event: SubmitEvent) {
 		}
 
 		error = 'Error al comentar artículo'
+	} finally {
+		loading = false
 	}
 }
 </script>
@@ -70,7 +74,7 @@ async function onSubmit(event: SubmitEvent) {
 
             <ErrorMessage value={error} />
 
-            <Button type="submit">Comentar</Button>
+            <Button type="submit" {loading}>Comentar</Button>
         </form>
     </Modal>
 {/if}

@@ -51,3 +51,17 @@ JWT_SECRET=<your_jwt_secret>
 
 DATABASE_URL=<your_database_url>
 ```
+
+### Install dependencies
+
+Run the following command to install the dependencies:
+```bash
+bun install
+```
+
+### Run the development server
+
+Run the following command to start the development server:
+```bash
+bun run dev
+```

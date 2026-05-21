@@ -13,6 +13,7 @@ import Page from 'client/components/Page.svelte'
 
 let { form }: { form: ActionData } = $props()
 
+let loading = $state<boolean>(false)
 let content = $state('')
 let image = $state<File | string>('')
 </script>
@@ -22,6 +23,7 @@ let image = $state<File | string>('')
 		method="POST"
 		enctype="multipart/form-data"
 		use:enhance={({ formData }) => {
+		loading = true
 			formData.set('content', content);
 			formData.set('image', image);
 
@@ -29,6 +31,7 @@ let image = $state<File | string>('')
 				await update();
 
 				if (result.type === 'success') {
+				loading = false
 					goto(ROUTES.Article(result.data?.id as string));
 				}
 			};
@@ -84,6 +87,7 @@ let image = $state<File | string>('')
 
 				<Button
 					class="h-12.5 w-full bg-brand-orange text-xl font-bold text-white tablet:h-17.5 tablet:text-3xl"
+					{loading}
 					type="submit"
 				>
 					Crear artículo

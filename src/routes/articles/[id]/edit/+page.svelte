@@ -13,6 +13,7 @@ import type { ActionData, PageData } from './$types'
 
 let { data, form }: { data: PageData; form: ActionData } = $props()
 
+let loading = $state(false)
 let content = $derived(data.article.content)
 let image = $derived<File | string>(data.article.image)
 </script>
@@ -22,6 +23,7 @@ let image = $derived<File | string>(data.article.image)
 		method="POST"
 		enctype="multipart/form-data"
 		use:enhance={({ formData }) => {
+			loading = true
 			formData.set('content', content);
 			formData.set('image', image);
 
@@ -29,6 +31,7 @@ let image = $derived<File | string>(data.article.image)
 				await update();
 
 				if (result.type === 'success') {
+				loading = false
 					goto(ROUTES.Article(data.article.id));
 				}
 			};
@@ -88,6 +91,7 @@ let image = $derived<File | string>(data.article.image)
 
 				<Button
 					class="h-12.5 w-full bg-brand-orange text-xl font-bold text-white tablet:h-17.5 tablet:text-3xl"
+					{loading}
 					type="submit"
 				>
 					Editar artículo
