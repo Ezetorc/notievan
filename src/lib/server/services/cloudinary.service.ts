@@ -13,9 +13,13 @@ export class CloudinaryService {
 	}> {
 		const { buffer, fileName, folder, transformations = [] } = params
 
+		const baseName = fileName.replace(/\.[^/.]+$/, '')
+		const safeName = this.sanitizeFileName(baseName)
+		const publicId = `${Date.now()}-${safeName}`
+
 		const result = await CloudinaryService.uploadStream(buffer, {
 			folder,
-			public_id: `${Date.now()}-${fileName}`,
+			public_id: publicId,
 			resource_type: 'image',
 			transformation: transformations
 		})
@@ -24,6 +28,15 @@ export class CloudinaryService {
 			secureUrl: result.secure_url,
 			publicId: result.public_id
 		}
+	}
+
+	static sanitizeFileName(name: string): string {
+		return name
+			.toLowerCase()
+			.trim()
+			.replace(/[^a-z0-9-_]+/gi, '-')
+			.replace(/-+/g, '-')
+			.replace(/^-+|-+$/g, '')
 	}
 
 	static async delete(publicId: string): Promise<void> {
