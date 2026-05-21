@@ -26,3 +26,28 @@ Built to keep students and teachers connected without needing 37 WhatsApp groups
 ---
 
 ## Getting Started
+
+### Prerequisites
+
+You have to install
+- Bun
+- NodeJS
+
+### Environment Variables
+
+Create a `.env` file in the root directory and add the following variables:
+```env
+NODE_ENV=<development | production>
+
+INSTAGRAM_BUSINESS_ACCOUNT_ID=<your_instagram_business_account_id>
+# Only neccesary if NODE_ENV is set to 'production'
+
+CLOUDINARY_CLOUD_NAME=<your_cloudinary_cloud_name>
+CLOUDINARY_API_SECRET=<your_cloudinary_api_secret>
+CLOUDINARY_API_KEY=<your_cloudinary_api_key>
+
+JWT_EXPIRES_IN=<your_jwt_expires_in>
+JWT_SECRET=<your_jwt_secret>
+
+DATABASE_URL=<your_database_url>
+```

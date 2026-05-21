@@ -10,13 +10,19 @@ import { ROUTES } from 'shared/configuration/routes.configuration'
 import { userStore } from 'users/client/stores/user.store'
 import DeleteArticleModal from 'articles/client/components/DeleteArticleModal.svelte'
 import Page from 'client/components/Page.svelte'
+import { browser } from '$app/environment'
 
 const { data }: { data: PageData } = $props()
 const article = $derived<ArticleOut>(data.article)
 const isAuthor = $derived<boolean>($userStore?.id === article.author.id)
-const html = $derived<string>(
-	DOMPurify.sanitize(marked.parse(article.content, { async: false }))
-)
+
+let html = $state()
+
+$effect(() => {
+	if (!browser) return
+
+	html = DOMPurify.sanitize(marked.parse(article.content, { async: false }))
+})
 </script>
 
 <Page>
