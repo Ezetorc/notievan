@@ -45,6 +45,7 @@
 		"@types/jsonwebtoken": "^9.0.10",
 		"@types/pg": "^8.20.0",
 		"@types/sanitize-html": "^2.16.1",
+		"@vercel/speed-insights": "^2.0.0",
 		"@vitest/browser-playwright": "^4.1.7",
 		"bcrypt": "^6.0.0",
 		"browser-image-compression": "^2.0.2",

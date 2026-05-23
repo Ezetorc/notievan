@@ -5,8 +5,11 @@ import { navigating } from '$app/state'
 import favicon from 'client/assets/favicon.webp'
 import Header from 'client/components/Header.svelte'
 import { userStore } from 'users/client/stores/user.store'
+import { injectSpeedInsights } from '@vercel/speed-insights/sveltekit'
 
 let { children, data } = $props()
+
+injectSpeedInsights()
 
 $effect(() => {
 	userStore.set(data.user)
